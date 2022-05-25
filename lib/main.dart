@@ -1,6 +1,8 @@
 import 'package:beefit/constants/app_style.dart';
+import 'package:beefit/screens/OnProgressScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:beefit/widgets/ButtonTag.dart';
+import 'package:beefit/widgets/PercentIndicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
@@ -66,7 +68,7 @@ class MyRuler extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Ruler Picker Demo'),
+      home: OnProgressScreen(),
     );
   }
 }
@@ -115,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            PercentIndicator(),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,

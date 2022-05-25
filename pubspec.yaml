@@ -37,6 +37,7 @@ dependencies:
   http: ^0.13.4
   get: ^4.6.1
   flutter_ruler_picker: ^1.0.2
+  percent_indicator: ^4.2.0
 
 dev_dependencies:
   flutter_test:
