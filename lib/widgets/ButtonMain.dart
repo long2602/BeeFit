@@ -38,6 +38,7 @@ class ButtonMain extends StatelessWidget {
               style: TextStyle(
                 color: _textColor,
                 fontSize: 20,
+                fontWeight: FontWeight.bold
               ),
             ),
           ),

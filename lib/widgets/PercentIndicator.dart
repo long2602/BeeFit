@@ -27,7 +27,7 @@ class _PercentIndicatorState extends State<PercentIndicator> {
       ),
       backgroundColor: const Color(0xffebebeb),
       circularStrokeCap: CircularStrokeCap.round,
-      progressColor: AppStyle.primaryColor,
+      progressColor: AppStyle.primaryColor1,
     );
   }
 }

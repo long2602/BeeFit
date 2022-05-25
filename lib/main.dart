@@ -1,5 +1,6 @@
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
+import 'package:beefit/screens/OnboardingScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:beefit/widgets/ButtonTag.dart';
 import 'package:beefit/widgets/PercentIndicator.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
 void main() {
-  runApp(const MyRuler());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -17,42 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BeeFit',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ButtonMain(
-                onPressed: () {},
-                backgroundColor: AppStyle.primaryColor,
-                text: "Next",
-                textColor: AppStyle.whiteColor,
-              ),
-              ButtonTag(
-                onPressed: () {},
-                backgroundColor: AppStyle.primaryColor,
-                text: "Next",
-                textColor: AppStyle.whiteColor,
-              ),
-              RulerPicker(
-                beginValue: 30,
-                endValue: 200,
-                initValue: 50,
-                onValueChange: (value){
-                },
-                width: 320,
-                height: 80,
-              ),
-            ],
-          ),
+        title: 'BeeFit',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
-      ),
+        home: const OnBoardingScreen(),
     );
   }
 }
@@ -68,7 +39,7 @@ class MyRuler extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: OnProgressScreen(),
+      home: OnBoardingScreen(),
     );
   }
 }
@@ -76,6 +47,7 @@ class MyRuler extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -132,7 +104,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text("kg",style: TextStyle(color: AppStyle.black1Color, fontSize: 18),),
+                  child: Text("kg", style: TextStyle(
+                      color: AppStyle.black1Color, fontSize: 18),),
                 )
               ],
             ),
@@ -143,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
               endValue: 100,
               initValue: currentValue,
               rulerScaleTextStyle: TextStyle(
-                color: AppStyle.black1Color
+                  color: AppStyle.black1Color
               ),
               scaleLineStyleList: [
                 ScaleLineStyle(
@@ -161,7 +134,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   currentValue = value;
                 });
               },
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               height: 80,
               rulerMarginTop: 30,
               marker: Container(

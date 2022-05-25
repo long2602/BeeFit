@@ -8,6 +8,7 @@ class AppStyle {
   static const double mainPadding = 20.0;
 
   //color
+  static const Color primaryColor1 = Color(0xffE9A24A);
   static const Color primaryColor = Color(0xffFFC563);
   static const Color secondaryColor = Color(0xff022859);
   static const Color accent1Color = Color(0xff1d3d59);

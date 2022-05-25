@@ -14,7 +14,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [
+        children: const [
           Text("We are creating plans for you..."),
           PercentIndicator(),
         ],
