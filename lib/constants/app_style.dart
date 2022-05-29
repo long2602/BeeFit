@@ -7,9 +7,17 @@ class AppStyle {
   //main padding
   static const double mainPadding = 20.0;
 
+  //img path
+  static const String imagePath = "assets/svg/";
+  static const String keepFit = imagePath + 'keepfit.svg';
+  static const String scale = imagePath + 'scale.svg';
+  static const String buildMuscle = imagePath + 'buildmuscle.svg';
+
+
+
   //color
   static const Color primaryColor1 = Color(0xffE9A24A);
-  static const Color primaryColor = Color(0xffFFC563);
+  static const Color primaryColor = Color(0xffE4A248);
   static const Color secondaryColor = Color(0xff022859);
   static const Color accent1Color = Color(0xff1d3d59);
   static const Color accent2Color = Color(0xfff29f05);

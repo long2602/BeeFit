@@ -26,32 +26,44 @@ class OnPageView extends StatefulWidget {
 class _OnPageViewState extends State<OnPageView> {
   @override
   Widget build(BuildContext context) {
+    final _scale = AppUI.screenScale(context);
     return Container(
       decoration: const BoxDecoration(
         color: AppStyle.whiteColor,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
-            widget._title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 30 * AppUI.fontScale(context),
-              fontWeight: FontWeight.w900,
-              color: AppStyle.secondaryColor,
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: 52 * _scale, vertical: 20 * _scale),
+            child: Text(
+              widget._title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 30 * AppUI.fontScale(context),
+                fontWeight: FontWeight.w900,
+                color: AppStyle.secondaryColor,
+              ),
             ),
           ),
-          widget._widget,
-          ButtonMain(
-            backgroundColor: AppStyle.primaryColor,
-            textColor: AppStyle.whiteColor,
-            text: 'Next',
-            onPressed: () {
-              widget._pageController.nextPage(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-            },
+          Expanded(
+            child: widget._widget,
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+                52 * _scale, 20 * _scale, 52 * _scale, 100 * _scale),
+            child: ButtonMain(
+              backgroundColor: AppStyle.primaryColor,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              height: 60 * AppUI.fontScale(context),
+              onPressed: () {
+                widget._pageController.nextPage(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut);
+              },
+            ),
           ),
         ],
       ),

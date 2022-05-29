@@ -1,4 +1,3 @@
-import 'package:beefit/constants/app_style.dart';
 import 'package:flutter/material.dart';
 
 class ButtonMain extends StatelessWidget {
@@ -6,17 +5,23 @@ class ButtonMain extends StatelessWidget {
   final Color _backgroundColor;
   final String _text;
   final Color _textColor;
+  final double? _height;
+  final double? _width;
 
   const ButtonMain(
       {Key? key,
       required VoidCallback onPressed,
       required Color backgroundColor,
       required String text,
-      required Color textColor})
+      required Color textColor,
+      double? height,
+      double? width})
       : _backgroundColor = backgroundColor,
         _onPressed = onPressed,
         _text = text,
         _textColor = textColor,
+        _height = height,
+        _width = width,
         super(key: key);
 
   @override
@@ -26,8 +31,8 @@ class ButtonMain extends StatelessWidget {
       child: InkWell(
         onTap: _onPressed,
         child: Container(
-          height: 60,
-          width: 330,
+          height: _height,
+          width: _width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             color: _backgroundColor,
@@ -36,10 +41,7 @@ class ButtonMain extends StatelessWidget {
             child: Text(
               _text,
               style: TextStyle(
-                color: _textColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              ),
+                  color: _textColor, fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
         ),
