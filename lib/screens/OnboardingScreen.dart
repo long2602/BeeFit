@@ -1,5 +1,6 @@
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/constants/app_ui.dart';
+import 'package:beefit/screens/OnProgressScreen.dart';
 import 'package:beefit/widgets/OnPageView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,15 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final pageController = PageController();
   final currentController = PageController();
-  var _selectedIndex = 0;
+  var _selectedOften = 0;
+  var _selectedDesiredBody = 0;
+  var _selectedCurrentBody = 0;
   final nameController = TextEditingController();
   final ageController = TextEditingController();
   RulerPickerController? _rulerPickerController;
+  RulerPickerController? _currentWeightController;
+  RulerPickerController? _targetWeightController;
+
   int currentValue = 50;
 
   @override
@@ -216,11 +222,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       itemCount: 5,
                       onPageChanged: (index) {
                         setState(() {
-                          _selectedIndex = index;
+                          _selectedCurrentBody = index;
                         });
                       },
                       itemBuilder: (context, index) {
-                        var _dot = _selectedIndex == index ? 1 : 0.8;
+                        var _dot = _selectedCurrentBody == index ? 1 : 0.8;
                         return TweenAnimationBuilder(
                           duration: const Duration(milliseconds: 350),
                           tween: Tween(begin: _dot, end: _dot),
@@ -239,7 +245,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             height: 283 * _scaleScreen,
                             decoration: BoxDecoration(
                               borderRadius: AppStyle.appBorder,
-                              color: _selectedIndex == index
+                              color: _selectedCurrentBody == index
                                   ? AppStyle.primaryColor
                                   : AppStyle.gray5Color,
                             ),
@@ -267,7 +273,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                               5,
                               (index) => Indicator(
                                   isActive:
-                                      _selectedIndex == index ? true : false)),
+                                      _selectedCurrentBody == index ? true : false)),
                         ],
                       ),
                     ],
@@ -294,11 +300,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       itemCount: 5,
                       onPageChanged: (index) {
                         setState(() {
-                          _selectedIndex = index;
+                          _selectedDesiredBody = index;
                         });
                       },
                       itemBuilder: (context, index) {
-                        var _dot = _selectedIndex == index ? 1 : 0.8;
+                        var _dot = _selectedDesiredBody == index ? 1 : 0.8;
                         return TweenAnimationBuilder(
                           duration: const Duration(milliseconds: 350),
                           tween: Tween(begin: _dot, end: _dot),
@@ -317,7 +323,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             height: 283 * _scaleScreen,
                             decoration: BoxDecoration(
                               borderRadius: AppStyle.appBorder,
-                              color: _selectedIndex == index
+                              color: _selectedDesiredBody == index
                                   ? AppStyle.primaryColor
                                   : AppStyle.gray5Color,
                             ),
@@ -342,10 +348,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ...List.generate(
-                              5,
-                              (index) => Indicator(
-                                  isActive:
-                                      _selectedIndex == index ? true : false)),
+                            5,
+                            (index) => Indicator(
+                                isActive:
+                                    _selectedDesiredBody == index ? true : false),
+                          ),
                         ],
                       ),
                     ],
@@ -616,8 +623,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 60, horizontal: 40),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -626,7 +633,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           child: Row(
                             children: [
                               Image.asset('assets/imgs/drop.png'),
-                              const SizedBox(width: 2,),
+                              const SizedBox(
+                                width: 2,
+                              ),
                               Text(
                                 'Sweet choice!',
                                 style: TextStyle(
@@ -652,6 +661,95 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               ],
             ),
           ),
+
+          /**
+           * Often work
+           */
+          OnPageView(
+            title: "How often would you like to work out?",
+            pageController: pageController,
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const OnProgressScreen()),
+              );
+            },
+            widget: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 283 * _scaleScreen,
+                  child: PageView.builder(
+                      controller: PageController(viewportFraction: 0.7),
+                      itemCount: 4,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _selectedOften = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        var _dot = _selectedOften == index ? 1 : 0.8;
+                        return TweenAnimationBuilder(
+                          duration: const Duration(milliseconds: 350),
+                          tween: Tween(begin: _dot, end: _dot),
+                          curve: Curves.ease,
+                          builder: (context, value, child) {
+                            return Transform.scale(
+                              scale: value is double ? value : 1,
+                              child: child,
+                            );
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 350),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 20 * _scaleScreen),
+                            width: 200 * _scaleScreen,
+                            height: 283 * _scaleScreen,
+                            decoration: BoxDecoration(
+                              borderRadius: AppStyle.appBorder,
+                              color: AppStyle.whiteColor,
+                              border: Border.all(
+                                width: 6,
+                                color: _selectedOften == index
+                                    ? AppStyle.primaryColor
+                                    : AppStyle.gray5Color,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 40.0, left: 40, right: 40),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppStyle.gray4Color,
+                          borderRadius: AppStyle.appBorder,
+                        ),
+                        height: 4,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ...List.generate(
+                            4,
+                            (index) => Indicator(
+                                isActive:
+                                    _selectedOften == index ? true : false),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -670,11 +768,23 @@ class Indicator extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
       decoration: BoxDecoration(
-        color: _isActive ? AppStyle.primaryColor : AppStyle.gray4Color,
+        color: _isActive ? AppStyle.gray1Color : AppStyle.gray4Color,
         borderRadius: AppStyle.appBorder,
+        border:
+            _isActive ? Border.all(color: AppStyle.whiteColor, width: 2) : null,
+        boxShadow: _isActive
+            ? [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3), // changes position of shadow
+                ),
+              ]
+            : null,
       ),
-      width: _isActive ? 15 : 15,
-      height: _isActive ? 15 : 15,
+      width: _isActive ? 18 : 15,
+      height: _isActive ? 18 : 15,
     );
   }
 }
