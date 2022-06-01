@@ -2,18 +2,17 @@ import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/constants/app_ui.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
 import 'package:beefit/widgets/OnPageView.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
-class OnBoardingScreen extends StatefulWidget {
-  const OnBoardingScreen({Key? key}) : super(key: key);
+class GetStartedScreen extends StatefulWidget {
+  const GetStartedScreen({Key? key}) : super(key: key);
 
   @override
-  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+  State<GetStartedScreen> createState() => _GetStartedScreenState();
 }
 
-class _OnBoardingScreenState extends State<OnBoardingScreen> {
+class _GetStartedScreenState extends State<GetStartedScreen> {
   final pageController = PageController();
   final currentController = PageController();
   var _selectedOften = 0;
