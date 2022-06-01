@@ -1,6 +1,7 @@
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
 import 'package:beefit/screens/OnboardingScreen.dart';
+import 'package:beefit/screens/WelcomeScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:beefit/widgets/ButtonTag.dart';
 import 'package:beefit/widgets/PercentIndicator.dart';

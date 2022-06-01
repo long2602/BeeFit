@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/constants/app_ui.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
 import 'package:beefit/widgets/OnPageView.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 
@@ -272,8 +273,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           ...List.generate(
                               5,
                               (index) => Indicator(
-                                  isActive:
-                                      _selectedCurrentBody == index ? true : false)),
+                                  isActive: _selectedCurrentBody == index
+                                      ? true
+                                      : false)),
                         ],
                       ),
                     ],
@@ -350,8 +352,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           ...List.generate(
                             5,
                             (index) => Indicator(
-                                isActive:
-                                    _selectedDesiredBody == index ? true : false),
+                                isActive: _selectedDesiredBody == index
+                                    ? true
+                                    : false),
                           ),
                         ],
                       ),
@@ -406,7 +409,41 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           OnPageView(
             title: "What’s your height?",
             pageController: pageController,
-            widget: Container(),
+            widget: Transform.rotate(
+              angle:  pi / 2,
+              child: Center(
+                child: RulerPicker(
+                  controller: _rulerPickerController!,
+                  beginValue: 30,
+                  endValue: 100,
+                  initValue: currentValue,
+                  rulerScaleTextStyle:
+                      const TextStyle(color: AppStyle.black1Color),
+                  scaleLineStyleList: const [
+                    ScaleLineStyle(
+                        color: Colors.grey, width: 1.5, height: 30, scale: 0),
+                    ScaleLineStyle(
+                        color: Colors.grey, width: 1, height: 25, scale: 5),
+                    ScaleLineStyle(
+                        color: Colors.grey, width: 1, height: 15, scale: -1)
+                  ],
+                  onValueChange: (value) {
+                    setState(() {
+                      currentValue = value;
+                    });
+                  },
+                  width: MediaQuery.of(context).size.width,
+                  height: 80,
+                  rulerMarginTop: 0,
+                  marker: Container(
+                      width: 4,
+                      height: 140,
+                      decoration: BoxDecoration(
+                          color: AppStyle.primaryColor,
+                          borderRadius: BorderRadius.circular(5))),
+                ),
+              ),
+            ),
           ),
 
           /**
@@ -480,10 +517,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         },
                         width: MediaQuery.of(context).size.width,
                         height: 80,
-                        rulerMarginTop: 30,
+                        rulerMarginTop:80,
                         marker: Container(
                             width: 4,
-                            height: 140,
+                            height: 200,
                             decoration: BoxDecoration(
                                 color: AppStyle.primaryColor,
                                 borderRadius: BorderRadius.circular(5))),
@@ -668,10 +705,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           OnPageView(
             title: "How often would you like to work out?",
             pageController: pageController,
-            onPressed: (){
+            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const OnProgressScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const OnProgressScreen()),
               );
             },
             widget: Column(
