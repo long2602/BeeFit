@@ -14,7 +14,7 @@ class OnPageView extends StatefulWidget {
       {required String title,
       required Widget widget,
       required PageController pageController,
-        VoidCallback? onPressed,
+      VoidCallback? onPressed,
       Key? key})
       : _title = title,
         _widget = widget,
@@ -44,8 +44,8 @@ class _OnPageViewState extends State<OnPageView> {
               widget._title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 30 * AppUI.fontScale(context),
-                fontWeight: FontWeight.w900,
+                fontSize: 25 * AppUI.fontScale(context),
+                fontWeight: FontWeight.bold,
                 color: AppStyle.secondaryColor,
               ),
             ),
@@ -60,13 +60,14 @@ class _OnPageViewState extends State<OnPageView> {
               backgroundColor: AppStyle.primaryColor,
               textColor: AppStyle.whiteColor,
               text: 'Next',
-              height: 60 * AppUI.fontScale(context),
-              onPressed: widget._onPressed == null ?
-                  () {
-                  widget._pageController.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut);
-              }: widget._onPressed!,
+              height: 45 * AppUI.fontScale(context),
+              onPressed: widget._onPressed == null
+                  ? () {
+                      widget._pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut);
+                    }
+                  : widget._onPressed!,
             ),
           ),
         ],

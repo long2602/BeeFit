@@ -96,7 +96,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 'Lose Weight',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26 * _scaleFont,
+                                  fontSize: 20 * _scaleFont,
                                 ),
                               ),
                               Image.asset(
@@ -136,7 +136,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 'Build Muscle',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26 * _scaleFont,
+                                  fontSize: 20 * _scaleFont,
                                 ),
                               ),
                               Image.asset(
@@ -177,7 +177,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 'Keep Fit',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26 * _scaleFont,
+                                  fontSize: 20 * _scaleFont,
                                 ),
                               ),
                               Image.asset(
@@ -272,8 +272,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           ...List.generate(
                               5,
                               (index) => Indicator(
-                                  isActive:
-                                      _selectedCurrentBody == index ? true : false)),
+                                  isActive: _selectedCurrentBody == index
+                                      ? true
+                                      : false)),
                         ],
                       ),
                     ],
@@ -350,8 +351,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           ...List.generate(
                             5,
                             (index) => Indicator(
-                                isActive:
-                                    _selectedDesiredBody == index ? true : false),
+                                isActive: _selectedDesiredBody == index
+                                    ? true
+                                    : false),
                           ),
                         ],
                       ),
@@ -668,10 +670,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           OnPageView(
             title: "How often would you like to work out?",
             pageController: pageController,
-            onPressed: (){
+            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const OnProgressScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const OnProgressScreen()),
               );
             },
             widget: Column(

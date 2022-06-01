@@ -34,14 +34,14 @@ class ButtonMain extends StatelessWidget {
           height: _height,
           width: _width,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(15),
             color: _backgroundColor,
           ),
           child: Center(
             child: Text(
               _text,
               style: TextStyle(
-                  color: _textColor, fontSize: 20, fontWeight: FontWeight.bold),
+                  color: _textColor, fontSize: 17, fontWeight: FontWeight.bold),
             ),
           ),
         ),
