@@ -1,21 +1,25 @@
 import 'dart:math';
 
 import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/constants/app_ui.dart';
+import 'package:beefit/constants/app_methods.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
+<<<<<<< HEAD:lib/screens/OnboardingScreen.dart
 import 'package:beefit/widgets/OnPageView.dart';
+=======
+>>>>>>> duys-work:lib/screens/get_started_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
+import '../widgets/OnPageView.dart';
 
-class OnBoardingScreen extends StatefulWidget {
-  const OnBoardingScreen({Key? key}) : super(key: key);
+class GetStartedScreen extends StatefulWidget {
+  const GetStartedScreen({Key? key}) : super(key: key);
 
   @override
-  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+  State<GetStartedScreen> createState() => _GetStartedScreenState();
 }
 
-class _OnBoardingScreenState extends State<OnBoardingScreen> {
-  final pageController = PageController();
+class _GetStartedScreenState extends State<GetStartedScreen> {
+  final _pageController = PageController();
   final currentController = PageController();
   var _selectedOften = 0;
   var _selectedDesiredBody = 0;
@@ -28,47 +32,146 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   int currentValue = 50;
 
+  late bool _maleIsTapped, _femaleIsTapped;
+
   @override
   void initState() {
     _rulerPickerController = RulerPickerController(value: 0);
     super.initState();
+    _maleIsTapped = false;
+    _femaleIsTapped = false;
   }
 
   @override
   void dispose() {
-    pageController.dispose();
+    _pageController.dispose();
     currentController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double _scaleScreen = AppUI.screenScale(context);
-    final double _scaleFont = AppUI.fontScale(context);
+    final double _scaleScreen = AppMethods.screenScale(context);
+    final double _scaleFont = AppMethods.fontScale(context);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppStyle.whiteColor,
-      ),
       body: PageView(
-        controller: pageController,
-        // physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           /**
            * Gender
            */
           OnPageView(
-            title: "What’s your Gender?",
-            pageController: pageController,
-            widget: Container(),
+            canPress: _maleIsTapped == false && _femaleIsTapped == false
+                ? false
+                : true,
+            title: "What’s your ",
+            keyword: "gender",
+            additionalText: "?",
+            pageController: _pageController,
+            widget: Padding(
+              padding: const EdgeInsets.all(30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _maleIsTapped = true;
+                        _femaleIsTapped = false;
+                      });
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(30),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 3,
+                                  color: _maleIsTapped == true
+                                      ? Colors.blue
+                                      : _femaleIsTapped == true
+                                          ? Colors.grey
+                                          : Colors.black),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(15))),
+                          child: Image.asset(
+                            "assets/imgs/male.png",
+                            height: 100,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          "Male",
+                          style: TextStyle(
+                              color: _maleIsTapped == true
+                                  ? Colors.blue
+                                  : _femaleIsTapped == true
+                                      ? Colors.grey
+                                      : Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (() {
+                      setState(() {
+                        _femaleIsTapped = true;
+                        _maleIsTapped = false;
+                      });
+                    }),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(30),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 3,
+                                  color: _femaleIsTapped == true
+                                      ? Colors.blue
+                                      : _maleIsTapped == true
+                                          ? Colors.grey
+                                          : Colors.black),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(15))),
+                          child: Image.asset(
+                            "assets/imgs/female.png",
+                            height: 100,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          "Female",
+                          style: TextStyle(
+                              color: _femaleIsTapped == true
+                                  ? Colors.blue
+                                  : _maleIsTapped == true
+                                      ? Colors.grey
+                                      : Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
 
           /**
            * Main goal
            */
           OnPageView(
-            title: "What’s your main goal?",
-            pageController: pageController,
+            canPress: true,
+            title: "What’s your ",
+            keyword: "goal",
+            additionalText: "?",
+            pageController: _pageController,
             widget: Column(
               // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -97,7 +200,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 'Lose Weight',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26 * _scaleFont,
+                                  fontSize: 20 * _scaleFont,
                                 ),
                               ),
                               Image.asset(
@@ -137,7 +240,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 'Build Muscle',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26 * _scaleFont,
+                                  fontSize: 20 * _scaleFont,
                                 ),
                               ),
                               Image.asset(
@@ -178,7 +281,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 'Keep Fit',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26 * _scaleFont,
+                                  fontSize: 20 * _scaleFont,
                                 ),
                               ),
                               Image.asset(
@@ -201,8 +304,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Focus area
            */
           OnPageView(
-            title: "What’s your focus area?",
-            pageController: pageController,
+            canPress: true,
+            title: "Which ",
+            keyword: "muscle groups ",
+            additionalText: "would you like to train?",
+            pageController: _pageController,
             widget: Container(),
           ),
 
@@ -210,8 +316,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Current body shape
            */
           OnPageView(
-            title: "What’s your current body shape?",
-            pageController: pageController,
+            canPress: true,
+            title: "What’s your ",
+            keyword: "body shape",
+            additionalText: "?",
+            pageController: _pageController,
             widget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -289,8 +398,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Desired body shape
            */
           OnPageView(
-            title: "What’s your desired body shape?",
-            pageController: pageController,
+            canPress: true,
+            title: "What’s your ",
+            keyword: "desired body shape",
+            additionalText: "?",
+            pageController: _pageController,
             widget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -369,8 +481,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Name
            */
           OnPageView(
-            title: "What’s your name?",
-            pageController: pageController,
+            canPress: true,
+            title: "What’s your ",
+            keyword: "name",
+            additionalText: "?",
+            pageController: _pageController,
             widget: Padding(
               padding: EdgeInsets.symmetric(horizontal: 60 * _scaleScreen),
               child: TextField(
@@ -388,8 +503,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Age
            */
           OnPageView(
-            title: "How old are you?",
-            pageController: pageController,
+            canPress: true,
+            title: "",
+            keyword: "How old ",
+            additionalText: "are you?",
+            pageController: _pageController,
             widget: Padding(
               padding: EdgeInsets.symmetric(horizontal: 60 * _scaleScreen),
               child: TextField(
@@ -407,6 +525,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Height
            */
           OnPageView(
+<<<<<<< HEAD:lib/screens/OnboardingScreen.dart
             title: "What’s your height?",
             pageController: pageController,
             widget: Transform.rotate(
@@ -444,14 +563,25 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 ),
               ),
             ),
+=======
+            canPress: true,
+            title: "What’s your ",
+            keyword: "height",
+            additionalText: "?",
+            pageController: _pageController,
+            widget: Container(),
+>>>>>>> duys-work:lib/screens/get_started_screen.dart
           ),
 
           /**
            * Current Weight
            */
           OnPageView(
-            title: "What’s your current weight?",
-            pageController: pageController,
+            canPress: true,
+            title: "What’s your ",
+            keyword: "current weight",
+            additionalText: "?",
+            pageController: _pageController,
             widget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -579,8 +709,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Target Weight
            */
           OnPageView(
-            title: "What’s your target weight?",
-            pageController: pageController,
+            canPress: true,
+            title: "What’s your ",
+            keyword: "desired weight",
+            additionalText: "?",
+            pageController: _pageController,
             widget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -703,8 +836,16 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
            * Often work
            */
           OnPageView(
+<<<<<<< HEAD:lib/screens/OnboardingScreen.dart
             title: "How often would you like to work out?",
             pageController: pageController,
+=======
+            canPress: true,
+            title: "",
+            keyword: "How often ",
+            additionalText: "would you like to workout?",
+            pageController: _pageController,
+>>>>>>> duys-work:lib/screens/get_started_screen.dart
             onPressed: () {
               Navigator.push(
                 context,

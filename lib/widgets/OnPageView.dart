@@ -1,25 +1,35 @@
-import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/constants/app_ui.dart';
+import 'package:beefit/constants/app_methods.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../constants/app_style.dart';
 import 'ButtonMain.dart';
 
 class OnPageView extends StatefulWidget {
   final String _title;
   final Widget _widget;
+  final String _keyword;
+  final String _additionalText;
   final PageController _pageController;
   final VoidCallback? _onPressed;
+  final bool _canPress;
 
   const OnPageView(
       {required String title,
       required Widget widget,
+      required String keyword,
+      required String additionalText,
       required PageController pageController,
-        VoidCallback? onPressed,
+      VoidCallback? onPressed,
+      required bool canPress,
       Key? key})
       : _title = title,
         _widget = widget,
+        _keyword = keyword,
         _pageController = pageController,
         _onPressed = onPressed,
+        _additionalText = additionalText,
+        _canPress = canPress,
         super(key: key);
 
   @override
@@ -29,44 +39,68 @@ class OnPageView extends StatefulWidget {
 class _OnPageViewState extends State<OnPageView> {
   @override
   Widget build(BuildContext context) {
-    final _scale = AppUI.screenScale(context);
+    final _scale = AppMethods.screenScale(context);
     return Container(
       decoration: const BoxDecoration(
         color: AppStyle.whiteColor,
       ),
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          SizedBox(height: 70 * _scale),
           Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 52 * _scale, vertical: 20 * _scale),
-            child: Text(
-              widget._title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 30 * AppUI.fontScale(context),
-                fontWeight: FontWeight.w900,
-                color: AppStyle.secondaryColor,
-              ),
-            ),
+            padding: EdgeInsets.only(left: 30 * _scale, right: 30 * _scale),
+            child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    style: TextStyle(
+                        fontFamily: "OpenSans",
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25 * AppMethods.fontScale(context)),
+                    children: [
+                      TextSpan(text: widget._title),
+                      TextSpan(
+                          text: widget._keyword,
+                          style: TextStyle(
+                              color: Color(AppMethods.hexColor("#fb9b28")),
+                              fontWeight: FontWeight.bold)),
+                      TextSpan(text: widget._additionalText)
+                    ])),
           ),
           Expanded(
-            child: widget._widget,
+            child: Padding(
+                padding: const EdgeInsets.all(30), child: widget._widget),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
-                52 * _scale, 20 * _scale, 52 * _scale, 100 * _scale),
+            padding: const EdgeInsets.fromLTRB(30, 0, 30, 50),
             child: ButtonMain(
-              backgroundColor: AppStyle.primaryColor,
+              backgroundColor: widget._canPress == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
               textColor: AppStyle.whiteColor,
               text: 'Next',
-              height: 60 * AppUI.fontScale(context),
-              onPressed: widget._onPressed == null ?
-                  () {
-                  widget._pageController.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut);
-              }: widget._onPressed!,
+              height: 50 * AppMethods.fontScale(context),
+              onPressed: widget._onPressed == null
+                  ? widget._canPress == true
+                      ? () {
+                          widget._pageController.nextPage(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut);
+                        }
+                      : () {
+                          Get.snackbar(
+                            "Please choose your gender!",
+                            "You did not choose your gender. Please choose one to continue.",
+                            dismissDirection: DismissDirection.horizontal,
+                            colorText: Colors.white,
+                            snackStyle: SnackStyle.FLOATING,
+                            barBlur: 30,
+                            backgroundColor: Colors.black54,
+                            isDismissible: true,
+                            duration: const Duration(seconds: 3),
+                          );
+                        }
+                  : widget._onPressed!,
             ),
           ),
         ],

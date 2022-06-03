@@ -39,6 +39,8 @@ dependencies:
   flutter_ruler_picker: ^1.0.2
   percent_indicator: ^4.2.0
   flutter_svg: ^1.0.3
+  animated_splash_screen: ^1.2.0
+  introduction_screen: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +68,11 @@ flutter:
   assets:
     - assets/imgs/
     - assets/imgs/svg/
+  
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
