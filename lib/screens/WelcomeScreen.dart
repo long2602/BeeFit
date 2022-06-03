@@ -1,8 +1,9 @@
 import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/constants/app_ui.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../constants/app_methods.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String _name;
@@ -13,8 +14,8 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double _scaleScreen = AppUI.screenScale(context);
-    double _scaleFont = AppUI.fontScale(context);
+    double _scaleScreen = AppMethods.screenScale(context);
+    double _scaleFont = AppMethods.fontScale(context);
     return Scaffold(
       backgroundColor: AppStyle.whiteColor,
       appBar: AppBar(
@@ -68,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
               backgroundColor: AppStyle.primaryColor,
               textColor: AppStyle.whiteColor,
               text: 'Go to home',
-              height: 60 * AppUI.fontScale(context),
+              height: 60 * AppMethods.fontScale(context),
               onPressed: () {},
             ),
           ],

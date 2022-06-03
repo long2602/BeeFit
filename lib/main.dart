@@ -1,15 +1,11 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:beefit/constants/app_style.dart';
-<<<<<<< HEAD
 import 'package:beefit/screens/OnProgressScreen.dart';
-import 'package:beefit/screens/OnboardingScreen.dart';
 import 'package:beefit/screens/WelcomeScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:beefit/widgets/ButtonTag.dart';
 import 'package:beefit/widgets/PercentIndicator.dart';
-=======
 import 'package:beefit/screens/onboarding_screen.dart';
->>>>>>> duys-work
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';

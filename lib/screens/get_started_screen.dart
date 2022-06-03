@@ -3,10 +3,7 @@ import 'dart:math';
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/constants/app_methods.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
-<<<<<<< HEAD:lib/screens/OnboardingScreen.dart
 import 'package:beefit/widgets/OnPageView.dart';
-=======
->>>>>>> duys-work:lib/screens/get_started_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 import '../widgets/OnPageView.dart';
@@ -69,97 +66,94 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             keyword: "gender",
             additionalText: "?",
             pageController: _pageController,
-            widget: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _maleIsTapped = true;
-                        _femaleIsTapped = false;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(30),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 3,
-                                  color: _maleIsTapped == true
-                                      ? Colors.blue
-                                      : _femaleIsTapped == true
-                                          ? Colors.grey
-                                          : Colors.black),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(15))),
-                          child: Image.asset(
-                            "assets/imgs/male.png",
-                            height: 100,
-                          ),
+            widget: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _maleIsTapped = true;
+                      _femaleIsTapped = false;
+                    });
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(30),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 2,
+                                color: _maleIsTapped == true
+                                    ? Colors.blue
+                                    : _femaleIsTapped == true
+                                        ? Colors.grey
+                                        : Colors.black),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15))),
+                        child: Image.asset(
+                          "assets/imgs/male.png",
+                          height: 100,
                         ),
-                        const SizedBox(height: 15),
-                        Text(
-                          "Male",
-                          style: TextStyle(
-                              color: _maleIsTapped == true
-                                  ? Colors.blue
-                                  : _femaleIsTapped == true
-                                      ? Colors.grey
-                                      : Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        "Male",
+                        style: TextStyle(
+                            color: _maleIsTapped == true
+                                ? Colors.blue
+                                : _femaleIsTapped == true
+                                    ? Colors.grey
+                                    : Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: (() {
-                      setState(() {
-                        _femaleIsTapped = true;
-                        _maleIsTapped = false;
-                      });
-                    }),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(30),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 3,
-                                  color: _femaleIsTapped == true
-                                      ? Colors.blue
-                                      : _maleIsTapped == true
-                                          ? Colors.grey
-                                          : Colors.black),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(15))),
-                          child: Image.asset(
-                            "assets/imgs/female.png",
-                            height: 100,
-                          ),
+                ),
+                GestureDetector(
+                  onTap: (() {
+                    setState(() {
+                      _femaleIsTapped = true;
+                      _maleIsTapped = false;
+                    });
+                  }),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(30),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 2,
+                                color: _femaleIsTapped == true
+                                    ? Colors.blue
+                                    : _maleIsTapped == true
+                                        ? Colors.grey
+                                        : Colors.black),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15))),
+                        child: Image.asset(
+                          "assets/imgs/female.png",
+                          height: 100,
                         ),
-                        const SizedBox(height: 15),
-                        Text(
-                          "Female",
-                          style: TextStyle(
-                              color: _femaleIsTapped == true
-                                  ? Colors.blue
-                                  : _maleIsTapped == true
-                                      ? Colors.grey
-                                      : Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        "Female",
+                        style: TextStyle(
+                            color: _femaleIsTapped == true
+                                ? Colors.blue
+                                : _maleIsTapped == true
+                                    ? Colors.grey
+                                    : Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
 
@@ -525,11 +519,10 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Height
            */
           OnPageView(
-<<<<<<< HEAD:lib/screens/OnboardingScreen.dart
             title: "What’s your height?",
-            pageController: pageController,
+            pageController: _pageController,
             widget: Transform.rotate(
-              angle:  pi / 2,
+              angle: pi / 2,
               child: Center(
                 child: RulerPicker(
                   controller: _rulerPickerController!,
@@ -563,14 +556,9 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                 ),
               ),
             ),
-=======
             canPress: true,
-            title: "What’s your ",
             keyword: "height",
             additionalText: "?",
-            pageController: _pageController,
-            widget: Container(),
->>>>>>> duys-work:lib/screens/get_started_screen.dart
           ),
 
           /**
@@ -647,7 +635,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         },
                         width: MediaQuery.of(context).size.width,
                         height: 80,
-                        rulerMarginTop:80,
+                        rulerMarginTop: 80,
                         marker: Container(
                             width: 4,
                             height: 200,
@@ -836,16 +824,11 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Often work
            */
           OnPageView(
-<<<<<<< HEAD:lib/screens/OnboardingScreen.dart
             title: "How often would you like to work out?",
-            pageController: pageController,
-=======
             canPress: true,
-            title: "",
             keyword: "How often ",
             additionalText: "would you like to workout?",
             pageController: _pageController,
->>>>>>> duys-work:lib/screens/get_started_screen.dart
             onPressed: () {
               Navigator.push(
                 context,
