@@ -34,9 +34,8 @@ class ButtonMain extends StatelessWidget {
           height: _height,
           width: _width,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: _backgroundColor,
-          ),
+              borderRadius: BorderRadius.circular(15),
+              color: _backgroundColor),
           child: Center(
             child: Text(
               _text,

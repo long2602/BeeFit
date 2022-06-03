@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppUI {
+class AppMethods {
   //Convert hexColor to int
   static int hexColor(String a) {
     String newColor = '0xff' + a;
