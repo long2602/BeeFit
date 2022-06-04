@@ -1,6 +1,10 @@
 import 'package:beefit/constants/app_style.dart';
+import 'package:beefit/widgets/ButtonMain.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../constants/app_methods.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,104 +14,121 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  static final List<Widget> _pageOption = <Widget>[
-    Container(),
-    Container(),
-    Container(),
-    Container(),
-    Container(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  final DatePickerController _datePickerController = DatePickerController();
+  DateTime _selectedValue = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppStyle.whiteColor,
-      body: Center(
-        child: _pageOption.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppStyle.gray5Color,
-              blurRadius: 5.0,
-              offset: Offset(5.0, 5.0),
-              spreadRadius: 5,
-            )
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          child: BottomNavigationBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                // backgroundColor: Colors.transparent,
-                icon: SvgPicture.asset(
-                  'assets/imgs/svg/home.svg',
-                  color: _selectedIndex == 0
-                      ? AppStyle.primaryColor
-                      : AppStyle.gray4Color,
+    final _scaleFont = AppMethods.fontScale(context);
+    final _scaleScreen = AppMethods.screenScale(context);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Welcome back, Long',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    color: AppStyle.secondaryColor,
+                    fontSize: 20 * _scaleFont,
+                  )),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.notifications,
+                  size: 24 * _scaleScreen,
+                  color: AppStyle.secondaryColor,
                 ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/imgs/svg/exercise.svg',
-                  color: _selectedIndex == 1
-                      ? AppStyle.primaryColor
-                      : AppStyle.gray4Color,
-                ),
-                label: 'Exercise',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/imgs/svg/plan.svg',
-                  color: _selectedIndex == 2
-                      ? AppStyle.primaryColor
-                      : AppStyle.gray4Color,
-                ),
-                label: 'Plan',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/imgs/svg/daily.svg',
-                  color: _selectedIndex == 3
-                      ? AppStyle.primaryColor
-                      : AppStyle.gray4Color,
-                ),
-                label: 'Daily',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/imgs/svg/setting.svg',
-                  color: _selectedIndex == 4
-                      ? AppStyle.primaryColor
-                      : AppStyle.gray4Color,
-                ),
-                label: 'Settings',
               ),
             ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.amber[800],
-            onTap: _onItemTapped,
           ),
-        ),
+          DatePicker(
+            DateTime.now().subtract(const Duration(days: 1)),
+            width: 55 * _scaleScreen,
+            height: 90 * _scaleScreen,
+            controller: _datePickerController,
+            initialSelectedDate: DateTime.now(),
+            selectionColor: AppStyle.primaryColor,
+            selectedTextColor: Colors.white,
+            dateTextStyle: TextStyle(
+              color: AppStyle.black1Color.withOpacity(.25),
+              fontSize: 18 * _scaleFont,
+              fontWeight: FontWeight.w700,
+            ),
+            dayTextStyle: TextStyle(
+              color: AppStyle.black1Color.withOpacity(.25),
+              fontSize: 12 * _scaleFont,
+            ),
+            monthTextStyle: TextStyle(
+              color: AppStyle.black1Color.withOpacity(.25),
+              fontSize: 12 * _scaleFont,
+            ),
+            onDateChange: (date) {
+              // New date selected
+              setState(() {
+                _selectedValue = date;
+              });
+            },
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 16),
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              color: AppStyle.whiteColor,
+              borderRadius: AppStyle.appBorder,
+              boxShadow: const [
+                BoxShadow(
+                  color: AppStyle.gray5Color,
+                  blurRadius: 20.0,
+                  offset: Offset(0, 0),
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'My Plan',
+                style: GoogleFonts.poppins(
+                  color: AppStyle.secondaryColor,
+                  fontSize: 14 * _scaleFont,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'All Plans',
+                  style: GoogleFonts.poppins(
+                    color: AppStyle.primaryColor,
+                    fontSize: 14 * _scaleFont,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Image.asset('assets/imgs/fitness1.png'),
+          ),
+          ButtonMain(
+            onPressed: () {},
+            backgroundColor: AppStyle.gray5Color,
+            text: 'Explore all plans',
+            textColor: AppStyle.black1Color,
+            height: 40 * _scaleScreen,
+          ),
+        ],
       ),
     );
   }
