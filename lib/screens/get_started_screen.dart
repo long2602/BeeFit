@@ -23,20 +23,24 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   var _selectedCurrentBody = 0;
   final nameController = TextEditingController();
   final ageController = TextEditingController();
-  RulerPickerController? _rulerPickerController;
   RulerPickerController? _currentWeightController;
   RulerPickerController? _targetWeightController;
+  RulerPickerController? _currentHeightController;
 
-  int currentValue = 50;
+  int _currentWeightValue = 50;
+  int _targetWeightValue = 50;
+  int _currentHeightValue = 150;
 
   late bool _maleIsTapped, _femaleIsTapped;
 
   @override
   void initState() {
-    _rulerPickerController = RulerPickerController(value: 0);
-    super.initState();
+    _currentWeightController = RulerPickerController(value: 0);
+    _targetWeightController = RulerPickerController(value: 0);
+    _currentHeightController = RulerPickerController(value: 0);
     _maleIsTapped = false;
     _femaleIsTapped = false;
+    super.initState();
   }
 
   @override
@@ -88,7 +92,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                                     ? Colors.blue
                                     : _femaleIsTapped == true
                                         ? Colors.grey
-                                        : Colors.black),
+                                        : AppStyle.gray4Color),
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(15))),
                         child: Image.asset(
@@ -104,7 +108,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                                 ? Colors.blue
                                 : _femaleIsTapped == true
                                     ? Colors.grey
-                                    : Colors.black,
+                                    : AppStyle.gray4Color,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       )
@@ -130,7 +134,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                                     ? Colors.blue
                                     : _maleIsTapped == true
                                         ? Colors.grey
-                                        : Colors.black),
+                                        : AppStyle.gray4Color),
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(15))),
                         child: Image.asset(
@@ -146,7 +150,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                                 ? Colors.blue
                                 : _maleIsTapped == true
                                     ? Colors.grey
-                                    : Colors.black,
+                                    : AppStyle.gray4Color,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       )
@@ -374,11 +378,12 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ...List.generate(
-                              5,
-                              (index) => Indicator(
-                                  isActive: _selectedCurrentBody == index
-                                      ? true
-                                      : false)),
+                            5,
+                            (index) => Indicator(
+                                isActive: _selectedCurrentBody == index
+                                    ? true
+                                    : false),
+                          ),
                         ],
                       ),
                     ],
@@ -522,13 +527,13 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             title: "What’s your height?",
             pageController: _pageController,
             widget: Transform.rotate(
-              angle: pi / 2,
+              angle: -pi / 2,
               child: Center(
                 child: RulerPicker(
-                  controller: _rulerPickerController!,
-                  beginValue: 30,
-                  endValue: 100,
-                  initValue: currentValue,
+                  controller: _currentHeightController!,
+                  beginValue: 70,
+                  endValue: 250,
+                  initValue: _currentHeightValue,
                   rulerScaleTextStyle:
                       const TextStyle(color: AppStyle.black1Color),
                   scaleLineStyleList: const [
@@ -541,18 +546,52 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   ],
                   onValueChange: (value) {
                     setState(() {
-                      currentValue = value;
+                      value == 70
+                          ? _currentHeightValue = 70
+                          : (value == 250 ? _currentHeightValue = 250 : _currentHeightValue = value - 5);
                     });
                   },
                   width: MediaQuery.of(context).size.width,
-                  height: 80,
-                  rulerMarginTop: 0,
-                  marker: Container(
-                      width: 4,
-                      height: 140,
-                      decoration: BoxDecoration(
-                          color: AppStyle.primaryColor,
-                          borderRadius: BorderRadius.circular(5))),
+                  height: 80 * _scaleScreen,
+                  rulerMarginTop: 100 * _scaleScreen,
+                  marker: Stack(
+                    alignment: Alignment.topLeft,
+                    children: [
+                      Transform.rotate(
+                        angle: pi / 2,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              _currentHeightValue.toString(),
+                              style: TextStyle(
+                                fontSize: 30 * _scaleFont,
+                                color: AppStyle.primaryColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                'cm',
+                                style: TextStyle(
+                                  fontSize: 18 * _scaleFont,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                          width: 4,
+                          height: 150,
+                          decoration: BoxDecoration(
+                              color: AppStyle.primaryColor,
+                              borderRadius: BorderRadius.circular(5))),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -583,7 +622,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            currentValue.toString(),
+                            _currentWeightValue.toString(),
                             style: TextStyle(
                                 color: AppStyle.primaryColor,
                                 fontWeight: FontWeight.w900,
@@ -605,10 +644,10 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: RulerPicker(
-                        controller: _rulerPickerController!,
+                        controller: _currentWeightController!,
                         beginValue: 30,
                         endValue: 100,
-                        initValue: currentValue,
+                        initValue: _currentWeightValue,
                         rulerScaleTextStyle:
                             const TextStyle(color: AppStyle.black1Color),
                         scaleLineStyleList: const [
@@ -630,7 +669,9 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         ],
                         onValueChange: (value) {
                           setState(() {
-                            currentValue = value;
+                            value == 30
+                                ? _currentWeightValue = 30
+                                : (value == 100 ? _currentWeightValue = 100 : _currentWeightValue = value - 5);
                           });
                         },
                         width: MediaQuery.of(context).size.width,
@@ -715,7 +756,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            currentValue.toString(),
+                            _targetWeightValue.toString(),
                             style: TextStyle(
                                 color: AppStyle.primaryColor,
                                 fontWeight: FontWeight.w900,
@@ -737,10 +778,10 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: RulerPicker(
-                        controller: _rulerPickerController!,
+                        controller: _targetWeightController!,
                         beginValue: 30,
                         endValue: 100,
-                        initValue: currentValue,
+                        initValue: _targetWeightValue,
                         rulerScaleTextStyle:
                             const TextStyle(color: AppStyle.black1Color),
                         scaleLineStyleList: const [
@@ -762,15 +803,17 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         ],
                         onValueChange: (value) {
                           setState(() {
-                            currentValue = value;
+                            value == 30
+                                ? _targetWeightValue = 30
+                                : (value == 100 ? _targetWeightValue = 100 : _targetWeightValue = value - 5);
                           });
                         },
                         width: MediaQuery.of(context).size.width,
                         height: 80,
-                        rulerMarginTop: 30,
+                        rulerMarginTop: 80,
                         marker: Container(
                             width: 4,
-                            height: 140,
+                            height: 200,
                             decoration: BoxDecoration(
                                 color: AppStyle.primaryColor,
                                 borderRadius: BorderRadius.circular(5))),

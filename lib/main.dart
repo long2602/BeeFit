@@ -1,10 +1,5 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/screens/OnProgressScreen.dart';
-import 'package:beefit/screens/WelcomeScreen.dart';
-import 'package:beefit/widgets/ButtonMain.dart';
-import 'package:beefit/widgets/ButtonTag.dart';
-import 'package:beefit/widgets/PercentIndicator.dart';
 import 'package:beefit/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
