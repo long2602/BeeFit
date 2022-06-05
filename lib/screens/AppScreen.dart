@@ -3,6 +3,8 @@ import 'package:beefit/screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'ExerciseScreen.dart';
+
 class AppScreen extends StatefulWidget {
   const AppScreen({Key? key}) : super(key: key);
 
@@ -14,7 +16,7 @@ class _AppScreenState extends State<AppScreen> {
   int _selectedIndex = 0;
   static final List<Widget> _pageOption = <Widget>[
     const HomeScreen(),
-    Container(),
+    const ExerciseScreen(),
     Container(),
     Container(),
     Container(),

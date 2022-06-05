@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _datePickerController,
             initialSelectedDate: DateTime.now(),
             selectionColor: AppStyle.primaryColor,
-            selectedTextColor: Colors.white,
+            selectedTextColor: AppStyle.whiteColor,
             dateTextStyle: TextStyle(
               color: AppStyle.black1Color.withOpacity(.25),
               fontSize: 18 * _scaleFont,
