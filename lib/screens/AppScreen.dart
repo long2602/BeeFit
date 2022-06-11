@@ -1,5 +1,6 @@
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/screens/HomeScreen.dart';
+import 'package:beefit/screens/PlanScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,7 +18,7 @@ class _AppScreenState extends State<AppScreen> {
   static final List<Widget> _pageOption = <Widget>[
     const HomeScreen(),
     const ExerciseScreen(),
-    Container(),
+    const PlanScreen(),
     Container(),
     Container(),
   ];
