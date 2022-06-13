@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 class AppMethods {
@@ -41,15 +43,13 @@ class AppMethods {
   //Animated page route
   static PageRouteBuilder<dynamic> animatedRoute(Widget destination) {
     return PageRouteBuilder(
-        transitionDuration: const Duration(seconds: 1),
+        transitionDuration: const Duration(milliseconds: 700),
         transitionsBuilder: (BuildContext context, Animation<double> animation,
             Animation<double> secAnimation, Widget child) {
-          animation =
-              CurvedAnimation(parent: animation, curve: Curves.linearToEaseOut);
-          return ScaleTransition(
-            scale: animation,
+          return SlideTransition(
             child: child,
-            alignment: Alignment.center,
+            position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+                .animate(animation),
           );
         },
         pageBuilder: (BuildContext context, Animation<double> animation,

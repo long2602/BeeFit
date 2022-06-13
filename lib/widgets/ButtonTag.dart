@@ -1,4 +1,6 @@
-import 'package:beefit/constants/app_style.dart';
+// ignore_for_file: file_names
+
+import 'package:beefit/constants/AppStyles.dart';
 import 'package:flutter/material.dart';
 
 class ButtonTag extends StatelessWidget {

@@ -1,5 +1,7 @@
-import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/constants/app_methods.dart';
+// ignore_for_file: file_names
+
+import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/constants/AppMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 

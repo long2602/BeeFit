@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/cupertino.dart';
 
 class AppStyle {
@@ -12,8 +14,6 @@ class AppStyle {
   static const String keepFit = imagePath + 'keepfit.svg';
   static const String scale = imagePath + 'scale.svg';
   static const String buildMuscle = imagePath + 'buildmuscle.svg';
-
-
 
   //color
   static const Color primaryColor1 = Color(0xffE9A24A);
@@ -35,4 +35,5 @@ class AppStyle {
   static const Color gray3Color = Color(0xff828282);
   static const Color gray4Color = Color(0xffbdbdbd);
   static const Color gray5Color = Color(0xffe0e0e0);
+  static const Color selectedColor = Color(0xff5998C5);
 }

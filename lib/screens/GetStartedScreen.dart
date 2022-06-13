@@ -1,12 +1,15 @@
+// ignore_for_file: file_names
+
 import 'dart:math';
 
-import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/constants/app_methods.dart';
+import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
-import 'package:beefit/widgets/OnPageView.dart';
+import 'package:beefit/widgets/CommonButton.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
-import '../widgets/OnPageView.dart';
+import 'package:get/get.dart';
 
 class GetStartedScreen extends StatefulWidget {
   const GetStartedScreen({Key? key}) : super(key: key);
@@ -19,8 +22,8 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   final _pageController = PageController();
   final currentController = PageController();
   var _selectedOften = 0;
-  var _selectedDesiredBody = 0;
-  var _selectedCurrentBody = 0;
+  // var _selectedDesiredBody = 0;
+  // var _selectedCurrentBody = 0;
   final nameController = TextEditingController();
   final ageController = TextEditingController();
   RulerPickerController? _currentWeightController;
@@ -32,15 +35,27 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   int _currentHeightValue = 150;
 
   late bool _maleIsTapped, _femaleIsTapped;
+  late int _goalListIndex;
+
+  final List _goalList = [
+    {"title": "Lose Weight", "img": "loseweight.jpg"},
+    {"title": "Build Muscle", "img": "buildmuscles.jpg"},
+    {"title": "Keep Fit", "img": "keepfit.jpg"},
+  ];
 
   @override
   void initState() {
+    super.initState();
+
+    setState(() {
+      _maleIsTapped = false;
+      _femaleIsTapped = false;
+      _goalListIndex = 0;
+    });
+
     _currentWeightController = RulerPickerController(value: 0);
     _targetWeightController = RulerPickerController(value: 0);
     _currentHeightController = RulerPickerController(value: 0);
-    _maleIsTapped = false;
-    _femaleIsTapped = false;
-    super.initState();
   }
 
   @override
@@ -56,21 +71,17 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
     final double _scaleFont = AppMethods.fontScale(context);
     return Scaffold(
       body: PageView(
+
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          /**
-           * Gender
-           */
+          //Gender selection
           OnPageView(
-            canPress: _maleIsTapped == false && _femaleIsTapped == false
-                ? false
-                : true,
             title: "What’s your ",
             keyword: "gender",
             additionalText: "?",
             pageController: _pageController,
-            widget: Row(
+            childWidget: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
@@ -80,412 +91,229 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                       _femaleIsTapped = false;
                     });
                   },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(30),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 2,
-                                color: _maleIsTapped == true
-                                    ? Colors.blue
-                                    : _femaleIsTapped == true
-                                        ? Colors.grey
-                                        : AppStyle.gray4Color),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(15))),
-                        child: Image.asset(
-                          "assets/imgs/male.png",
-                          height: 100,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Text(
-                        "Male",
-                        style: TextStyle(
-                            color: _maleIsTapped == true
-                                ? Colors.blue
-                                : _femaleIsTapped == true
-                                    ? Colors.grey
-                                    : AppStyle.gray4Color,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
+                  child: _genderCard(
+                      mainTapped: _maleIsTapped,
+                      secondaryCheck: _femaleIsTapped,
+                      gender: "Male",
+                      imgName: "male.png"),
                 ),
                 GestureDetector(
-                  onTap: (() {
-                    setState(() {
-                      _femaleIsTapped = true;
-                      _maleIsTapped = false;
-                    });
-                  }),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(30),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 2,
-                                color: _femaleIsTapped == true
-                                    ? Colors.blue
-                                    : _maleIsTapped == true
-                                        ? Colors.grey
-                                        : AppStyle.gray4Color),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(15))),
-                        child: Image.asset(
-                          "assets/imgs/female.png",
-                          height: 100,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Text(
-                        "Female",
-                        style: TextStyle(
-                            color: _femaleIsTapped == true
-                                ? Colors.blue
-                                : _maleIsTapped == true
-                                    ? Colors.grey
-                                    : AppStyle.gray4Color,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                ),
+                    onTap: (() {
+                      setState(() {
+                        _femaleIsTapped = true;
+                        _maleIsTapped = false;
+                      });
+                    }),
+                    child: _genderCard(
+                        mainTapped: _femaleIsTapped,
+                        secondaryCheck: _maleIsTapped,
+                        gender: "Female",
+                        imgName: "female.png")),
               ],
+            ),
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true || _femaleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {
+                if (_maleIsTapped == true || _femaleIsTapped == true) {
+                  _pageController.nextPage(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut);
+                } else {
+                  Get.snackbar(
+                    "Please choose your gender!",
+                    "You did not choose your gender. Please choose one to continue.",
+                    dismissDirection: DismissDirection.horizontal,
+                    colorText: Colors.white,
+                    snackStyle: SnackStyle.FLOATING,
+                    barBlur: 30,
+                    backgroundColor: Colors.black54,
+                    isDismissible: true,
+                    duration: const Duration(seconds: 3),
+                  );
+                }
+              },
             ),
           ),
 
-          /**
-           * Main goal
-           */
+          //Goal selection
           OnPageView(
-            canPress: true,
             title: "What’s your ",
             keyword: "goal",
             additionalText: "?",
             pageController: _pageController,
-            widget: Column(
-              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            childWidget: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 46 * _scaleScreen,
-                      vertical: 10 * _scaleScreen),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: AppStyle.appBorder,
-                    child: InkWell(
-                      borderRadius: AppStyle.appBorder,
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: AppStyle.appBorder,
-                            border: Border.all(
-                                color: AppStyle.gray5Color, width: 1)),
-                        height: 110,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Lose Weight',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20 * _scaleFont,
-                                ),
-                              ),
-                              Image.asset(
-                                'assets/imgs/scale.png',
-                                height: 70 * _scaleScreen,
-                                width: 70 * _scaleScreen,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                Text(
+                  _goalList[_goalListIndex]["title"],
+                  style: TextStyle(
+                      color: Color(AppMethods.hexColor("383B53")),
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 25),
+                CarouselSlider.builder(
+                  itemCount: _goalList.length,
+                  itemBuilder: (context, index, realIndex) {
+                    return _optionCard(imgName: _goalList[index]["img"]);
+                  },
+                  options: CarouselOptions(
+                      autoPlay: false,
+                      height: 283 * AppMethods.screenScale(context),
+                      viewportFraction: 0.7,
+                      enableInfiniteScroll: false,
+                      initialPage: _goalListIndex ,
+                      enlargeCenterPage: true,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _goalListIndex = index;
+                        });
+                      }),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 46 * _scaleScreen,
-                      vertical: 10 * _scaleScreen),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: AppStyle.appBorder,
-                    child: InkWell(
-                      borderRadius: AppStyle.appBorder,
-                      onTap: () {},
-                      child: Container(
+                  padding:
+                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
                         decoration: BoxDecoration(
-                            borderRadius: AppStyle.appBorder,
-                            border: Border.all(
-                                color: AppStyle.gray5Color, width: 1)),
-                        height: 110,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Build Muscle',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20 * _scaleFont,
-                                ),
-                              ),
-                              Image.asset(
-                                'assets/imgs/buildMuscle.png',
-                                height: 70 * _scaleScreen,
-                                width: 70 * _scaleScreen,
-                              ),
-                            ],
-                          ),
+                          color: AppStyle.gray4Color,
+                          borderRadius: AppStyle.appBorder,
                         ),
+                        height: 2.5,
                       ),
-                    ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ...List.generate(
+                            _goalList.length,
+                            (index) => Indicator(
+                                isActive:
+                                    _goalListIndex == index ? true : false),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+                )
+              ],
+            ),
+            bottomWidget: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CommonButton(
+                  width: 170,
+                  backgroundColor: Colors.white,
+                  textColor: Color(AppMethods.hexColor("#fb9b28")),
+                  text: 'Previous',
+                  borderSide: BorderSide(
+                      color: Color(AppMethods.hexColor("#fb9b28")), width: 2),
+                  onPressed: () {
+                    _pageController.previousPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                  },
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 46 * _scaleScreen,
-                    vertical: 10 * _scaleScreen,
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: AppStyle.appBorder,
-                    child: InkWell(
-                      borderRadius: AppStyle.appBorder,
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: AppStyle.appBorder,
-                            border: Border.all(
-                                color: AppStyle.gray5Color, width: 1)),
-                        height: 110,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Keep Fit',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20 * _scaleFont,
-                                ),
-                              ),
-                              Image.asset(
-                                'assets/imgs/keepFit.png',
-                                height: 70 * _scaleScreen,
-                                width: 70 * _scaleScreen,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                CommonButton(
+                  width: 170,
+                  backgroundColor: Color(AppMethods.hexColor("#fb9b28")),
+                  textColor: AppStyle.whiteColor,
+                  text: 'Next',
+                  onPressed: () {
+                    print(_goalList[_goalListIndex]["title"]);
+                    _pageController.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                  },
                 ),
               ],
             ),
           ),
 
-          /**
-           * Focus area
-           */
+          //Muscle groups selection
           OnPageView(
-            canPress: true,
             title: "Which ",
             keyword: "muscle groups ",
             additionalText: "would you like to train?",
             pageController: _pageController,
-            widget: Container(),
+            childWidget: Container(),
+            bottomWidget: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CommonButton(
+                  width: 170,
+                  backgroundColor: Colors.white,
+                  textColor: Color(AppMethods.hexColor("#fb9b28")),
+                  text: 'Previous',
+                  borderSide: BorderSide(
+                      color: Color(AppMethods.hexColor("#fb9b28")), width: 2),
+                  onPressed: () {
+                    _pageController.previousPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                  },
+                ),
+                CommonButton(
+                  width: 170,
+                  backgroundColor: Color(AppMethods.hexColor("#fb9b28")),
+                  textColor: AppStyle.whiteColor,
+                  text: 'Next',
+                  onPressed: () {
+                    print(_goalList[_goalListIndex]["title"]);
+                    _pageController.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
+                  },
+                ),
+              ],
+            ),
           ),
 
           /**
            * Current body shape
            */
-          OnPageView(
-            canPress: true,
-            title: "What’s your ",
-            keyword: "body shape",
-            additionalText: "?",
-            pageController: _pageController,
-            widget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 283 * _scaleScreen,
-                  child: PageView.builder(
-                      controller: PageController(viewportFraction: 0.7),
-                      itemCount: 5,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _selectedCurrentBody = index;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        var _dot = _selectedCurrentBody == index ? 1 : 0.8;
-                        return TweenAnimationBuilder(
-                          duration: const Duration(milliseconds: 350),
-                          tween: Tween(begin: _dot, end: _dot),
-                          curve: Curves.ease,
-                          builder: (context, value, child) {
-                            return Transform.scale(
-                              scale: value is double ? value : 1,
-                              child: child,
-                            );
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 350),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 20 * _scaleScreen),
-                            width: 200 * _scaleScreen,
-                            height: 283 * _scaleScreen,
-                            decoration: BoxDecoration(
-                              borderRadius: AppStyle.appBorder,
-                              color: _selectedCurrentBody == index
-                                  ? AppStyle.primaryColor
-                                  : AppStyle.gray5Color,
-                            ),
-                          ),
-                        );
-                      }),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 40.0, left: 40, right: 40),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppStyle.gray4Color,
-                          borderRadius: AppStyle.appBorder,
-                        ),
-                        height: 4,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(
-                            5,
-                            (index) => Indicator(
-                                isActive: _selectedCurrentBody == index
-                                    ? true
-                                    : false),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+          // OnPageView(
+          //   canPress: true,
+          //   title: "What’s your ",
+          //   keyword: "body shape",
+          //   additionalText: "?",
+          //   pageController: _pageController,
+          //   childWidget: _slidableOptions(options: _goalList, opIndex: 0),
+          // ),
 
           /**
            * Desired body shape
            */
-          OnPageView(
-            canPress: true,
-            title: "What’s your ",
-            keyword: "desired body shape",
-            additionalText: "?",
-            pageController: _pageController,
-            widget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 283 * _scaleScreen,
-                  child: PageView.builder(
-                      controller: PageController(viewportFraction: 0.7),
-                      itemCount: 5,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _selectedDesiredBody = index;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        var _dot = _selectedDesiredBody == index ? 1 : 0.8;
-                        return TweenAnimationBuilder(
-                          duration: const Duration(milliseconds: 350),
-                          tween: Tween(begin: _dot, end: _dot),
-                          curve: Curves.ease,
-                          builder: (context, value, child) {
-                            return Transform.scale(
-                              scale: value is double ? value : 1,
-                              child: child,
-                            );
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 350),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 20 * _scaleScreen),
-                            width: 200 * _scaleScreen,
-                            height: 283 * _scaleScreen,
-                            decoration: BoxDecoration(
-                              borderRadius: AppStyle.appBorder,
-                              color: _selectedDesiredBody == index
-                                  ? AppStyle.primaryColor
-                                  : AppStyle.gray5Color,
-                            ),
-                          ),
-                        );
-                      }),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 40.0, left: 40, right: 40),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppStyle.gray4Color,
-                          borderRadius: AppStyle.appBorder,
-                        ),
-                        height: 4,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(
-                            5,
-                            (index) => Indicator(
-                                isActive: _selectedDesiredBody == index
-                                    ? true
-                                    : false),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+          // OnPageView(
+          //     canPress: true,
+          //     title: "What’s your ",
+          //     keyword: "desired body shape",
+          //     additionalText: "?",
+          //     pageController: _pageController,
+          //     childWidget: _slidableOptions(options: _goalList, opIndex: 0)),
 
           /**
            * Name
            */
           OnPageView(
-            canPress: true,
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {},
+            ),
             title: "What’s your ",
             keyword: "name",
             additionalText: "?",
             pageController: _pageController,
-            widget: Padding(
+            childWidget: Padding(
               padding: EdgeInsets.symmetric(horizontal: 60 * _scaleScreen),
               child: TextField(
                 controller: nameController,
@@ -502,12 +330,19 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Age
            */
           OnPageView(
-            canPress: true,
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {},
+            ),
             title: "",
             keyword: "How old ",
             additionalText: "are you?",
             pageController: _pageController,
-            widget: Padding(
+            childWidget: Padding(
               padding: EdgeInsets.symmetric(horizontal: 60 * _scaleScreen),
               child: TextField(
                 controller: ageController,
@@ -524,9 +359,17 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Height
            */
           OnPageView(
-            title: "What’s your height?",
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {},
+            ),
+            title: "What’s your ",
             pageController: _pageController,
-            widget: Transform.rotate(
+            childWidget: Transform.rotate(
               angle: -pi / 2,
               child: Center(
                 child: RulerPicker(
@@ -548,7 +391,9 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                     setState(() {
                       value == 70
                           ? _currentHeightValue = 70
-                          : (value == 250 ? _currentHeightValue = 250 : _currentHeightValue = value - 5);
+                          : (value == 250
+                              ? _currentHeightValue = 250
+                              : _currentHeightValue = value - 5);
                     });
                   },
                   width: MediaQuery.of(context).size.width,
@@ -595,7 +440,6 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                 ),
               ),
             ),
-            canPress: true,
             keyword: "height",
             additionalText: "?",
           ),
@@ -604,12 +448,19 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Current Weight
            */
           OnPageView(
-            canPress: true,
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {},
+            ),
             title: "What’s your ",
             keyword: "current weight",
             additionalText: "?",
             pageController: _pageController,
-            widget: Column(
+            childWidget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
@@ -671,7 +522,9 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                           setState(() {
                             value == 30
                                 ? _currentWeightValue = 30
-                                : (value == 100 ? _currentWeightValue = 100 : _currentWeightValue = value - 5);
+                                : (value == 100
+                                    ? _currentWeightValue = 100
+                                    : _currentWeightValue = value - 5);
                           });
                         },
                         width: MediaQuery.of(context).size.width,
@@ -738,12 +591,19 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Target Weight
            */
           OnPageView(
-            canPress: true,
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {},
+            ),
             title: "What’s your ",
             keyword: "desired weight",
             additionalText: "?",
             pageController: _pageController,
-            widget: Column(
+            childWidget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
@@ -805,7 +665,9 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                           setState(() {
                             value == 30
                                 ? _targetWeightValue = 30
-                                : (value == 100 ? _targetWeightValue = 100 : _targetWeightValue = value - 5);
+                                : (value == 100
+                                    ? _targetWeightValue = 100
+                                    : _targetWeightValue = value - 5);
                           });
                         },
                         width: MediaQuery.of(context).size.width,
@@ -867,19 +729,19 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
            * Often work
            */
           OnPageView(
-            title: "How often would you like to work out?",
-            canPress: true,
+            bottomWidget: CommonButton(
+              backgroundColor: _maleIsTapped == true
+                  ? Color(AppMethods.hexColor("#fb9b28"))
+                  : Colors.grey.shade400,
+              textColor: AppStyle.whiteColor,
+              text: 'Next',
+              onPressed: () {},
+            ),
+            title: "",
             keyword: "How often ",
             additionalText: "would you like to workout?",
             pageController: _pageController,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const OnProgressScreen()),
-              );
-            },
-            widget: Column(
+            childWidget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
@@ -959,8 +821,134 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
       ),
     );
   }
+
+  //Gender card
+  Widget _genderCard(
+      {required bool mainTapped,
+      required bool secondaryCheck,
+      required String gender,
+      required String imgName}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.all(mainTapped == true ? 32 : 30),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                  width: 2,
+                  color: mainTapped == true
+                      ? Color(AppMethods.hexColor("fb9b28"))
+                      : secondaryCheck == true
+                          ? Colors.grey
+                          : Colors.black54),
+              borderRadius: const BorderRadius.all(Radius.circular(15))),
+          child: Image.asset(
+            "assets/imgs/$imgName",
+            height: mainTapped == true ? 105 : 100,
+          ),
+        ),
+        const SizedBox(height: 15),
+        Text(
+          gender,
+          style: TextStyle(
+              color: mainTapped == true
+                  ? Color(AppMethods.hexColor("fb9b28"))
+                  : secondaryCheck == true
+                      ? Colors.grey
+                      : Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        )
+      ],
+    );
+  }
+
+  //Slidable pageview
+  // Widget _slidableOptions(
+  //     {required List options, required CarouselController controller}) {
+  //   int opIndex = 0;
+  //   return StatefulBuilder(builder: (context, setState) {
+  //     return Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Text(
+  //           options[opIndex]["title"],
+  //           style: TextStyle(
+  //               color: Color(AppMethods.hexColor("383B53")),
+  //               fontSize: 25,
+  //               fontWeight: FontWeight.bold),
+  //         ),
+  //         const SizedBox(height: 25),
+  //         CarouselSlider.builder(
+  //           carouselController: controller,
+  //           itemCount: options.length,
+  //           itemBuilder: (context, index, realIndex) {
+  //             if (index == 0) {}
+  //             opIndex = realIndex;
+  //             return _optionCard(imgName: options[opIndex]["img"]);
+  //           },
+  //           options: CarouselOptions(
+  //               autoPlay: false,
+  //               height: 283 * AppMethods.screenScale(context),
+  //               viewportFraction: 0.7,
+  //               enableInfiniteScroll: false,
+  //               enlargeCenterPage: true,
+  //               onPageChanged: (index, reason) {
+  //                 setState(() {
+  //                   opIndex = index;
+  //                 });
+  //               }),
+  //         ),
+  //         Padding(
+  //           padding: const EdgeInsets.only(top: 30.0, left: 40, right: 40),
+  //           child: Stack(
+  //             alignment: Alignment.center,
+  //             children: [
+  //               Container(
+  //                 decoration: BoxDecoration(
+  //                   color: AppStyle.gray4Color,
+  //                   borderRadius: AppStyle.appBorder,
+  //                 ),
+  //                 height: 2.5,
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   ...List.generate(
+  //                     options.length,
+  //                     (index) =>
+  //                         Indicator(isActive: opIndex == index ? true : false),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     );
+  //   });
+  // }
+
+  //Option card
+  Widget _optionCard({required String imgName}) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(
+                width: 5, color: Color(AppMethods.hexColor("fb9b28"))),
+            borderRadius: AppStyle.appBorder),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset('assets/imgs/$imgName', fit: BoxFit.cover),
+        ),
+      ),
+    );
+  }
 }
 
+//Indicator below option cards
 class Indicator extends StatelessWidget {
   final bool _isActive;
 
@@ -973,7 +961,9 @@ class Indicator extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
       decoration: BoxDecoration(
-        color: _isActive ? AppStyle.gray1Color : AppStyle.gray4Color,
+        color: _isActive
+            ? Color(AppMethods.hexColor("fb9b28"))
+            : AppStyle.gray4Color,
         borderRadius: AppStyle.appBorder,
         border:
             _isActive ? Border.all(color: AppStyle.whiteColor, width: 2) : null,
@@ -981,8 +971,8 @@ class Indicator extends StatelessWidget {
             ? [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
+                  spreadRadius: 0,
+                  blurRadius: 5,
                   offset: const Offset(0, 3), // changes position of shadow
                 ),
               ]
@@ -990,6 +980,74 @@ class Indicator extends StatelessWidget {
       ),
       width: _isActive ? 18 : 15,
       height: _isActive ? 18 : 15,
+    );
+  }
+}
+
+//On pageview elements
+class OnPageView extends StatefulWidget {
+  final String title;
+  final Widget childWidget;
+  final Widget bottomWidget;
+  final String keyword;
+  final String additionalText;
+  final PageController pageController;
+
+  const OnPageView(
+      {Key? key,
+      required this.title,
+      required this.childWidget,
+      required this.keyword,
+      required this.additionalText,
+      required this.pageController,
+      required this.bottomWidget})
+      : super(key: key);
+
+  @override
+  State<OnPageView> createState() => _OnPageViewState();
+}
+
+class _OnPageViewState extends State<OnPageView> {
+  @override
+  Widget build(BuildContext context) {
+    final _scale = AppMethods.screenScale(context);
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppStyle.whiteColor,
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 70 * _scale),
+          Padding(
+            padding: EdgeInsets.only(left: 30 * _scale, right: 30 * _scale),
+            child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    style: TextStyle(
+                        fontFamily: "OpenSans",
+                        color: Color(AppMethods.hexColor("#383B53")),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25 * AppMethods.fontScale(context)),
+                    children: [
+                      TextSpan(text: widget.title),
+                      TextSpan(
+                          text: widget.keyword,
+                          style: TextStyle(
+                              color: Color(AppMethods.hexColor("#fb9b28")),
+                              fontWeight: FontWeight.bold)),
+                      TextSpan(text: widget.additionalText)
+                    ])),
+          ),
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                child: widget.childWidget),
+          ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 50),
+              child: widget.bottomWidget),
+        ],
+      ),
     );
   }
 }

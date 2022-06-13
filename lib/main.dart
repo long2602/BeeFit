@@ -1,7 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/screens/HomeScreen.dart';
-import 'package:beefit/screens/onboarding_screen.dart';
+import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/screens/OnboardingScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -47,8 +46,8 @@ class MyApp extends StatelessWidget {
             )
           ],
         ),
-        // nextScreen: const OnboardingScreen(),
-        nextScreen: const HomeScreen(),
+        nextScreen: const OnboardingScreen(),
+        // nextScreen: const HomeScreen(),
 
         backgroundColor: AppStyle.primaryColor,
         duration: 2500,
