@@ -43,7 +43,7 @@ class AppMethods {
   //Animated page route
   static PageRouteBuilder<dynamic> animatedRoute(Widget destination) {
     return PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 700),
+        transitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (BuildContext context, Animation<double> animation,
             Animation<double> secAnimation, Widget child) {
           return SlideTransition(

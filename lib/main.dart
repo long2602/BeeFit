@@ -55,7 +55,5 @@ class MyApp extends StatelessWidget {
         animationDuration: const Duration(milliseconds: 2000),
       ),
     );
-
-
   }
 }
