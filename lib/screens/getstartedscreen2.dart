@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:math';
 
 import 'package:beefit/constants/AppMethods.dart';
@@ -26,6 +28,7 @@ class _GetStartedScreen2State extends State<GetStartedScreen2>
       _chooseLeg = false,
       _chooseButt = false,
       _chooseFull = false;
+
   int _goalListIndex = 0,
       _physiqueIndex = 2,
       _desiredPhyIndex = 1,
@@ -129,18 +132,21 @@ class _GetStartedScreen2State extends State<GetStartedScreen2>
     });
   }
 
-  double _BMICalculate() {
-    return _currentWeight / pow((_currentHeight * 0.01), 2);
+  double _BMICalculate({required double weight, required double height}) {
+    return weight / pow((height * 0.01), 2);
   }
 
   @override
   Widget build(BuildContext context) {
     List _choosedList = [];
+
     if (_maleIsTapped == true) {
       _choosedList = _manGoals;
     } else {
       _choosedList = _womenGoals;
     }
+
+    var _changedWeight = (_idealWeight - _currentWeight).abs();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -892,7 +898,10 @@ class _GetStartedScreen2State extends State<GetStartedScreen2>
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            _BMICalculate().toStringAsFixed(1),
+                            _BMICalculate(
+                                    height: _currentHeight.toDouble(),
+                                    weight: _currentWeight.toDouble())
+                                .toStringAsFixed(1),
                             style: TextStyle(
                                 color: Color(AppMethods.hexColor("fb9b28")),
                                 fontSize: 30,
@@ -925,109 +934,144 @@ class _GetStartedScreen2State extends State<GetStartedScreen2>
             widget: Column(
               children: [
                 const SizedBox(height: 50),
-                RulerPicker(
-                  controller: _iwRulerController,
-                  beginValue: 30,
-                  endValue: 200,
-                  initValue: _idealWeight + 3,
-                  scaleLineStyleList: const [
-                    ScaleLineStyle(
-                        color: Colors.black, width: 1.5, height: 30, scale: 0),
-                  ],
-                  onValueChange: (value) {
-                    setState(() {
-                      _idealWeight = value - 3;
-                    });
-                  },
-                  width: MediaQuery.of(context).size.width,
-                  height: 80,
-                  rulerMarginTop: 100,
-                  rulerScaleTextStyle: const TextStyle(color: Colors.black),
-                  marker: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
+                Stack(
+                  children: [
+                    _idealWeight > _currentWeight
+                        ? Positioned(
+                            top: 100,
+                            right: MediaQuery.of(context).size.width / 2 - 30,
+                            child: Container(
+                              height: 40,
+                              width: _changedWeight.toDouble() * 10,
+                              color: Color(AppMethods.hexColor("F6CF8D")),
+                            ),
+                          )
+                        : Positioned(
+                            top: 100,
+                            left: MediaQuery.of(context).size.width / 2 - 30,
+                            child: Container(
+                              height: 40,
+                              width: _changedWeight.toDouble() * 10,
+                              color: Color(AppMethods.hexColor("F6CF8D")),
+                            ),
+                          ),
+                    RulerPicker(
+                      controller: _iwRulerController,
+                      beginValue: 30,
+                      endValue: 200,
+                      initValue: _idealWeight + 3,
+                      rulerBackgroundColor: Colors.white.withAlpha(150),
+                      scaleLineStyleList: const [
+                        ScaleLineStyle(
+                            color: Colors.black,
+                            width: 1.5,
+                            height: 30,
+                            scale: 0),
+                      ],
+                      onValueChange: (value) {
+                        setState(() {
+                          _idealWeight = value - 3;
+                        });
+                      },
+                      width: MediaQuery.of(context).size.width,
+                      height: 80,
+                      rulerMarginTop: 100,
+                      rulerScaleTextStyle: const TextStyle(color: Colors.black),
+                      marker: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            _currentWeight.toString(),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.grey),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _currentWeight.toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.grey),
+                              ),
+                              const SizedBox(width: 10),
+                              SvgPicture.asset(
+                                "assets/imgs/svg/to-icon.svg",
+                                height: 10,
+                              ),
+                              const SizedBox(width: 10),
+                              RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                      style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          color: Color(
+                                              AppMethods.hexColor("#fb9b28")),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30 *
+                                              AppMethods.fontScale(context)),
+                                      children: [
+                                        TextSpan(text: _idealWeight.toString()),
+                                        const TextSpan(
+                                            text: " kg",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18))
+                                      ])),
+                              const SizedBox(width: 55),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          SvgPicture.asset(
-                            "assets/imgs/svg/to-icon.svg",
-                            height: 10,
-                          ),
-                          const SizedBox(width: 10),
-                          RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                  style: TextStyle(
-                                      fontFamily: "Poppins",
-                                      color:
-                                          Color(AppMethods.hexColor("#fb9b28")),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          30 * AppMethods.fontScale(context)),
-                                  children: [
-                                    TextSpan(text: _idealWeight.toString()),
-                                    const TextSpan(
-                                        text: " kg",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 18))
-                                  ])),
-                          const SizedBox(width: 55),
+                          Container(
+                              width: 5,
+                              height: 65,
+                              decoration: BoxDecoration(
+                                  color: Color(AppMethods.hexColor("fb9b28"))
+                                      .withAlpha(200),
+                                  borderRadius: BorderRadius.circular(5))),
                         ],
                       ),
-                      Container(
-                          width: 5,
-                          height: 65,
-                          decoration: BoxDecoration(
-                              color: Color(AppMethods.hexColor("fb9b28"))
-                                  .withAlpha(200),
-                              borderRadius: BorderRadius.circular(5))),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
-                // Container(
-                //   padding: const EdgeInsets.all(10),
-                //   child: Row(
-                //     crossAxisAlignment: CrossAxisAlignment.end,
-                //     children: [
-                //       Column(
-                //         crossAxisAlignment: CrossAxisAlignment.center,
-                //         children: [
-                //           const Text(
-                //             "Current BMI",
-                //             style: TextStyle(fontWeight: FontWeight.bold),
-                //           ),
-                //           Text(
-                //             _BMICalculate().toStringAsFixed(1),
-                //             style: TextStyle(
-                //                 color: Color(AppMethods.hexColor("fb9b28")),
-                //                 fontSize: 30,
-                //                 fontWeight: FontWeight.bold,
-                //                 fontFamily: "Poppins"),
-                //           ),
-                //         ],
-                //       ),
-                //       const SizedBox(width: 10),
-                //       const Expanded(
-                //         child: Text(
-                //           "You have a great potential to get in a better shape, move now!",
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                //   decoration: BoxDecoration(
-                //     borderRadius: const BorderRadius.all(Radius.circular(15)),
-                //     color: Color(AppMethods.hexColor("FFFBF5")),
-                //   ),
-                // ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            "assets/imgs/drop.png",
+                            height: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "Sweety choice!",
+                            style: TextStyle(
+                                color: Color(AppMethods.hexColor("fb9b28")),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "You will ${_idealWeight > _currentWeight ? "gain" : "lose"} ${(100 - _idealWeight * 100 / _currentWeight).abs().toStringAsFixed(0)}% of body weight",
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 5),
+                      const Text(
+                        "You will gain continuous health benefits:\n* Improve bone health\n* Improve your skin tone",
+                        style: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    color: Color(AppMethods.hexColor("FFFBF5")),
+                  ),
+                ),
               ],
             ),
           ),
