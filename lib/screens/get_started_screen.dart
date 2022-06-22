@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/constants/app_methods.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
+import 'package:beefit/screens/WelcomeScreen.dart';
 import 'package:beefit/widgets/OnPageView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
@@ -876,7 +877,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const OnProgressScreen()),
+                    builder: (context) => const WelcomeScreen(name: "long")),
               );
             },
             widget: Column(

@@ -1,6 +1,8 @@
 import 'package:beefit/screens/DetailExerciseScreen.dart';
+import 'package:beefit/screens/get_started_screen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/app_methods.dart';
@@ -91,12 +93,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     return InkWell(
                       onTap: () {
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) =>
-                                  const DetailExerciseScreen()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (_) =>
+                        //           const DetailExerciseScreen()),
+                        // );
+                        Get.to(const DetailExerciseScreen());
                       },
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -108,7 +111,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         ),
                         child: Row(
                           children: [
-
+                            
                           ],
                         ),
                       ),

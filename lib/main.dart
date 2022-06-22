@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:beefit/constants/app_style.dart';
 import 'package:beefit/screens/AppScreen.dart';
@@ -5,13 +7,18 @@ import 'package:beefit/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+Future main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final isFirstTime = prefs.getBool("firstTime") ?? false;
+  runApp(MyApp(isFirstTime: isFirstTime,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  bool isFirstTime;
+  MyApp({Key? key, required  this.isFirstTime}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -47,16 +54,12 @@ class MyApp extends StatelessWidget {
             )
           ],
         ),
-        // nextScreen: const OnboardingScreen(),
-        nextScreen: const AppScreen(),
-
+        nextScreen: isFirstTime? const AppScreen() : const OnboardingScreen(),
         backgroundColor: AppStyle.primaryColor,
         duration: 2500,
         splashTransition: SplashTransition.slideTransition,
         animationDuration: const Duration(milliseconds: 2000),
       ),
     );
-
-
   }
 }

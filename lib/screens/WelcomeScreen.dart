@@ -1,7 +1,11 @@
 import 'package:beefit/constants/app_style.dart';
+import 'package:beefit/screens/AppScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 import '../constants/app_methods.dart';
 
@@ -70,7 +74,11 @@ class WelcomeScreen extends StatelessWidget {
               textColor: AppStyle.whiteColor,
               text: 'Go to home',
               height: 60 * AppMethods.fontScale(context),
-              onPressed: () {},
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("firstTime", true);
+                Get.to(const AppScreen());
+              },
             ),
           ],
         ),

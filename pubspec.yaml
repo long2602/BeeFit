@@ -43,7 +43,10 @@ dependencies:
   introduction_screen: ^3.0.2
   google_fonts:
   date_picker_timeline:
-
+  custom_top_navigator: ^0.0.3
+  background_app_bar: ^2.0.1
+  shared_preferences: ^2.0.15
+  sqflite: ^2.0.2+1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,6 +73,7 @@ flutter:
   assets:
     - assets/imgs/
     - assets/imgs/svg/
+    - assets/db/beefit.db
   
   fonts:
     - family: OpenSans

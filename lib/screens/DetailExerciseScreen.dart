@@ -72,6 +72,7 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       'Descriptions',
