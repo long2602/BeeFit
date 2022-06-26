@@ -1,8 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:beefit/constants/AppMethods.dart';
-import 'package:beefit/screens/GetStartedScreen.dart';
-import 'package:beefit/screens/getstartedscreen2.dart';
+import 'package:beefit/screens/getstartedscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -91,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             right: 30 * _scale,
             child: ElevatedButton(
               onPressed: () => Navigator.pushReplacement(
-                  context, AppMethods.animatedRoute(const GetStartedScreen2())),
+                  context, AppMethods.animatedRoute(const GetStartedScreen())),
               child: Text(
                 "Get Started",
                 style: TextStyle(
