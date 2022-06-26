@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/app_methods.dart';
-import '../constants/app_style.dart';
+import '../constants/AppMethods.dart';
+import '../constants/AppStyles.dart';
 
 class PlanScreen extends StatefulWidget {
   const PlanScreen({Key? key}) : super(key: key);

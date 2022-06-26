@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/app_methods.dart';
-import '../constants/app_style.dart';
+import '../constants/AppMethods.dart';
+import '../constants/AppStyles.dart';
 
 class DetailExerciseScreen extends StatefulWidget {
   const DetailExerciseScreen({Key? key}) : super(key: key);

@@ -1,5 +1,5 @@
-import 'package:beefit/constants/app_style.dart';
-import 'package:beefit/constants/app_methods.dart';
+import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/constants/AppMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -27,7 +27,7 @@ class _PercentIndicatorState extends State<PercentIndicator> {
       ),
       backgroundColor: const Color(0xffebebeb),
       circularStrokeCap: CircularStrokeCap.round,
-      progressColor: AppStyle.primaryColor1,
+      progressColor: AppStyle.primaryColor,
     );
   }
 }

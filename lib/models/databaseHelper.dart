@@ -35,7 +35,7 @@ class DatabaseHelper {
       } catch (_) {}
 
       //Copy
-      ByteData data = await rootBundle.load(join("assets/db", _databaseName));
+      ByteData data = await rootBundle.load(join("assets/db/", _databaseName));
       List<int> bytes = data.buffer.asUint8List(
           data.offsetInBytes, data.lengthInBytes);
 

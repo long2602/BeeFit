@@ -13,10 +13,8 @@ class AppStyle {
   static const String scale = imagePath + 'scale.svg';
   static const String buildMuscle = imagePath + 'buildmuscle.svg';
 
-
-
   //color
-  static const Color primaryColor1 = Color(0xffE9A24A);
+  // static const Color primaryColor1 = Color(0xffE9A24A);
   static const Color primaryColor = Color(0xffE4A248);
   static const Color secondaryColor = Color(0xff022859);
   static const Color accent1Color = Color(0xff1d3d59);
@@ -35,4 +33,5 @@ class AppStyle {
   static const Color gray3Color = Color(0xff828282);
   static const Color gray4Color = Color(0xffbdbdbd);
   static const Color gray5Color = Color(0xffe0e0e0);
+  static const Color selectedColor = Color(0xff5998C5);
 }

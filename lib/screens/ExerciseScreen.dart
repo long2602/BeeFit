@@ -1,12 +1,12 @@
 import 'package:beefit/screens/DetailExerciseScreen.dart';
-import 'package:beefit/screens/get_started_screen.dart';
+import 'package:beefit/screens/GetStartedScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/app_methods.dart';
-import '../constants/app_style.dart';
+import '../constants/AppMethods.dart';
+import '../constants/AppStyles.dart';
 
 class ExerciseScreen extends StatefulWidget {
   const ExerciseScreen({Key? key}) : super(key: key);

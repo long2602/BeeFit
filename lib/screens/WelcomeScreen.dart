@@ -1,13 +1,12 @@
-import 'package:beefit/constants/app_style.dart';
+import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/AppScreen.dart';
-import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 
-import '../constants/app_methods.dart';
+import '../constants/AppMethods.dart';
+import '../widgets/CommonButton.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String _name;
@@ -27,7 +26,8 @@ class WelcomeScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 52 * _scaleScreen, vertical: 100 * _scaleScreen),
+        padding: EdgeInsets.symmetric(
+            horizontal: 52 * _scaleScreen, vertical: 100 * _scaleScreen),
         child: Column(
           children: [
             Expanded(
@@ -35,7 +35,7 @@ class WelcomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: 100  * _scaleScreen),
+                    padding: EdgeInsets.only(bottom: 100 * _scaleScreen),
                     child: SvgPicture.asset(
                       'assets/imgs/svg/checked.svg',
                       width: 150 * _scaleScreen,
@@ -69,11 +69,10 @@ class WelcomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ButtonMain(
+            CommonButton(
               backgroundColor: AppStyle.primaryColor,
               textColor: AppStyle.whiteColor,
               text: 'Go to home',
-              height: 60 * AppMethods.fontScale(context),
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setBool("firstTime", true);

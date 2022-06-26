@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/app_style.dart';
+import '../constants/AppStyles.dart';
 import '../widgets/PercentIndicator.dart';
 
 class OnProgressScreen extends StatefulWidget {

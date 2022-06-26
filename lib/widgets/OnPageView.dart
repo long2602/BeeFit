@@ -1,8 +1,8 @@
-import 'package:beefit/constants/app_methods.dart';
+import 'package:beefit/constants/AppMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../constants/app_style.dart';
+import '../constants/AppStyles.dart';
 import 'ButtonMain.dart';
 
 class OnPageView extends StatefulWidget {

@@ -1,5 +1,5 @@
-import 'package:beefit/constants/app_methods.dart';
-import 'package:beefit/screens/get_started_screen.dart';
+import 'package:beefit/constants/AppMethods.dart';
+import 'package:beefit/screens/GetStartedScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';

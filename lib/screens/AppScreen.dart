@@ -1,4 +1,4 @@
-import 'package:beefit/constants/app_style.dart';
+import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/HomeScreen.dart';
 import 'package:beefit/screens/PlanScreen.dart';
 import 'package:beefit/screens/testData.dart';

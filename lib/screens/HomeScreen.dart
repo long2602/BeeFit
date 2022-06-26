@@ -1,10 +1,10 @@
-import 'package:beefit/constants/app_style.dart';
+import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/app_methods.dart';
+import '../constants/AppMethods.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -82,26 +82,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 16),
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                color: AppStyle.whiteColor,
-                borderRadius: AppStyle.appBorder,
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppStyle.gray5Color,
-                    blurRadius: 20.0,
-                    offset: Offset(0, 0),
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-
-                ],
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(top: 16),
+                width: double.infinity,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: AppStyle.whiteColor,
+                  borderRadius: AppStyle.appBorder,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: AppStyle.gray5Color,
+                      blurRadius: 20.0,
+                      offset: Offset(0, 0),
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [],
+                ),
               ),
             ),
             Row(
@@ -127,16 +127,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Image.asset('assets/imgs/fitness1.png'),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Image.asset('assets/imgs/fitness1.png',fit: BoxFit.cover),
+              ),
             ),
-            ButtonMain(
-              onPressed: () {},
-              backgroundColor: AppStyle.gray5Color,
-              text: 'Explore all plans',
-              textColor: AppStyle.black1Color,
-              height: 40 * _scaleScreen,
+            Padding(
+              padding: EdgeInsets.only(bottom: 16* _scaleScreen),
+              child: ButtonMain(
+                onPressed: () {},
+                backgroundColor: AppStyle.gray5Color,
+                text: 'Explore all plans',
+                textColor: AppStyle.black1Color,
+                height: 40 * _scaleScreen,
+              ),
             ),
           ],
         ),
