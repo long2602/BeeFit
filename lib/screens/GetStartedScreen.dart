@@ -1,9 +1,10 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, file_names
 
 import 'dart:math';
 
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/screens/OnProgressScreen.dart';
 import 'package:beefit/screens/WelcomeScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -36,7 +37,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       _currentHeight = 150,
       _currentWeight = 50,
       _idealWeight = 50,
-      _activeIndex = 0;
+      _planListIndex = 0;
 
   late TabController _tabController;
 
@@ -63,7 +64,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       "title": "Thin & Muscular",
       "img": "thin-muscular.jpg",
       "des":
-      "You have a low amount of body fat and a standard level off muscle mass.",
+          "You have a low amount of body fat and a standard level off muscle mass.",
       "icon": "😄"
     },
     {
@@ -76,14 +77,14 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       "title": "Standard Muscular",
       "img": "standard-muscular.jpg",
       "des":
-      "You have an average amount of fat percentage and a high muscle mass level.",
+          "You have an average amount of fat percentage and a high muscle mass level.",
       "icon": "😄"
     },
     {
       "title": "Obese",
       "img": "obese.jpg",
       "des":
-      "You have a high fat percentage and a standard level of muscle mass.",
+          "You have a high fat percentage and a standard level of muscle mass.",
       "icon": "😐"
     },
   ];
@@ -93,30 +94,39 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       "title": "Thin & Muscular",
       "img": "thin-muscular.jpg",
       "des":
-      "This is a healthy Physique rating. Watch out people can be very jealous!",
+          "This is a healthy Physique rating. Watch out people can be very jealous!",
       "icon": "😉"
     },
     {
       "title": "Standard Muscular",
       "img": "standard.jpg",
       "des":
-      "You can be proud of this physique rating. This is a rating which some athletes have.",
+          "You can be proud of this physique rating. This is a rating which some athletes have.",
       "icon": "😄"
     },
     {
       "title": "Very Muscular",
       "img": "standard-muscular.jpg",
       "des":
-      "You have an average amount of fat percentage and a high muscle mass level.",
+          "You have an average amount of fat percentage and a high muscle mass level.",
       "icon": "😃"
     }
+  ];
+
+  final List _plans = [
+    {"frequency": "2 times/week", "des": "I don't have much time."},
+    {"frequency": "3 times/week", "des": "I have free time, but not much."},
+    {"frequency": "4 times/week", "des": "I can work out often."},
+    {"frequency": "6 times/week", "des": "I can do the workout all day."}
   ];
 
   late RulerPickerController _hRulerController,
       _wRulerController,
       _iwRulerController;
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -129,7 +139,11 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     _hRulerController = RulerPickerController(value: 0);
     _wRulerController = RulerPickerController(value: 0);
     _iwRulerController = RulerPickerController(value: 0);
+
     _ageController.addListener(() {
+      setState(() {});
+    });
+    _nameController.addListener(() {
       setState(() {});
     });
   }
@@ -138,9 +152,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     return weight / pow((height * 0.01), 2);
   }
 
-  double _BMRCalculate({required double weight, required double height}){
+  double _BMRCalculate({required double weight, required double height}) {
     double activeFactor = 1.2;
-    switch(_activeIndex){
+    switch (_planListIndex) {
       case 1:
         activeFactor = 1.375;
         break;
@@ -154,10 +168,18 @@ class _GetStartedScreenState extends State<GetStartedScreen>
         activeFactor = 1.9;
         break;
     }
-    if(_femaleIsTapped){
-      return (655 + (9.6 * weight) +(1.8 * height) - (4.7 * int.parse(_ageController.text))) * activeFactor;
+    if (_femaleIsTapped) {
+      return (655 +
+              (9.6 * weight) +
+              (1.8 * height) -
+              (4.7 * int.parse(_ageController.text))) *
+          activeFactor;
     }
-    return (66 + (13.7 * weight) +(5 * height) - (6.8 * int.parse(_ageController.text))) * activeFactor;
+    return (66 +
+            (13.7 * weight) +
+            (5 * height) -
+            (6.8 * int.parse(_ageController.text))) *
+        activeFactor;
   }
 
   @override
@@ -171,6 +193,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     }
 
     var _changedWeight = (_idealWeight - _currentWeight).abs();
+    var _bmi = _BMICalculate(
+        height: _currentHeight.toDouble(), weight: _currentWeight.toDouble());
+    var _newBMI = _BMICalculate(
+        weight: _idealWeight.toDouble(), height: _currentHeight.toDouble());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -178,84 +204,111 @@ class _GetStartedScreenState extends State<GetStartedScreen>
         padding: const EdgeInsets.fromLTRB(30, 0, 30, 50),
         child: _tabController.index == 0
             ? CommonButton(
-          backgroundColor:
-          _maleIsTapped == true || _femaleIsTapped == true
-              ? Color(AppMethods.hexColor("#fb9b28"))
-              : Colors.grey.shade400,
-          textColor: AppStyle.whiteColor,
-          text: 'Next',
-          onPressed: () {
-            if (_maleIsTapped == true || _femaleIsTapped == true) {
-              _tabController.index = 1;
-            } else {
-              Get.snackbar(
-                "Please choose your gender!",
-                "You did not choose your gender. Please choose one to continue.",
-                dismissDirection: DismissDirection.horizontal,
-                colorText: Colors.white,
-                snackStyle: SnackStyle.FLOATING,
-                barBlur: 30,
-                backgroundColor: Colors.black54,
-                isDismissible: true,
-                duration: const Duration(seconds: 3),
-              );
-            }
-          },
-        )
+                backgroundColor:
+                    _maleIsTapped == true || _femaleIsTapped == true
+                        ? Color(AppMethods.hexColor("#fb9b28"))
+                        : Colors.grey.shade400,
+                textColor: AppStyle.whiteColor,
+                text: 'Next',
+                onPressed: () {
+                  if (_maleIsTapped == true || _femaleIsTapped == true) {
+                    _tabController.index = 1;
+                  } else {
+                    Get.snackbar(
+                      "Please choose your gender!",
+                      "You did not choose your gender. Please choose one to continue.",
+                      dismissDirection: DismissDirection.horizontal,
+                      colorText: Colors.white,
+                      snackStyle: SnackStyle.FLOATING,
+                      barBlur: 30,
+                      backgroundColor: Colors.black54,
+                      isDismissible: true,
+                      duration: const Duration(seconds: 3),
+                    );
+                  }
+                },
+              )
             : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CommonButton(
-              width: 170,
-              backgroundColor: Colors.white,
-              textColor: Color(AppMethods.hexColor("#fb9b28")),
-              text: 'Previous',
-              borderSide: BorderSide(
-                  color: Color(AppMethods.hexColor("#fb9b28")), width: 2),
-              onPressed: () {
-                // switch (_tabController.index) {
-                //   case 1:
-                //     {
-                //       _tabController.index--;
-                //     }
-                //     break;
-                //   case 3:
-                //     {
-                //       _tabController.index -= 2;
-                //     }
-                //     break;
-                //   default:
-                // }
-                _tabController.index--;
-              },
-            ),
-            CommonButton(
-              width: 170,
-              backgroundColor: Color(AppMethods.hexColor("#fb9b28")),
-              textColor: AppStyle.whiteColor,
-              text: 'Next',
-              onPressed: (_tabController.index == _tabController.length - 1)? ()=> Navigator.pushReplacement(
-                context, AppMethods.animatedRoute(const WelcomeScreen(name: "Long"))): (){
-                // switch (_tabController.index) {
-                //   case 1:
-                //     {
-                //       _tabController.index += 2;
-                //     }
-                //     break;
-                //   case 5:
-                //     {
-                //       if (_formKey1.currentState!.validate()) {
-                //         _tabController.index++;
-                //       }
-                //     }
-                //     break;
-                //   default:
-                // }
-                _tabController.index++;
-              },
-            ),
-          ],
-        ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CommonButton(
+                    width: 170,
+                    backgroundColor: Colors.white,
+                    textColor: Color(AppMethods.hexColor("#fb9b28")),
+                    text: 'Previous',
+                    borderSide: BorderSide(
+                        color: Color(AppMethods.hexColor("#fb9b28")), width: 2),
+                    onPressed: () {
+                      switch (_tabController.index) {
+                        case 1:
+                          {
+                            _tabController.index--;
+                          }
+                          break;
+                        case 3:
+                          {
+                            if (_goalListIndex == 0) {
+                              _tabController.index -= 2;
+                            } else {
+                              _tabController.index--;
+                            }
+                          }
+                          break;
+                        default:
+                          {
+                            _tabController.index--;
+                          }
+                      }
+                    },
+                  ),
+                  CommonButton(
+                    width: 170,
+                    backgroundColor: Color(AppMethods.hexColor("#fb9b28")),
+                    textColor: AppStyle.whiteColor,
+                    text: 'Next',
+                    onPressed: () {
+                      switch (_tabController.index) {
+                        case 1:
+                          {
+                            if (_goalListIndex == 0) {
+                              _tabController.index += 2;
+                            } else {
+                              _tabController.index++;
+                            }
+                          }
+                          break;
+                        case 5:
+                          {
+                            if (_formKey1.currentState!.validate()) {
+                              _tabController.index++;
+                            }
+                          }
+                          break;
+                        case 10:
+                          {
+                            {
+                              if (_formKey2.currentState!.validate()) {
+                                // Navigator.pushReplacement(
+                                //     context,
+                                //     AppMethods.animatedRoute(
+                                //         const OnProgressScreen()));
+                                Navigator.pushReplacement(
+                                    context,
+                                    AppMethods.animatedRoute(WelcomeScreen(
+                                        name: _nameController.text)));
+                              }
+                            }
+                          }
+                          break;
+                        default:
+                          {
+                            _tabController.index++;
+                          }
+                      }
+                    },
+                  ),
+                ],
+              ),
       ),
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
@@ -314,7 +367,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                 CarouselSlider.builder(
                   itemCount: _choosedList.length,
                   itemBuilder: (context, index, realIndex) {
-                    return OptionCard(imgName: _choosedList[index]["img"]);
+                    return OptionCard(
+                      imgName: _choosedList[index]["img"],
+                      fill: Colors.white,
+                    );
                   },
                   options: CarouselOptions(
                       autoPlay: false,
@@ -331,7 +387,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.only(top: 30.0, left: 40, right: 40),
+                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -347,9 +403,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         children: [
                           ...List.generate(
                             _choosedList.length,
-                                (index) => Indicator(
+                            (index) => Indicator(
                                 isActive:
-                                _goalListIndex == index ? true : false),
+                                    _goalListIndex == index ? true : false),
                           ),
                         ],
                       ),
@@ -362,233 +418,233 @@ class _GetStartedScreenState extends State<GetStartedScreen>
           //Focus area 2
           _maleIsTapped == true
               ? TabChild(
-              title1: "What is your ",
-              keyword: "focus area",
-              title2: "?",
-              widget: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Image.asset(
-                      "assets/imgs/body-man.png",
-                      height: 450,
-                    ),
-                  ),
-                  Positioned(
-                      top: 205,
-                      left: 120,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/arm-line.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Positioned(
-                      top: 220,
-                      left: 120,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/chest-line.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Positioned(
-                      top: 265,
-                      left: 120,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/abs-line.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Positioned(
-                      top: 385,
-                      left: 120,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/leg-line.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  title1: "What is your ",
+                  keyword: "focus area",
+                  title2: "?",
+                  widget: Stack(
                     children: [
-                      BodyAreaSelection(
-                        text: "Arm",
-                        isTapped: _chooseArm,
-                        action: () {
-                          setState(() {
-                            _chooseArm = true;
-                            _chooseFull = false;
-                          });
-                        },
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Image.asset(
+                          "assets/imgs/body-man.png",
+                          height: 450,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Chest",
-                        isTapped: _chooseChest,
-                        action: () {
-                          setState(() {
-                            _chooseChest = true;
-                            _chooseFull = false;
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Abs",
-                        isTapped: _chooseAbs,
-                        action: () {
-                          setState(() {
-                            _chooseAbs = true;
-                            _chooseFull = false;
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Leg",
-                        isTapped: _chooseLeg,
-                        action: () {
-                          setState(() {
-                            _chooseLeg = true;
-                            _chooseFull = false;
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Full body",
-                        isTapped: _chooseFull,
-                        action: () {
-                          setState(() {
-                            _chooseFull = true;
-                            _chooseAbs = false;
-                            _chooseArm = false;
-                            _chooseButt = false;
-                            _chooseChest = false;
-                            _chooseLeg = false;
-                          });
-                        },
+                      Positioned(
+                          top: 205,
+                          left: 120,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/arm-line.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Positioned(
+                          top: 220,
+                          left: 120,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/chest-line.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Positioned(
+                          top: 265,
+                          left: 120,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/abs-line.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Positioned(
+                          top: 385,
+                          left: 120,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/leg-line.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BodyAreaSelection(
+                            text: "Arm",
+                            isTapped: _chooseArm,
+                            action: () {
+                              setState(() {
+                                _chooseArm = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Chest",
+                            isTapped: _chooseChest,
+                            action: () {
+                              setState(() {
+                                _chooseChest = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Abs",
+                            isTapped: _chooseAbs,
+                            action: () {
+                              setState(() {
+                                _chooseAbs = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Leg",
+                            isTapped: _chooseLeg,
+                            action: () {
+                              setState(() {
+                                _chooseLeg = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Full body",
+                            isTapped: _chooseFull,
+                            action: () {
+                              setState(() {
+                                _chooseFull = true;
+                                _chooseAbs = false;
+                                _chooseArm = false;
+                                _chooseButt = false;
+                                _chooseChest = false;
+                                _chooseLeg = false;
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
-              ))
+                  ))
               : TabChild(
-              title1: "What is your ",
-              keyword: "focus area",
-              title2: "?",
-              widget: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Image.asset(
-                      "assets/imgs/body-women.png",
-                      height: 450,
-                    ),
-                  ),
-                  Positioned(
-                      top: 205,
-                      left: 103,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/arm-line2.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Positioned(
-                      top: 265,
-                      left: 100,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/abs-line2.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Positioned(
-                      top: 325,
-                      left: 87,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/leg-line.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Positioned(
-                      top: 385,
-                      left: 100,
-                      child: SvgPicture.asset(
-                        'assets/imgs/svg/leg-line.svg',
-                        // color: Color(AppMethods.hexColor("#fb9b28")),
-                      )),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  title1: "What is your ",
+                  keyword: "focus area",
+                  title2: "?",
+                  widget: Stack(
                     children: [
-                      BodyAreaSelection(
-                        text: "Arm",
-                        isTapped: _chooseArm,
-                        action: () {
-                          setState(() {
-                            _chooseArm = true;
-                            _chooseFull = false;
-                          });
-                        },
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Image.asset(
+                          "assets/imgs/body-women.png",
+                          height: 450,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Abs",
-                        isTapped: _chooseAbs,
-                        action: () {
-                          setState(() {
-                            _chooseAbs = true;
-                            _chooseFull = false;
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Butt",
-                        isTapped: _chooseButt,
-                        action: () {
-                          setState(() {
-                            _chooseButt = true;
-                            _chooseFull = false;
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Leg",
-                        isTapped: _chooseLeg,
-                        action: () {
-                          setState(() {
-                            _chooseLeg = true;
-                            _chooseFull = false;
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BodyAreaSelection(
-                        text: "Full body",
-                        isTapped: _chooseFull,
-                        action: () {
-                          setState(() {
-                            _chooseFull = true;
-                            _chooseAbs = false;
-                            _chooseArm = false;
-                            _chooseButt = false;
-                            _chooseChest = false;
-                            _chooseLeg = false;
-                          });
-                        },
+                      Positioned(
+                          top: 205,
+                          left: 103,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/arm-line2.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Positioned(
+                          top: 265,
+                          left: 100,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/abs-line2.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Positioned(
+                          top: 325,
+                          left: 87,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/leg-line.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Positioned(
+                          top: 385,
+                          left: 100,
+                          child: SvgPicture.asset(
+                            'assets/imgs/svg/leg-line.svg',
+                            // color: Color(AppMethods.hexColor("#fb9b28")),
+                          )),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BodyAreaSelection(
+                            text: "Arm",
+                            isTapped: _chooseArm,
+                            action: () {
+                              setState(() {
+                                _chooseArm = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Abs",
+                            isTapped: _chooseAbs,
+                            action: () {
+                              setState(() {
+                                _chooseAbs = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Butt",
+                            isTapped: _chooseButt,
+                            action: () {
+                              setState(() {
+                                _chooseButt = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Leg",
+                            isTapped: _chooseLeg,
+                            action: () {
+                              setState(() {
+                                _chooseLeg = true;
+                                _chooseFull = false;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          BodyAreaSelection(
+                            text: "Full body",
+                            isTapped: _chooseFull,
+                            action: () {
+                              setState(() {
+                                _chooseFull = true;
+                                _chooseAbs = false;
+                                _chooseArm = false;
+                                _chooseButt = false;
+                                _chooseChest = false;
+                                _chooseLeg = false;
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
-              )),
+                  )),
           //Current physique 3
           TabChild(
             title1: "What is your current ",
@@ -608,7 +664,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                 CarouselSlider.builder(
                   itemCount: _physiques.length,
                   itemBuilder: (context, index, realIndex) {
-                    return OptionCard(imgName: _physiques[index]["img"]);
+                    return OptionCard(
+                      imgName: _physiques[index]["img"],
+                      fill: Color(AppMethods.hexColor("233b55")),
+                    );
                   },
                   options: CarouselOptions(
                       autoPlay: false,
@@ -625,7 +684,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.only(top: 30.0, left: 40, right: 40),
+                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -641,11 +700,29 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         children: [
                           ...List.generate(
                             _physiques.length,
-                                (index) => Indicator(
+                            (index) => Indicator(
                                 isActive:
-                                _physiqueIndex == index ? true : false),
+                                    _physiqueIndex == index ? true : false),
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(23, 5, 25, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        "Skinny",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        "Heavy",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ],
                   ),
@@ -693,7 +770,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                 CarouselSlider.builder(
                   itemCount: _desiredPhysiques.length,
                   itemBuilder: (context, index, realIndex) {
-                    return OptionCard(imgName: _desiredPhysiques[index]["img"]);
+                    return OptionCard(
+                      imgName: _desiredPhysiques[index]["img"],
+                      fill: Color(AppMethods.hexColor("233b55")),
+                    );
                   },
                   options: CarouselOptions(
                       autoPlay: false,
@@ -710,7 +790,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.only(top: 30.0, left: 40, right: 40),
+                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -726,11 +806,29 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         children: [
                           ...List.generate(
                             _desiredPhysiques.length,
-                                (index) => Indicator(
+                            (index) => Indicator(
                                 isActive:
-                                _desiredPhyIndex == index ? true : false),
+                                    _desiredPhyIndex == index ? true : false),
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 5, 27, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        "Lean",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        "Bulky",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ],
                   ),
@@ -761,34 +859,36 @@ class _GetStartedScreenState extends State<GetStartedScreen>
           ),
           //Year old 5
           TabChild(
-              title1: "How ",
-              keyword: "old ",
-              title2: "are you?",
-              widget: Form(
-                key: _formKey1,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(50, 30, 50, 0),
-                      child: TextFormField(
-                        cursorColor: Color(AppMethods.hexColor("#fb9b28")),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        autofocus: true,
-                        validator: (val) {
-                          if (val == "") return "Please enter your age.";
-                        },
-                        controller: _ageController,
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(
-                            color: Color(AppMethods.hexColor("#383B53")),
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
-                      ),
+            title1: "How ",
+            keyword: "old ",
+            title2: "are you?",
+            widget: Form(
+              key: _formKey1,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(50, 30, 50, 0),
+                    child: TextFormField(
+                      cursorColor: Color(AppMethods.hexColor("#fb9b28")),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autofocus: true,
+                      validator: (val) {
+                        if (val == "") return "Please enter your age.";
+                        return null;
+                      },
+                      controller: _ageController,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(
+                          color: Color(AppMethods.hexColor("#383B53")),
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
           //Current height 6
           TabChild(
             title1: "What is your ",
@@ -827,10 +927,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                 style: TextStyle(
                                     fontFamily: "Poppins",
                                     color:
-                                    Color(AppMethods.hexColor("#fb9b28")),
+                                        Color(AppMethods.hexColor("#fb9b28")),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
-                                    30 * AppMethods.fontScale(context)),
+                                        30 * AppMethods.fontScale(context)),
                                 children: [
                                   TextSpan(text: _currentHeight.toString()),
                                   const TextSpan(
@@ -923,10 +1023,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            _BMICalculate(
-                                height: _currentHeight.toDouble(),
-                                weight: _currentWeight.toDouble())
-                                .toStringAsFixed(1),
+                            _bmi.toStringAsFixed(1),
                             style: TextStyle(
                                 color: Color(AppMethods.hexColor("fb9b28")),
                                 fontSize: 30,
@@ -936,9 +1033,16 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         ],
                       ),
                       const SizedBox(width: 10),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          "You have a great potential to get in a better shape, move now!",
+                          _bmi < 18.5
+                              ? "You have a great potential to get in a better shape, move now!"
+                              : _bmi >= 18.5 && _bmi <= 25
+                                  ? "You've got a great figure! Keep it up to be more perfect!"
+                                  : _bmi > 25 && _bmi < 27
+                                      ? "You only need a bit more sweaty exercises to see a fitter you!"
+                                      : "You may need to do more workouts to be better and healthier!",
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],
@@ -963,23 +1067,23 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                   children: [
                     _idealWeight > _currentWeight
                         ? Positioned(
-                      top: 100,
-                      right: MediaQuery.of(context).size.width / 2 - 30,
-                      child: Container(
-                        height: 40,
-                        width: _changedWeight.toDouble() * 10,
-                        color: Color(AppMethods.hexColor("F6CF8D")),
-                      ),
-                    )
+                            top: 100,
+                            right: MediaQuery.of(context).size.width / 2 - 30,
+                            child: Container(
+                              height: 40,
+                              width: _changedWeight.toDouble() * 10,
+                              color: Color(AppMethods.hexColor("F6CF8D")),
+                            ),
+                          )
                         : Positioned(
-                      top: 100,
-                      left: MediaQuery.of(context).size.width / 2 - 30,
-                      child: Container(
-                        height: 40,
-                        width: _changedWeight.toDouble() * 10,
-                        color: Color(AppMethods.hexColor("F6CF8D")),
-                      ),
-                    ),
+                            top: 100,
+                            left: MediaQuery.of(context).size.width / 2 - 30,
+                            child: Container(
+                              height: 40,
+                              width: _changedWeight.toDouble() * 10,
+                              color: Color(AppMethods.hexColor("F6CF8D")),
+                            ),
+                          ),
                     RulerPicker(
                       controller: _iwRulerController,
                       beginValue: 30,
@@ -1068,7 +1172,13 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            "Sweety choice!",
+                            _newBMI < 18.5
+                                ? "Attention!"
+                                : _newBMI >= 18.5 && _newBMI <= 25
+                                    ? "Reasonable target!"
+                                    : _newBMI > 25 && _newBMI < 27
+                                        ? "Reasonable target!"
+                                        : "Attention!",
                             style: TextStyle(
                                 color: Color(AppMethods.hexColor("fb9b28")),
                                 fontSize: 18,
@@ -1085,9 +1195,19 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 5),
-                      const Text(
-                        "You will gain continuous health benefits:\n* Improve bone health\n* Improve your skin tone",
-                        style: TextStyle(
+                      Text(
+                        _newBMI >= 18.5 &&
+                                _newBMI <= 25 &&
+                                _idealWeight < _currentWeight
+                            ? "Moderate weight loss can also make a big difference:\n- Lower blood pressure\n- Reduce the risk of type 2 diabetes"
+                            : _newBMI >= 18.5 &&
+                                    _newBMI <= 25 &&
+                                    _idealWeight > _currentWeight
+                                ? "Moderate weight gain can also make a big difference:\n- Better focus on daily tasks\n- Better mood and better sleep"
+                                : _newBMI < 18.5
+                                    ? "It seems that your target BMI is too low, which might cause some health problems..."
+                                    : "It seems that your target BMI is too high, which might cause some health problems...",
+                        style: const TextStyle(
                             color: Colors.grey, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -1102,17 +1222,115 @@ class _GetStartedScreenState extends State<GetStartedScreen>
           ),
           //Workout routine 9
           TabChild(
-              title1: "Which ",
-              keyword: "song ",
-              title2: "would you like to listen to?",
-              widget: Container()),
+            title1: "How ",
+            keyword: "often ",
+            title2: "would you like to work out?",
+            widget: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CarouselSlider.builder(
+                  itemCount: _plans.length,
+                  itemBuilder: (context, index, realIndex) {
+                    return OptionCard(
+                      frequency: _plans[index]["frequency"],
+                      des: _plans[index]["des"],
+                      fill: Colors.white,
+                      isPlan: true,
+                    );
+                  },
+                  options: CarouselOptions(
+                      autoPlay: false,
+                      height: 320 * AppMethods.screenScale(context),
+                      viewportFraction: 0.7,
+                      enableInfiniteScroll: false,
+                      initialPage: _planListIndex,
+                      enlargeCenterPage: true,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _planListIndex = index;
+                        });
+                      }),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppStyle.gray4Color,
+                          borderRadius: AppStyle.appBorder,
+                        ),
+                        height: 2.5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ...List.generate(
+                            _plans.length,
+                            (index) => Indicator(
+                                isActive:
+                                    _planListIndex == index ? true : false),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text(
+                        "Less",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        "More",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           //Name 10
           TabChild(
-              title1: "Which ",
-              keyword: "song ",
-              title2: "would you like to listen to?",
-              widget: Container()),
-
+            title1: "What is your ",
+            keyword: "name",
+            title2: "?",
+            widget: Form(
+              key: _formKey2,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(50, 30, 50, 0),
+                    child: TextFormField(
+                      cursorColor: Color(AppMethods.hexColor("#fb9b28")),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autofocus: true,
+                      validator: (val) {
+                        if (val == "") return "Please enter your name.";
+                        return null;
+                      },
+                      controller: _nameController,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(
+                          color: Color(AppMethods.hexColor("#383B53")),
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1165,19 +1383,51 @@ class BodyAreaSelection extends StatelessWidget {
 class OptionCard extends StatelessWidget {
   const OptionCard({
     Key? key,
-    required this.imgName,
+    this.imgName,
+    this.isPlan,
+    required this.fill,
+    this.frequency,
+    this.des,
   }) : super(key: key);
 
-  final String imgName;
+  final String? imgName, frequency, des;
+  final bool? isPlan;
+  final Color fill;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Image.asset('assets/imgs/$imgName', fit: BoxFit.cover),
-      ),
+      width: 220,
+      decoration: BoxDecoration(
+          color: fill,
+          border: isPlan == true
+              ? Border.all(
+                  width: 5, color: Color(AppMethods.hexColor("fb9b28")))
+              : null,
+          borderRadius: BorderRadius.circular(15)),
+      child: isPlan == true
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  frequency!,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(AppMethods.hexColor("fb9b28"))),
+                ),
+                const SizedBox(height: 25),
+                Text(
+                  des!,
+                  style: const TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.asset('assets/imgs/$imgName', fit: BoxFit.contain)),
     );
   }
 }
@@ -1253,8 +1503,8 @@ class GenderCard extends StatelessWidget {
             height: mainTapped == true
                 ? 320
                 : mainTapped == false && secondaryCheck == false
-                ? 300
-                : 280,
+                    ? 300
+                    : 280,
             fit: BoxFit.contain,
           ),
           const SizedBox(height: 15),
@@ -1264,8 +1514,8 @@ class GenderCard extends StatelessWidget {
                 color: mainTapped == true
                     ? Color(AppMethods.hexColor("fb9b28"))
                     : secondaryCheck == true
-                    ? Colors.grey
-                    : Colors.black,
+                        ? Colors.grey
+                        : Colors.black,
                 fontSize: 20,
                 fontWeight: FontWeight.bold),
           )
@@ -1293,16 +1543,16 @@ class Indicator extends StatelessWidget {
             : AppStyle.gray4Color,
         borderRadius: AppStyle.appBorder,
         border:
-        _isActive ? Border.all(color: AppStyle.whiteColor, width: 2) : null,
+            _isActive ? Border.all(color: AppStyle.whiteColor, width: 2) : null,
         boxShadow: _isActive
             ? [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 0,
-            blurRadius: 5,
-            offset: const Offset(0, 3), // changes position of shadow
-          ),
-        ]
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 0,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3), // changes position of shadow
+                ),
+              ]
             : null,
       ),
       width: _isActive ? 18 : 15,
