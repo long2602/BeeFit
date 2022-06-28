@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/HomeScreen.dart';
 import 'package:beefit/screens/PlanScreen.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import '../constants/AppStyles.dart';
 import '../widgets/PercentIndicator.dart';

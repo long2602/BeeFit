@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:beefit/screens/DetailExerciseScreen.dart';
 import 'package:beefit/screens/GetStartedScreen.dart';
 import 'package:beefit/widgets/ButtonMain.dart';

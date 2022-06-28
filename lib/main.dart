@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// ignore_for_file: must_be_immutable
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:beefit/constants/AppStyles.dart';

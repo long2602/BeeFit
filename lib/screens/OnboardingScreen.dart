@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/screens/GetStartedScreen.dart';
 import 'package:flutter/material.dart';
