@@ -1166,19 +1166,14 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                     children: [
                       Row(
                         children: [
-                          Image.asset(
-                            "assets/imgs/drop.png",
-                            height: 20,
-                          ),
-                          const SizedBox(width: 10),
                           Text(
                             _newBMI < 18.5
-                                ? "Attention!"
+                                ? "😧 Attention!"
                                 : _newBMI >= 18.5 && _newBMI <= 25
-                                    ? "Reasonable target!"
+                                    ? "😃 Reasonable target!"
                                     : _newBMI > 25 && _newBMI < 27
-                                        ? "Reasonable target!"
-                                        : "Attention!",
+                                        ? "😃 Reasonable target!"
+                                        : "😧 Attention!",
                             style: TextStyle(
                                 color: Color(AppMethods.hexColor("fb9b28")),
                                 fontSize: 18,
