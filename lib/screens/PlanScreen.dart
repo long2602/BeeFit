@@ -15,6 +15,28 @@ class PlanScreen extends StatefulWidget {
 }
 
 class _PlanScreenState extends State<PlanScreen> {
+  bool isAppbarExpand = true;
+  late ScrollController _scrollController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _scrollController = ScrollController()
+      ..addListener(() => _isAppBarExpanded
+          ? setState(() {
+        isAppbarExpand = false;
+      })
+          : setState(() {
+        isAppbarExpand = true;
+      }));
+  }
+
+  bool get _isAppBarExpanded {
+    return _scrollController.hasClients &&
+        _scrollController.offset > (200 - kToolbarHeight);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -24,90 +46,104 @@ class _PlanScreenState extends State<PlanScreen> {
     return Scaffold(
       backgroundColor: AppStyle.whiteColor,
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverAppBar(
             expandedHeight: _kAppBarSize,
             pinned: true,
             elevation: 0.0,
             backgroundColor: AppStyle.primaryColor,
-            flexibleSpace: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 30 * _scaleScreen, vertical: 15 * _scaleScreen),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xffE9A24A),
-                    Color(0xffF2BE6A),
-                    Color(0xffF6D08B)
-                  ],
-                  end: Alignment.bottomRight,
-                  begin: Alignment.topLeft,
-                ),
-                image: DecorationImage(
-                  image: AssetImage("assets/imgs/appbarBackground.png"),
-                  fit: BoxFit.fill,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                isAppbarExpand ? "" : "Massive upper body",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24 * _scaleFont,
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Massive upper body'.toUpperCase(),
-                    style: GoogleFonts.poppins(
-                      color: AppStyle.whiteColor,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 28 * _scaleFont,
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.clock,
-                              color: AppStyle.whiteColor,
-                              size: 16 * _scaleFont,
-                            ),
-                            SizedBox(width: 4 * _scaleScreen),
-                            Text(
-                              '8-27 minutes/ day',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14 * _scaleFont,
-                                color: AppStyle.whiteColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.calendar,
-                              color: AppStyle.whiteColor,
-                              size: 16 * _scaleFont,
-                            ),
-                            SizedBox(width: 4 * _scaleFont),
-                            Text(
-                              '28 days',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14 * _scaleFont,
-                                color: AppStyle.whiteColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+
+              centerTitle: true,
+              background: Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: 30 * _scaleScreen, vertical: 15 * _scaleScreen),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xffE9A24A),
+                      Color(0xffF2BE6A),
+                      Color(0xffF6D08B)
                     ],
-                  )
-                ],
+                    end: Alignment.bottomRight,
+                    begin: Alignment.topLeft,
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage("assets/imgs/appbarBackground.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Massive upper body'.toUpperCase(),
+                      style: GoogleFonts.poppins(
+                        color: AppStyle.whiteColor,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 28 * _scaleFont,
+                      ),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.clock,
+                                color: AppStyle.whiteColor,
+                                size: 16 * _scaleFont,
+                              ),
+                              SizedBox(width: 4 * _scaleScreen),
+                              Text(
+                                '8-27 minutes/ day',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14 * _scaleFont,
+                                  color: AppStyle.whiteColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.calendar,
+                                color: AppStyle.whiteColor,
+                                size: 16 * _scaleFont,
+                              ),
+                              SizedBox(width: 4 * _scaleFont),
+                              Text(
+                                '28 days',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14 * _scaleFont,
+                                  color: AppStyle.whiteColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

@@ -24,6 +24,8 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
   late List<DragAndDropList> lists;
   List<DraggableList> subLists = [];
   bool isExpand = false;
+  bool isAppbarExpand = true;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -41,6 +43,20 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
     } else {
       lists = allLists.map(buildList).toList();
     }
+
+    _scrollController = ScrollController()
+      ..addListener(() => _isAppBarExpanded
+          ? setState(() {
+              isAppbarExpand = false;
+            })
+          : setState(() {
+              isAppbarExpand = true;
+            }));
+  }
+
+  bool get _isAppBarExpanded {
+    return _scrollController.hasClients &&
+        _scrollController.offset > (200 - kToolbarHeight);
   }
 
   @override
@@ -52,49 +68,66 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
     int day = widget._day;
     return Scaffold(
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverAppBar(
             expandedHeight: _kAppBarSize,
             pinned: true,
+            floating: false,
             elevation: 0.0,
             backgroundColor: AppStyle.primaryColor,
-            flexibleSpace: Container(
-              padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen, vertical: 15 * _scaleScreen),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xffE9A24A),
-                    Color(0xffF2BE6A),
-                    Color(0xffF6D08B)
-                  ],
-                  end: Alignment.bottomRight,
-                  begin: Alignment.topLeft,
-                ),
-                image: DecorationImage(
-                  image: AssetImage("assets/imgs/appbarBackground.png"),
-                  fit: BoxFit.fill,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                isAppbarExpand ? "" : "Massive upper body",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24 * _scaleFont,
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Massive upper body',
-                    style: GoogleFonts.poppins(
+
+              centerTitle: true,
+              background: Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: 30 * _scaleScreen, vertical: 15 * _scaleScreen),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xffE9A24A),
+                      Color(0xffF2BE6A),
+                      Color(0xffF6D08B)
+                    ],
+                    end: Alignment.bottomRight,
+                    begin: Alignment.topLeft,
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage("assets/imgs/appbarBackground.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Massive upper body',
+                      style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
-                        fontSize: 24 * _scaleFont,),
-                  ),
-                  Text(
-                    'Day ${day.toString()}'.toUpperCase(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 30 * _scaleFont,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                        fontSize: 24 * _scaleFont,
+                      ),
                     ),
-                  ),
-                ],
+                    Text(
+                      'Day ${day.toString()}'.toUpperCase(),
+                      style: GoogleFonts.poppins(
+                        fontSize: 30 * _scaleFont,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -102,7 +135,9 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
             delegate: SliverChildListDelegate(
               [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen, vertical: 20 * _scaleScreen),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 30 * _scaleScreen,
+                      vertical: 20 * _scaleScreen),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -114,8 +149,9 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                                 Text(
                                   '17 minutes',
                                   style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16 * _scaleFont,),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16 * _scaleFont,
+                                  ),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
