@@ -73,3 +73,66 @@ class _TestDataState extends State<TestData> {
     );
   }
 }
+
+
+// // Container(
+// // padding: EdgeInsets.symmetric(
+// // horizontal: 15 * _scaleScreen, vertical: 15 * _scaleScreen),
+// // decoration: BoxDecoration(
+// // color: AppStyle.primaryColor,
+// // borderRadius: AppStyle.appBorder,
+// // ),
+// // child: Column(
+// // children: [
+// // Row(
+// // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// // children: [
+// // Text(
+// // "Weekly Active Days",
+// // style: GoogleFonts.poppins(
+// // fontWeight: FontWeight.bold,
+// // color: AppStyle.whiteColor,
+// // fontSize: 14 * _scaleFont,
+// // ),
+// // ),
+// // Text(
+// // "1/4",
+// // style: GoogleFonts.poppins(
+// // color: AppStyle.whiteColor,
+// // fontSize: 14 * _scaleFont,
+// // ),
+// ),
+// ],
+// ),
+// Container(
+// padding: EdgeInsets.only(top: 10 * _scaleScreen),
+// height: 40 * _scaleScreen,
+// child: ListView.builder(
+// scrollDirection: Axis.horizontal,
+// itemCount: 30,
+// itemBuilder: (context, index) {
+// return Container(
+// margin: EdgeInsets.only(right: index!=29? 8:0),
+// height: 30 * _scaleScreen,
+// width: 30 * _scaleScreen,
+// decoration: BoxDecoration(
+// borderRadius: BorderRadius.circular(100),
+// color: AppStyle.whiteColor,
+// ),
+// child: Center(
+// child: Text(
+// (index + 1).toString(),
+// style: GoogleFonts.poppins(
+// color: AppStyle.primaryColor,
+// fontSize: 14 * _scaleFont,
+// fontWeight: FontWeight.bold,
+// ),
+// ),
+// ),
+// );
+// },
+// ),
+// ),
+// ],
+// ),
+// ),

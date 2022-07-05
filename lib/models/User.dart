@@ -13,12 +13,12 @@ class User{
       this.bodyStatus, this.idTarget);
 
   User.map(dynamic object){
-    this.name = object['Name'];
-    this.gender = object['Gender'];
-    this.age = object['Age'];
-    this.height = double.parse(object['Height'].toString());
-    this.weight = double.parse(object['Weight'].toString());
-    this.bodyStatus = object['BodyStatus'];
-    this.idTarget = object['IdTarget'];
+    name = object['Name'];
+    gender = object['Gender'];
+    age = object['Age'];
+    height = double.parse(object['Height'].toString());
+    weight = double.parse(object['Weight'].toString());
+    bodyStatus = object['BodyStatus'];
+    idTarget = object['IdTarget'];
   }
 }

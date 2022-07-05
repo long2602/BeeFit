@@ -47,7 +47,10 @@ dependencies:
   custom_top_navigator: ^0.0.3
   background_app_bar: ^2.0.1
   shared_preferences: ^2.0.15
+  font_awesome_flutter: ^10.1.0
+  drag_and_drop_lists: ^0.3.2+2
   sqflite: ^2.0.2+1
+  video_player: ^2.4.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

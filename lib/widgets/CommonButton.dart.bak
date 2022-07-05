@@ -11,8 +11,6 @@ class CommonButton extends StatelessWidget {
   final double? width;
   final int? borderRadius;
   final BorderSide? borderSide;
-  final double? elevation;
-  final double? height;
 
   const CommonButton(
       {Key? key,
@@ -22,15 +20,13 @@ class CommonButton extends StatelessWidget {
       required this.textColor,
       this.width,
       this.borderRadius,
-      this.borderSide,
-      this.elevation,
-      this.height})
+      this.borderSide})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height ?? 50 * AppMethods.screenScale(context),
+      height: 50 * AppMethods.screenScale(context),
       width: width ?? double.infinity,
       child: ElevatedButton(
         onPressed: onPressed,
@@ -40,7 +36,6 @@ class CommonButton extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: textColor)),
         style: ElevatedButton.styleFrom(
-          elevation: elevation ?? 2,
           shape: RoundedRectangleBorder(
               side: borderSide ?? BorderSide.none,
               borderRadius: BorderRadius.circular(borderRadius == null
