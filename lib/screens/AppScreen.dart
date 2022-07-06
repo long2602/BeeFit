@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/screens/DailyScreen.dart';
 import 'package:beefit/screens/HomeScreen.dart';
 import 'package:beefit/screens/PlanScreen.dart';
 import 'package:beefit/screens/testData.dart';
@@ -23,7 +24,7 @@ class _AppScreenState extends State<AppScreen> {
     const HomeScreen(),
     const ExerciseScreen(),
     const PlanScreen(),
-    Container(),
+    const DailyScreen(),
     Container(),
   ];
 
@@ -100,7 +101,7 @@ class _AppScreenState extends State<AppScreen> {
         const HomeScreen(),
         const ExerciseScreen(),
         const PlanScreen(),
-        const TestData(),
+        const DailyScreen(),
         Container(),
       ],
       onItemTap: _onItemTapped,

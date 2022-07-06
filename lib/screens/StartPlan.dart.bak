@@ -4,6 +4,7 @@ import 'package:beefit/widgets/CountDownTimerState.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:video_player/video_player.dart';
 import '../constants/AppMethods.dart';
 import '../widgets/TimeLine.dart';
 
@@ -15,17 +16,23 @@ class StartPlan extends StatefulWidget {
 }
 
 class _StartPlanState extends State<StartPlan> {
+  // late VideoPlayerController controller;
   final CountDownTimerState timerState = Get.put(CountDownTimerState());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // controller = VideoPlayerController.network("assets/video.mp4")
+    //   ..addListener(() {})
+    //   ..setLooping(true)
+    //   ..initialize().then((_) => controller.play());
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
+    // controller.dispose();
     super.dispose();
   }
 
@@ -34,10 +41,10 @@ class _StartPlanState extends State<StartPlan> {
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
     return Scaffold(
-      backgroundColor: AppStyle.whiteColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppStyle.primaryColor,
+        backgroundColor: const Color(0xffE4A248),
       ),
       body: GetBuilder<CountDownTimerState>(
         builder: (_) => Column(
@@ -45,20 +52,20 @@ class _StartPlanState extends State<StartPlan> {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Image.network(
                   'https://c.tenor.com/h9W4zejLjTMAAAAC/fit-workout.gif'),
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'Push up'.toUpperCase(),
-                    style: GoogleFonts.poppins(
-                        color: AppStyle.secondaryColor,
+                    style: const TextStyle(
+                        color: Color(0xff022859),
                         fontWeight: FontWeight.w900,
                         fontSize: 24),
                   ),
@@ -80,24 +87,23 @@ class _StartPlanState extends State<StartPlan> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 '00:${timerState.count}',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
-                  color: AppStyle.secondaryColor,
-                  fontSize: 50 * _scaleFont,
-                ),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xff022859),
+                    fontSize: 50),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10 * _scaleScreen),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {},
@@ -105,7 +111,7 @@ class _StartPlanState extends State<StartPlan> {
                         child: Icon(
                           Icons.navigate_before,
                           size: 50,
-                          color: AppStyle.secondaryColor,
+                          color: Color(0xff022859),
                         ),
                       ),
                     ),
@@ -113,7 +119,7 @@ class _StartPlanState extends State<StartPlan> {
                   Container(
                     height: 60,
                     width: 60,
-                    margin: EdgeInsets.symmetric(horizontal: 20 * _scaleScreen),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -144,7 +150,7 @@ class _StartPlanState extends State<StartPlan> {
                                         shape: const CircleBorder(
                                           side: BorderSide.none,
                                         ),
-                                        primary: AppStyle.primaryColor,
+                                        primary: const Color(0xffE4A248),
                                       ),
                                     ),
                                   )
@@ -164,7 +170,7 @@ class _StartPlanState extends State<StartPlan> {
                                         child: Icon(
                                           Icons.pause,
                                           size: 40,
-                                          color: AppStyle.secondaryColor,
+                                          color: Color(0xff022859),
                                         ),
                                       ),
                                       style: ElevatedButton.styleFrom(
@@ -189,7 +195,7 @@ class _StartPlanState extends State<StartPlan> {
                         child: Icon(
                           Icons.navigate_next,
                           size: 50,
-                          color: AppStyle.secondaryColor,
+                          color: Color(0xff022859),
                         ),
                       ),
                     ),
@@ -197,6 +203,22 @@ class _StartPlanState extends State<StartPlan> {
                 ],
               ),
             ),
+            // Row(
+            //   children: [
+            //     ElevatedButton(
+            //       onPressed: () {
+            //         timerState.pause();
+            //       },
+            //       child: const Text('Pause'),
+            //     ),
+            //     ElevatedButton(
+            //       onPressed: () {
+            //         timerState.reset();
+            //       },
+            //       child: const Text('Reset'),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -261,30 +283,54 @@ class _StartPlanState extends State<StartPlan> {
                 SizedBox(
                   height: 50,
                 ),
-                SizedBox(
-                  height: 300,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  'Push up',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  height: 50,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  'Performing hot reload...Syncing files to device Android SDK built for x86...Reloaded 1 of 607 libraries in 687ms.',
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
-              ],
-              indicators: const <Widget>[
-                NodeCircle(),
-                NodeCircle(),
-                NodeCircle(),
-                NodeCircle(),
-              ],
-              lineColor: AppStyle.primaryColor,
-            ),
-            CommonButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              backgroundColor: AppStyle.primaryColor,
-              text: 'Close'.toUpperCase(),
-              textColor: AppStyle.whiteColor,
-            ),
-          ],
+              ),
+              Timeline(
+                children: const <Widget>[
+                  SizedBox(
+                    height: 50,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  SizedBox(
+                    height: 100,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                ],
+                indicators: const <Widget>[
+                  NodeCircle(),
+                  NodeCircle(),
+                  NodeCircle(),
+                  NodeCircle(),
+                ],
+                lineColor: const Color(0xffE4A248),
+              ),
+              CommonButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                backgroundColor: const Color(0xffE4A248),
+                text: 'Close'.toUpperCase(),
+                textColor: Colors.white,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -303,10 +349,10 @@ class NodeCircle extends StatelessWidget {
         height: 22,
         width: 22,
         decoration: BoxDecoration(
-          color: AppStyle.whiteColor,
+          color: Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppStyle.primaryColor,
+            color: const Color(0xffE4A248),
             width: 1,
           ),
         ),
@@ -323,4 +369,36 @@ class NodeCircle extends StatelessWidget {
       ),
     );
   }
+}
+
+class VideoPlayer extends StatelessWidget {
+  VideoPlayerController _controller;
+
+  VideoPlayer({required VideoPlayerController controller, Key? key})
+      : _controller = controller,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return _controller != null && _controller.value.isInitialized
+        ? Container(
+            alignment: Alignment.topCenter,
+            child: buildVideo(),
+          )
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Container(
+              height: 400,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          );
+  }
+
+  Widget buildVideo() => buildVideoPlayer();
+
+  Widget buildVideoPlayer() => VideoPlayer(controller: _controller);
 }
