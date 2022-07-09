@@ -45,13 +45,13 @@ class _StartPlanState extends State<StartPlan> {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Image.network(
                   'https://c.tenor.com/h9W4zejLjTMAAAAC/fit-workout.gif'),
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -59,8 +59,8 @@ class _StartPlanState extends State<StartPlan> {
                     'Push up'.toUpperCase(),
                     style: GoogleFonts.poppins(
                         color: AppStyle.secondaryColor,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 24),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24 * _scaleFont),
                   ),
                   IconButton(
                     onPressed: () => showModalBottomSheet(
@@ -84,20 +84,20 @@ class _StartPlanState extends State<StartPlan> {
               child: Text(
                 '00:${timerState.count}',
                 style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w900,
                   color: AppStyle.secondaryColor,
                   fontSize: 50 * _scaleFont,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10 * _scaleScreen),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {},
@@ -197,6 +197,22 @@ class _StartPlanState extends State<StartPlan> {
                 ],
               ),
             ),
+            // Row(
+            //   children: [
+            //     ElevatedButton(
+            //       onPressed: () {
+            //         timerState.pause();
+            //       },
+            //       child: const Text('Pause'),
+            //     ),
+            //     ElevatedButton(
+            //       onPressed: () {
+            //         timerState.reset();
+            //       },
+            //       child: const Text('Reset'),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -239,18 +255,19 @@ class _StartPlanState extends State<StartPlan> {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
                 'Push up',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.poppins(
+                    fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
                 'Performing hot reload...Syncing files to device Android SDK built for x86...Reloaded 1 of 607 libraries in 687ms.',
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: GoogleFonts.poppins(color: Colors.grey, fontSize: 14),
               ),
             ),
             Timeline(
