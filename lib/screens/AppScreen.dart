@@ -3,6 +3,7 @@
 import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/DailyScreen.dart';
 import 'package:beefit/screens/HomeScreen.dart';
+import 'package:beefit/screens/DetailPlanScreen.dart';
 import 'package:beefit/screens/PlanScreen.dart';
 import 'package:beefit/screens/testData.dart';
 import 'package:custom_top_navigator/custom_navigation.dart';
@@ -106,6 +107,5 @@ class _AppScreenState extends State<AppScreen> {
       ],
       onItemTap: _onItemTapped,
     );
-
   }
 }

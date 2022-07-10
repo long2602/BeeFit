@@ -94,14 +94,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (_) =>
-                        //           const DetailExerciseScreen()),
-                        // );
-                        Get.to(const DetailExerciseScreen());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const DetailExerciseScreen()),
+                        );
                       },
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -112,9 +109,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           color: AppStyle.primaryColor,
                         ),
                         child: Row(
-                          children: [
-                            
-                          ],
+                          children: [],
                         ),
                       ),
                     );

@@ -16,7 +16,7 @@ class AppStyle {
   static const String buildMuscle = imagePath + 'buildmuscle.svg';
 
   //color
-  // static const Color primaryColor1 = Color(0xffE9A24A);
+  static const Color primaryColor2 = Color(0xffF6CF8D);
   static const Color primaryColor = Color(0xffE4A248);
   static const Color secondaryColor = Color(0xff022859);
   static const Color accent1Color = Color(0xff1d3d59);

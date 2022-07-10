@@ -4,7 +4,10 @@ import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../constants/AppMethods.dart';
 
@@ -90,19 +93,123 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: AppStyle.whiteColor,
                   borderRadius: AppStyle.appBorder,
-                  boxShadow: const [
+                  color: AppStyle.whiteColor,
+                  boxShadow: [
                     BoxShadow(
-                      color: AppStyle.gray5Color,
-                      blurRadius: 20.0,
-                      offset: Offset(0, 0),
-                      spreadRadius: 1,
+                      color: AppStyle.gray5Color.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 2), // changes position of shadow
                     ),
                   ],
                 ),
-                child: Row(
-                  children: [],
+                child: Padding(
+                  padding: EdgeInsets.all(16 * _scaleScreen),
+                  child: Row(
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10 * _scaleScreen),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    left: BorderSide(
+                                        color: AppStyle.infoColor,
+                                        width: 2 * _scaleScreen))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/imgs/svg/food.svg',
+                                    ),
+                                    SizedBox(
+                                      width: 4 * _scaleScreen,
+                                    ),
+                                    Text(
+                                      'Eaten',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14 * _scaleScreen,
+                                        color: AppStyle.secondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                // LinearProgressIndicator(
+                                //   backgroundColor: AppStyle.gray5Color,
+                                //   color: AppStyle.primaryColor,
+                                //   value: 46 / 158,
+                                // ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '1265',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20 * _scaleScreen,
+                                        color: AppStyle.secondaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 4 * _scaleScreen,
+                                    ),
+                                    Text(
+                                      'kCal',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14 * _scaleScreen,
+                                        color: AppStyle.secondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Column(
+                              children: [],
+                            ),
+                          ),
+                        ],
+                      ),
+                      CircularPercentIndicator(
+                        radius: 68 * AppMethods.screenScale(context),
+                        lineWidth: 15,
+                        animation: true,
+                        percent: 0.7,
+                        center: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "1625",
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      (26.0 * AppMethods.fontScale(context)),
+                                  color: AppStyle.primaryColor),
+                            ),
+                            Text(
+                              "kCal Left",
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize:
+                                      (12 * AppMethods.fontScale(context)),
+                                  color: AppStyle.secondaryColor),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: const Color(0xffebebeb),
+                        circularStrokeCap: CircularStrokeCap.round,
+                        progressColor: AppStyle.primaryColor,
+                        animationDuration: 1000,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -132,16 +239,17 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child: Image.asset('assets/imgs/fitness1.png',fit: BoxFit.cover),
+                child: Image.asset('assets/imgs/fitness1.png',
+                    width: double.infinity, fit: BoxFit.fill),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: 16* _scaleScreen),
+              padding: EdgeInsets.only(bottom: 16 * _scaleScreen),
               child: ButtonMain(
                 onPressed: () {},
                 backgroundColor: AppStyle.gray5Color,
                 text: 'Explore all plans',
-                textColor: AppStyle.black1Color,
+                textColor: AppStyle.gray2Color,
                 height: 40 * _scaleScreen,
               ),
             ),

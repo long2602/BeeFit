@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../tests/utils.dart';
+import 'dart:collection';
 
 import '../constants/AppMethods.dart';
 
@@ -15,12 +17,93 @@ class DailyScreen extends StatefulWidget {
 }
 
 class _DailyScreenState extends State<DailyScreen> {
+  late final PageController _pageController;
+  late final ValueNotifier<List<Event>> _selectedEvents;
+  final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
+  final Set<DateTime> _selectedDays = LinkedHashSet<DateTime>(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
+  DateTime? _rangeStart;
+  DateTime? _rangeEnd;
+
   TabBar get _tabBar => const TabBar(
         tabs: [
           Tab(text: 'Workout'),
           Tab(text: 'Nutrition'),
         ],
       );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectedDays.add(_focusedDay.value);
+    _selectedEvents = ValueNotifier(_getEventsForDay(_focusedDay.value));
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _focusedDay.dispose();
+    _selectedEvents.dispose();
+  }
+
+  bool get canClearSelection =>
+      _selectedDays.isNotEmpty || _rangeStart != null || _rangeEnd != null;
+
+  List<Event> _getEventsForDay(DateTime day) {
+    return kEvents[day] ?? [];
+  }
+
+  List<Event> _getEventsForDays(Iterable<DateTime> days) {
+    return [
+      for (final d in days) ..._getEventsForDay(d),
+    ];
+  }
+
+  List<Event> _getEventsForRange(DateTime start, DateTime end) {
+    final days = daysInRange(start, end);
+    return _getEventsForDays(days);
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      if (_selectedDays.contains(selectedDay)) {
+        _selectedDays.remove(selectedDay);
+      } else {
+        _selectedDays.add(selectedDay);
+      }
+
+      _focusedDay.value = focusedDay;
+      _rangeStart = null;
+      _rangeEnd = null;
+      _rangeSelectionMode = RangeSelectionMode.toggledOff;
+    });
+
+    _selectedEvents.value = _getEventsForDays(_selectedDays);
+  }
+
+  void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+    setState(() {
+      _focusedDay.value = focusedDay;
+      _rangeStart = start;
+      _rangeEnd = end;
+      _selectedDays.clear();
+      _rangeSelectionMode = RangeSelectionMode.toggledOn;
+    });
+
+    if (start != null && end != null) {
+      _selectedEvents.value = _getEventsForRange(start, end);
+    } else if (start != null) {
+      _selectedEvents.value = _getEventsForDay(start);
+    } else if (end != null) {
+      _selectedEvents.value = _getEventsForDay(end);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +257,62 @@ class _DailyScreenState extends State<DailyScreen> {
                         ],
                       ),
                     ),
-                    TableCalendar(
-                      firstDay: DateTime.utc(2010, 10, 16),
-                      lastDay: DateTime.utc(2030, 3, 14),
-                      focusedDay: DateTime.now(),
-                      calendarStyle: CalendarStyle(),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8 * _scaleScreen,
+                          horizontal: 10 * _scaleScreen),
+                      decoration: BoxDecoration(
+                        borderRadius: AppStyle.appBorder,
+                        color: AppStyle.whiteColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppStyle.gray5Color.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 2), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: TableCalendar<Event>(
+                        firstDay: kFirstDay,
+                        lastDay: kLastDay,
+                        focusedDay: _focusedDay.value,
+                        headerVisible: true,
+                        selectedDayPredicate: (day) =>
+                            _selectedDays.contains(day),
+                        // rangeStartDay: _rangeStart,
+                        // rangeEndDay: _rangeEnd,
+                        calendarFormat: _calendarFormat,
+                        // rangeSelectionMode: _rangeSelectionMode,
+                        // eventLoader: _getEventsForDay,
+                        // holidayPredicate: (day) {
+                        //   // Every 20th day of the month will be treated as a holiday
+                        //   return day.day == 20;
+                        // },
+                        onDaySelected: _onDaySelected,
+                        // onRangeSelected: _onRangeSelected,
+                        // onCalendarCreated: (controller) =>
+                        //     _pageController = controller,
+                        onPageChanged: (focusedDay) =>
+                            _focusedDay.value = focusedDay,
+                        onFormatChanged: (format) {
+                          if (_calendarFormat != format) {
+                            setState(() => _calendarFormat = format);
+                          }
+                        },
+                        calendarStyle: const CalendarStyle(
+                          selectedDecoration: BoxDecoration(
+                            color: AppStyle.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          todayDecoration: BoxDecoration(
+                            color: AppStyle.secondaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

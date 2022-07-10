@@ -7,7 +7,7 @@ import '../constants/AppStyles.dart';
 import '../tests/data.dart';
 import '../tests/model.dart';
 import '../widgets/CommonButton.dart';
-import 'StartPlan.dart';
+import 'StartPlanScreen.dart';
 
 class DayDetailScreen extends StatefulWidget {
   final int _day;
@@ -86,7 +86,6 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                   fontSize: 24 * _scaleFont,
                 ),
               ),
-
               centerTitle: true,
               background: Container(
                 padding: EdgeInsets.symmetric(
