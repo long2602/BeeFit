@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/AppStyles.dart';
-import '../tests/data.dart';
-import '../tests/model.dart';
+import '../controls//data.dart';
+import '../controls//model.dart';
 import '../widgets/CommonButton.dart';
 import 'StartPlanScreen.dart';
 

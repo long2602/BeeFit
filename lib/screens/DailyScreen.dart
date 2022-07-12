@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../tests/utils.dart';
+import 'package:beefit/controls/utils.dart';
 import 'dart:collection';
 
 import '../constants/AppMethods.dart';

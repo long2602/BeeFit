@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/controls/NotificationAPI.dart';
 import 'package:beefit/screens/DailyScreen.dart';
 import 'package:beefit/screens/HomeScreen.dart';
 import 'package:beefit/screens/DetailPlanScreen.dart';
@@ -33,6 +34,13 @@ class _AppScreenState extends State<AppScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    NotificationApi.init(initScheduled: true);
   }
 
   @override
