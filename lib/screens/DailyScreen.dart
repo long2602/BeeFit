@@ -1,13 +1,16 @@
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/nutrition/Ingredient.dart';
 import 'package:beefit/screens/AddFoodScreen.dart';
+import 'package:beefit/screens/SearchScreen/SearchFoodScreen.dart';
+import 'package:beefit/screens/testData.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:beefit/controls/utils.dart';
 import 'dart:collection';
-
 import '../constants/AppMethods.dart';
+import 'DetailFoodScreen.dart';
 
 class DailyScreen extends StatefulWidget {
   const DailyScreen({Key? key}) : super(key: key);
@@ -130,7 +133,12 @@ class _DailyScreenState extends State<DailyScreen> {
               ),
               IconButton(
                 padding: EdgeInsets.zero,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchScreen()),
+                  );
+                },
                 icon: Icon(
                   Icons.search,
                   size: 24 * _scaleScreen,
@@ -556,7 +564,15 @@ class _DailyScreenState extends State<DailyScreen> {
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => DetailFoodScreen(
+                                        ingredient:
+                                            Ingredient.fromMap(testMap))),
+                              );
+                            },
                             child: Row(
                               children: [
                                 Icon(

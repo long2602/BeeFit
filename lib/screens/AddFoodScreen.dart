@@ -1,8 +1,10 @@
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/constants/AppStyles.dart';
-import 'package:beefit/models/exercise.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controls/ApiService.dart';
+import '../models/nutrition/Ingredient.dart';
+import 'DetailFoodScreen.dart';
 
 class AddFoodScreen extends StatefulWidget {
   const AddFoodScreen({Key? key}) : super(key: key);
@@ -12,6 +14,20 @@ class AddFoodScreen extends StatefulWidget {
 }
 
 class _AddFoodScreenState extends State<AddFoodScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  ResultIngredients? _resultIngredients;
+  String _keyword = "";
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _scaleFont = AppMethods.fontScale(context);
@@ -19,6 +35,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: AppStyle.gray5Color.withOpacity(0.25),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: AppStyle.primaryColor,
@@ -45,6 +62,12 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(50)),
                   color: AppStyle.primaryColor2),
               child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _keyword = value;
+                  });
+                },
                 style: GoogleFonts.poppins(
                     color: AppStyle.whiteColor, fontWeight: FontWeight.w500),
                 decoration: const InputDecoration(
@@ -69,7 +92,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
           children: [
             TabBar(
               tabs: const [
-                Tab(text: 'Recent'),
+                Tab(text: 'All'),
                 Tab(text: 'My food'),
               ],
               labelStyle: GoogleFonts.poppins(
@@ -83,7 +106,92 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  Container(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: FutureBuilder(
+                      future: ApiService.instance.searchIngredient(_keyword),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            _resultIngredients =
+                                snapshot.data as ResultIngredients;
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30 * _scaleScreen,
+                              ),
+                              child: ListView.builder(
+                                itemCount:
+                                    _resultIngredients!.ingredients.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => DetailFoodScreen(
+                                                ingredient: _resultIngredients!
+                                                    .ingredients[index])),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 6 * _scaleScreen),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16 * _scaleScreen,
+                                          vertical: 12 * _scaleScreen),
+                                      decoration: BoxDecoration(
+                                        color: AppStyle.whiteColor,
+                                        borderRadius: AppStyle.appBorder,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.network(
+                                            _resultIngredients!
+                                                .ingredients[index].image,
+                                            width: 50 * _scaleScreen,
+                                            height: 50 * _scaleScreen,
+                                            fit: BoxFit.fill,
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8 * _scaleScreen),
+                                              child: Text(
+                                                _resultIngredients!
+                                                    .ingredients[index].name,
+                                                style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      AppStyle.secondaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.add_circle,
+                                            color: AppStyle.gray4Color,
+                                            size: 30 * _scaleScreen,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        } else if (snapshot.hasError) {
+                          return const Text('no data');
+                        }
+                        return Center(child: const CircularProgressIndicator());
+                      },
+                    ),
+                  ),
                   Container(),
                 ],
               ),

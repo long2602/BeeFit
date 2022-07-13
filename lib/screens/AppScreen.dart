@@ -1,12 +1,9 @@
 // ignore_for_file: file_names
 
 import 'package:beefit/constants/AppStyles.dart';
-import 'package:beefit/controls/NotificationAPI.dart';
 import 'package:beefit/screens/DailyScreen.dart';
 import 'package:beefit/screens/HomeScreen.dart';
-import 'package:beefit/screens/DetailPlanScreen.dart';
 import 'package:beefit/screens/PlanScreen.dart';
-import 'package:beefit/screens/testData.dart';
 import 'package:custom_top_navigator/custom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -40,7 +37,6 @@ class _AppScreenState extends State<AppScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    NotificationApi.init(initScheduled: true);
   }
 
   @override
