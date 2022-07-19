@@ -100,6 +100,7 @@ class Ingredient {
   final double? amount;
   final String image;
   final Nutrition? nutrition;
+  final List<String>? possibleUnits;
 
   Ingredient({
     required this.id,
@@ -107,9 +108,12 @@ class Ingredient {
     this.amount,
     required this.image,
     this.nutrition,
+    this.possibleUnits,
   });
 
   factory Ingredient.fromMap(Map<String, dynamic> map) {
+    List<String> list = [];
+    map['possibleUnits'].forEach((unit) => list.add(unit));
     //Meal object
     return Ingredient(
       name: map['name'],
@@ -118,6 +122,7 @@ class Ingredient {
       image: 'https://spoonacular.com/cdn/ingredients_500x500/' + map['image'],
       nutrition:
           map['nutrition'] != null ? Nutrition.fromMap(map['nutrition']) : null,
+      possibleUnits: list,
     );
   }
 }
