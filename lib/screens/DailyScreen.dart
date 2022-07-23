@@ -566,12 +566,11 @@ class _DailyScreenState extends State<DailyScreen> {
                           ElevatedButton(
                             onPressed: () {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => DetailFoodScreen(
-                                        ingredient:
-                                            Ingredient.fromMap(testMap))),
-                              );
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => DetailFoodScreen(
+                                          ingredient:
+                                              Ingredient.fromMap(testMap))));
                             },
                             child: Row(
                               children: [

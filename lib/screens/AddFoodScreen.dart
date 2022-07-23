@@ -152,7 +152,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                         children: [
                                           Image.network(
                                             _resultIngredients!
-                                                .ingredients[index].image,
+                                                .ingredients[index].image!,
                                             width: 50 * _scaleScreen,
                                             height: 50 * _scaleScreen,
                                             fit: BoxFit.fill,
@@ -163,7 +163,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                                   horizontal: 8 * _scaleScreen),
                                               child: Text(
                                                 _resultIngredients!
-                                                    .ingredients[index].name,
+                                                    .ingredients[index].name!,
                                                 style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.bold,
                                                   color:

@@ -95,25 +95,27 @@ class Nutrition {
 }
 
 class Ingredient {
-  final int id;
-  final String name;
+  final int? id;
+  final String? name;
   final double? amount;
-  final String image;
+  final String? image;
   final Nutrition? nutrition;
   final List<String>? possibleUnits;
 
   Ingredient({
-    required this.id,
-    required this.name,
+    this.id,
+    this.name,
     this.amount,
-    required this.image,
+    this.image,
     this.nutrition,
     this.possibleUnits,
   });
 
   factory Ingredient.fromMap(Map<String, dynamic> map) {
     List<String> list = [];
-    map['possibleUnits'].forEach((unit) => list.add(unit));
+    if (null != map['possibleUnits']) {
+      map['possibleUnits'].forEach((unit) => list.add(unit));
+    }
     //Meal object
     return Ingredient(
       name: map['name'],
