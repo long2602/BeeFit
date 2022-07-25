@@ -44,7 +44,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
   @override
   Widget build(BuildContext context) {
     final NutritionController _nutritionController =
-        Get.put(NutritionController(iD: widget._ingredient!.id.toString()));
+        Get.put(NutritionController(iD: widget._ingredient.id.toString()));
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
 

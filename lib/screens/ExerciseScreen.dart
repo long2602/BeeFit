@@ -117,6 +117,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
                       child: ListTile(
+                        onTap: () {},
                         tileColor: AppStyle.gray5Color.withOpacity(0.5),
                         shape: RoundedRectangleBorder(
                           borderRadius: AppStyle.appBorder,
@@ -140,84 +141,92 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppStyle.whiteColor,
-                                  borderRadius: AppStyle.appBorder,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.play_arrow,
-                                      color: AppStyle.secondaryColor,
-                                      size: 18 * _scaleFont,
-                                    ),
-                                    SizedBox(
-                                      width: 6 * _scaleScreen,
-                                    ),
-                                    Text(
-                                      "10 min",
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.bold,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppStyle.whiteColor,
+                                    borderRadius: AppStyle.appBorder,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.play_arrow,
                                         color: AppStyle.secondaryColor,
-                                        fontSize: 12 * _scaleFont,
+                                        size: 18 * _scaleFont,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12 * _scaleScreen,
-                                  vertical: 4 * _scaleScreen,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10 * _scaleScreen,
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppStyle.whiteColor,
-                                  borderRadius: AppStyle.appBorder,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/imgs/fire.png",
-                                      width: 12 * _scaleScreen,
-                                      height: 12 * _scaleScreen,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    SizedBox(
-                                      width: 10 * _scaleScreen,
-                                    ),
-                                    Text(
-                                      "100 kcal",
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppStyle.secondaryColor,
-                                        fontSize: 12 * _scaleFont,
+                                      SizedBox(
+                                        width: 6 * _scaleScreen,
                                       ),
-                                    ),
-                                  ],
+                                      Text(
+                                        "10 min",
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppStyle.secondaryColor,
+                                          fontSize: 12 * _scaleFont,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12 * _scaleScreen,
+                                    vertical: 4 * _scaleScreen,
+                                  ),
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12 * _scaleScreen,
-                                  vertical: 4 * _scaleScreen,
+                                SizedBox(
+                                  width: 10 * _scaleScreen,
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppStyle.whiteColor,
+                                    borderRadius: AppStyle.appBorder,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/imgs/fire.png",
+                                        width: 12 * _scaleScreen,
+                                        height: 12 * _scaleScreen,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      SizedBox(
+                                        width: 10 * _scaleScreen,
+                                      ),
+                                      Text(
+                                        "100 kcal",
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppStyle.secondaryColor,
+                                          fontSize: 12 * _scaleFont,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12 * _scaleScreen,
+                                    vertical: 4 * _scaleScreen,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 16),
-                        trailing: const Icon(
-                          Icons.favorite_border_outlined,
-                          color: AppStyle.secondaryColor,
+                        trailing: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.favorite_border_outlined,
+                            color: AppStyle.secondaryColor,
+                          ),
                         ),
                       ),
                     );
