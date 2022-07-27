@@ -21,13 +21,27 @@ class PauseScreen extends StatelessWidget {
         backgroundColor: AppStyle.primaryColor,
         automaticallyImplyLeading: false,
         elevation: 0,
-        actions: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {},
-            icon: const Icon(Icons.list),
+        titleSpacing: 0,
+        title: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () => showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    builder: (context) => buildSheet()),
+                icon: const Icon(Icons.list),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -99,6 +113,74 @@ class PauseScreen extends StatelessWidget {
                   ],
                 )
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSheet() {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.9,
+      minChildSize: 0.5,
+      maxChildSize: 0.9,
+      snap: false,
+      builder: (_, scrollController) => Container(
+        padding: const EdgeInsets.fromLTRB(30, 20, 30, 30),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Exercises',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    color: AppStyle.secondaryColor,
+                    fontSize: 24,
+                  ),
+                ),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.cancel))
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: false,
+                primary: true,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: ListTile(
+                      onTap: () {},
+                      tileColor: AppStyle.gray5Color.withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: AppStyle.appBorder,
+                      ),
+                      leading: ClipRRect(
+                        borderRadius: AppStyle.appBorder,
+                        child: Image.asset(
+                          "assets/imgs/fitness1.png",
+                          height: 60,
+                          width: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      title: Text(
+                        "Arm Circle".toUpperCase(),
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          color: AppStyle.secondaryColor,
+                          fontSize: 18,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 16),
+                    ),
+                  );
+                },
+                itemCount: 9,
+              ),
             ),
           ],
         ),

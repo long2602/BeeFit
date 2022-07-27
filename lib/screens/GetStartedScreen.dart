@@ -288,6 +288,14 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                           {
                             {
                               if (_formKey2.currentState!.validate()) {
+                                var _calo = _BMRCalculate(
+                                    weight: _currentWeight.toDouble(),
+                                    height: _currentHeight.toDouble());
+                                var _newCalo = _BMRCalculate(
+                                    weight: _idealWeight.toDouble(),
+                                    height: _currentHeight.toDouble());
+                                print('[CALO]: $_calo & new $_newCalo');
+
                                 // Navigator.pushReplacement(
                                 //     context,
                                 //     AppMethods.animatedRoute(

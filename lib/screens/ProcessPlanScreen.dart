@@ -2,6 +2,7 @@ import 'package:beefit/constants/AppMethods.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/AppStyles.dart';
 import '../controls//data.dart';
@@ -279,11 +280,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                       ),
                       CommonButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const StartPlan()),
-                          );
+                          Get.to(const StartPlan());
                         },
                         backgroundColor: const Color(0xffE4A248),
                         text: 'start'.toUpperCase(),
