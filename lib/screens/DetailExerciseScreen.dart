@@ -1,20 +1,44 @@
 // ignore_for_file: file_names
 
+import 'package:beefit/models/exercise.dart';
+import 'package:beefit/models/instruction.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:video_player/video_player.dart';
+import '../models/databaseHelper.dart';
 import '../widgets/TimeLine.dart';
 
 import '../constants/AppMethods.dart';
 import '../constants/AppStyles.dart';
 
 class DetailExerciseScreen extends StatefulWidget {
-  const DetailExerciseScreen({Key? key}) : super(key: key);
+  final Exercise _exercise;
+  const DetailExerciseScreen({required Exercise exercise, Key? key})
+      : _exercise = exercise,
+        super(key: key);
 
   @override
   State<DetailExerciseScreen> createState() => _DetailExerciseScreenState();
 }
 
 class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
+  late Exercise exercise;
+  late VideoPlayerController _controller;
+  DatabaseHelper databaseHelper = DatabaseHelper.instance;
+  List<Instruction> lists = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    exercise = widget._exercise;
+    _controller =
+        VideoPlayerController.asset('assets/imgs/video/videoTest.mp4');
+    _controller.setLooping(true);
+    _controller.initialize().then((_) => setState(() {}));
+    _controller.play();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _scaleFont = AppMethods.fontScale(context);
@@ -23,8 +47,6 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
       backgroundColor: AppStyle.whiteColor,
       appBar: AppBar(
         elevation: 0,
-        titleSpacing: 30,
-        automaticallyImplyLeading: false,
         backgroundColor: AppStyle.whiteColor,
         title: Text(
           'Exercise',
@@ -34,6 +56,7 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
             fontSize: 24 * _scaleFont,
           ),
         ),
+        leading: const BackButton(color: AppStyle.secondaryColor),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -44,7 +67,13 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Image.asset("assets/imgs/fitness1.png"),
+                child: ClipRRect(
+                  borderRadius: AppStyle.appBorder,
+                  child: AspectRatio(
+                    aspectRatio: _controller.value.aspectRatio,
+                    child: VideoPlayer(_controller),
+                  ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -53,7 +82,7 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Jumping Jack',
+                      exercise.name,
                       style: GoogleFonts.poppins(
                         fontSize: 18 * _scaleFont,
                         fontWeight: FontWeight.w600,
@@ -86,7 +115,7 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
                       ),
                     ),
                     Text(
-                      'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide Read More...',
+                      exercise.description,
                       style: GoogleFonts.poppins(
                         fontSize: 12 * _scaleFont,
                         fontWeight: FontWeight.w500,
@@ -96,132 +125,85 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'How to do it',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18 * _scaleFont,
-                        fontWeight: FontWeight.w600,
-                        color: AppStyle.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      '4 steps',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12 * _scaleFont,
-                        fontWeight: FontWeight.w500,
-                        color: AppStyle.gray3Color,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Timeline(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Spread Your Arms",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w500,
-                            color: AppStyle.black1Color,
+              FutureBuilder(
+                future:
+                    databaseHelper.getInstructionsByIdExercise(exercise.id!),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      lists = snapshot.data as List<Instruction>;
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'How to do it',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18 * _scaleFont,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppStyle.secondaryColor,
+                                  ),
+                                ),
+                                Text(
+                                  '${lists.length} steps',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12 * _scaleFont,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppStyle.gray3Color,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        Text(
-                          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands.",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xff7B6F72),
+                          Timeline(
+                            children: <Widget>[
+                              for (Instruction item in lists)
+                                Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Step ${item.step}",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14 * _scaleFont,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppStyle.black1Color,
+                                        ),
+                                      ),
+                                      Text(
+                                        item.detail,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14 * _scaleFont,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xff7B6F72),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                            indicators: <Widget>[
+                              for (Instruction item in lists)
+                                const NodeCircle(),
+                            ],
+                            lineColor: AppStyle.primaryColor,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Spread Your Arms",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w500,
-                            color: AppStyle.black1Color,
-                          ),
-                        ),
-                        Text(
-                          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands.",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xff7B6F72),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Spread Your Arms",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w500,
-                            color: AppStyle.black1Color,
-                          ),
-                        ),
-                        Text(
-                          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands.",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xff7B6F72),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Spread Your Arms",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w500,
-                            color: AppStyle.black1Color,
-                          ),
-                        ),
-                        Text(
-                          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands.",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14 * _scaleFont,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xff7B6F72),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                indicators: const <Widget>[
-                  NodeCircle(),
-                  NodeCircle(),
-                  NodeCircle(),
-                  NodeCircle(),
-                ],
-                lineColor: AppStyle.primaryColor,
+                        ],
+                      );
+                    }
+                  } else if (snapshot.hasError) {
+                    return const Text('no data');
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
               ),
             ],
           ),

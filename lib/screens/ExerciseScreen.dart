@@ -2,14 +2,18 @@
 
 import 'package:beefit/screens/DetailExerciseScreen.dart';
 import 'package:beefit/screens/GetStartedScreen.dart';
+import 'package:beefit/screens/testData.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:video_player/video_player.dart';
 
 import '../constants/AppMethods.dart';
 import '../constants/AppStyles.dart';
+import '../models/databaseHelper.dart';
+import '../models/exercise.dart';
 
 class ExerciseScreen extends StatefulWidget {
   const ExerciseScreen({Key? key}) : super(key: key);
@@ -87,186 +91,180 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           ),
           body: TabBarView(
             children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    30 * _scaleScreen, 20 * _scaleScreen, 30 * _scaleScreen, 0),
-                child: ListView.builder(
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    // return InkWell(
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (_) => const DetailExerciseScreen()),
-                    //     );
-                    //   },
-                    //   child: Container(
-                    //     margin: const EdgeInsets.symmetric(vertical: 4),
-                    //     padding: const EdgeInsets.symmetric(
-                    //         vertical: 6, horizontal: 12),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: AppStyle.appBorder,
-                    //       color: AppStyle.gray5Color,
-                    //     ),
-                    //     child: Row(
-                    //       children: [],
-                    //     ),
-                    //   ),
-                    // );
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
-                      child: ListTile(
-                        onTap: () {},
-                        tileColor: AppStyle.gray5Color.withOpacity(0.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppStyle.appBorder,
-                        ),
-                        leading: ClipRRect(
-                          borderRadius: AppStyle.appBorder,
-                          child: Image.asset(
-                            "assets/imgs/fitness1.png",
-                            height: 60 * _scaleScreen,
-                            width: 60 * _scaleScreen,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        title: Text(
-                          "Arm Circle".toUpperCase(),
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            color: AppStyle.secondaryColor,
-                            fontSize: 18 * _scaleFont,
-                          ),
-                        ),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppStyle.whiteColor,
-                                    borderRadius: AppStyle.appBorder,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.play_arrow,
-                                        color: AppStyle.secondaryColor,
-                                        size: 18 * _scaleFont,
-                                      ),
-                                      SizedBox(
-                                        width: 6 * _scaleScreen,
-                                      ),
-                                      Text(
-                                        "10 min",
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppStyle.secondaryColor,
-                                          fontSize: 12 * _scaleFont,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12 * _scaleScreen,
-                                    vertical: 4 * _scaleScreen,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10 * _scaleScreen,
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppStyle.whiteColor,
-                                    borderRadius: AppStyle.appBorder,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/imgs/fire.png",
-                                        width: 12 * _scaleScreen,
-                                        height: 12 * _scaleScreen,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      SizedBox(
-                                        width: 10 * _scaleScreen,
-                                      ),
-                                      Text(
-                                        "100 kcal",
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppStyle.secondaryColor,
-                                          fontSize: 12 * _scaleFont,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12 * _scaleScreen,
-                                    vertical: 4 * _scaleScreen,
-                                  ),
-                                ),
-                              ],
+              TabExercise(),
+              TabExercise(),
+              TabExercise(),
+              TabExercise(),
+              TabExercise(),
+            ],
+          )),
+    );
+  }
+}
+
+class TabExercise extends StatefulWidget {
+  const TabExercise({Key? key}) : super(key: key);
+
+  @override
+  State<TabExercise> createState() => _TabExerciseState();
+}
+
+class _TabExerciseState extends State<TabExercise> {
+  DatabaseHelper databaseHelper = DatabaseHelper.instance;
+  List<Exercise> lists = [];
+
+  @override
+  Widget build(BuildContext context) {
+    final _scaleFont = AppMethods.fontScale(context);
+    final _scaleScreen = AppMethods.screenScale(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+      child: FutureBuilder(
+        future: databaseHelper.getExercises(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              lists = snapshot.data as List<Exercise>;
+              return ListView.builder(
+                itemCount: lists.length,
+                itemBuilder: (context, index) {
+                  Exercise exercise = lists[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailExerciseScreen(
+                              exercise: exercise,
                             ),
                           ),
+                        );
+                      },
+                      tileColor: AppStyle.gray5Color.withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: AppStyle.appBorder,
+                      ),
+                      leading: ClipRRect(
+                        borderRadius: AppStyle.appBorder,
+                        child: Image.network(
+                          "https://i.pinimg.com/originals/e0/d6/2e/e0d62e32eba3542552e83bdea5ff95e8.gif",
+                          height: 60 * _scaleScreen,
+                          width: 60 * _scaleScreen,
+                          fit: BoxFit.cover,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 16),
-                        trailing: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.favorite_border_outlined,
-                            color: AppStyle.secondaryColor,
+                      ),
+                      title: Text(
+                        exercise.name.toUpperCase(),
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          color: AppStyle.secondaryColor,
+                          fontSize: 18 * _scaleFont,
+                        ),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: AppStyle.whiteColor,
+                                  borderRadius: AppStyle.appBorder,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.play_arrow,
+                                      color: AppStyle.secondaryColor,
+                                      size: 18 * _scaleFont,
+                                    ),
+                                    SizedBox(
+                                      width: 6 * _scaleScreen,
+                                    ),
+                                    Text(
+                                      "10 min",
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppStyle.secondaryColor,
+                                        fontSize: 12 * _scaleFont,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12 * _scaleScreen,
+                                  vertical: 4 * _scaleScreen,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10 * _scaleScreen,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: AppStyle.whiteColor,
+                                  borderRadius: AppStyle.appBorder,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/imgs/fire.png",
+                                      width: 12 * _scaleScreen,
+                                      height: 12 * _scaleScreen,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    SizedBox(
+                                      width: 10 * _scaleScreen,
+                                    ),
+                                    Text(
+                                      "100 kcal",
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppStyle.secondaryColor,
+                                        fontSize: 12 * _scaleFont,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12 * _scaleScreen,
+                                  vertical: 4 * _scaleScreen,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [],
-                  ),
-                ),
-              ),
-            ],
-          )),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 16),
+                      trailing: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.favorite_border_outlined,
+                          color: AppStyle.secondaryColor,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          } else if (snapshot.hasError) {
+            return const Text('no data');
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 }

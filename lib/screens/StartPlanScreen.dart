@@ -7,27 +7,37 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/AppMethods.dart';
 import '../widgets/TimeLine.dart';
+import 'package:video_player/video_player.dart';
 
 class StartPlan extends StatefulWidget {
   const StartPlan({Key? key}) : super(key: key);
-
   @override
   _StartPlanState createState() => _StartPlanState();
 }
 
 class _StartPlanState extends State<StartPlan> {
   final CountDownTimerState timerState = Get.put(CountDownTimerState());
+  late VideoPlayerController _controller;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _controller =
+        VideoPlayerController.asset('assets/imgs/video/videoTest.mp4');
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.setLooping(true);
+    _controller.initialize().then((_) => setState(() {}));
+    _controller.play();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -72,8 +82,24 @@ class _StartPlanState extends State<StartPlan> {
                   children: [
                     ClipRRect(
                       borderRadius: AppStyle.appBorder,
-                      child: Image.network(
-                        'https://c.tenor.com/h9W4zejLjTMAAAAC/fit-workout.gif',
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: <Widget>[
+                            VideoPlayer(_controller),
+                            // _ControlsOverlay(controller: _controller),
+                            // VideoProgressIndicator(
+                            //   _controller,
+                            //   allowScrubbing: true,
+                            //   colors: const VideoProgressColors(
+                            //     backgroundColor: Colors.transparent,
+                            //     playedColor: Colors.transparent,
+                            //     bufferedColor: Colors.transparent,
+                            //   ),
+                            // ),
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
@@ -111,7 +137,7 @@ class _StartPlanState extends State<StartPlan> {
                       child: Text(
                         '00:${timerState.count}',
                         style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: AppStyle.primaryColor,
                           fontSize: 50 * _scaleFont,
                         ),
@@ -316,11 +342,27 @@ class _StartPlanState extends State<StartPlan> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  'https://c.tenor.com/h9W4zejLjTMAAAAC/fit-workout.gif',
-                  width: double.infinity,
-                  height: 160,
-                  fit: BoxFit.cover,
+                child: ClipRRect(
+                  borderRadius: AppStyle.appBorder,
+                  child: AspectRatio(
+                    aspectRatio: _controller.value.aspectRatio,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: <Widget>[
+                        VideoPlayer(_controller),
+                        _ControlsOverlay(controller: _controller),
+                        VideoProgressIndicator(
+                          _controller,
+                          allowScrubbing: true,
+                          colors: const VideoProgressColors(
+                            backgroundColor: Colors.transparent,
+                            playedColor: Colors.transparent,
+                            bufferedColor: Colors.transparent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -407,6 +449,42 @@ class NodeCircle extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ControlsOverlay extends StatelessWidget {
+  const _ControlsOverlay({Key? key, required this.controller})
+      : super(key: key);
+  final VideoPlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 50),
+          reverseDuration: const Duration(milliseconds: 200),
+          child: controller.value.isPlaying
+              ? const SizedBox.shrink()
+              : Container(
+                  color: Colors.black26,
+                  child: const Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 100.0,
+                      semanticLabel: 'Play',
+                    ),
+                  ),
+                ),
+        ),
+        GestureDetector(
+          onTap: () {
+            controller.value.isPlaying ? controller.pause() : controller.play();
+          },
+        ),
+      ],
     );
   }
 }

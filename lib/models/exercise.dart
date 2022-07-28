@@ -1,26 +1,39 @@
-class Exercise{
-  int? idEx;
-  String? nameEx;
-  String? desEx;
-  String? videoEx;
-  String? gifEx;
-  String? imgEx;
-  int? duration;
-  int? level;
-  double? calories;
+class Exercise {
+  late int? id, level, type, met, restDuration;
+  late String name, description, gif;
 
-  Exercise(this.idEx, this.nameEx, this.desEx, this.videoEx, this.gifEx,
-      this.imgEx, this.duration, this.level, this.calories);
+  Exercise(
+      {this.id,
+      required this.name,
+      required this.description,
+      required this.gif,
+      required this.level,
+      required this.type,
+      required this.met,
+      required this.restDuration});
 
-  Exercise.map(dynamic object){
-    idEx =object['IdEx'];
-    nameEx = object['nameEx'];
-    desEx = object['dexEx'];
-    videoEx =object['videoEx'];
-    gifEx = object['gifEx'];
-    desEx = object['dexEx'];
-    idEx =object['IdEx'];
-    nameEx = object['nameEx'];
-    desEx = object['dexEx'];
+  factory Exercise.fromJson(Map<String, dynamic> json) {
+    return Exercise(
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        gif: json["gif"],
+        level: json["level"],
+        type: json["type"],
+        met: json["met"],
+        restDuration: json["rest_duration"]);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "description": description,
+      "gif": gif,
+      "level": level,
+      "type": type,
+      "met": met,
+      "rest_duration": restDuration
+    };
   }
 }

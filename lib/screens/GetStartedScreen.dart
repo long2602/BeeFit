@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/OnProgressScreen.dart';
-import 'package:beefit/screens/WelcomeScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -296,14 +295,20 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     height: _currentHeight.toDouble());
                                 print('[CALO]: $_calo & new $_newCalo');
 
-                                // Navigator.pushReplacement(
-                                //     context,
-                                //     AppMethods.animatedRoute(
-                                //         const OnProgressScreen()));
                                 Navigator.pushReplacement(
                                     context,
-                                    AppMethods.animatedRoute(WelcomeScreen(
-                                        name: _nameController.text)));
+                                    AppMethods.animatedRoute(OnProgressScreen(
+                                        isMale: _maleIsTapped,
+                                        height: _currentHeight,
+                                        currentWeight: _currentWeight,
+                                        desiredWeight: _idealWeight,
+                                        name: _nameController.value.text,
+                                        age: int.parse(
+                                            _ageController.value.text))));
+                                // Navigator.pushReplacement(
+                                //     context,
+                                //     AppMethods.animatedRoute(WelcomeScreen(
+                                //         name: _nameController.text)));
                               }
                             }
                           }

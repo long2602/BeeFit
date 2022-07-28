@@ -2,9 +2,12 @@
 
 import 'dart:io';
 
+import 'package:beefit/models/instruction.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
+import 'exercise.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'beefit.db';
@@ -38,8 +41,8 @@ class DatabaseHelper {
 
       //Copy
       ByteData data = await rootBundle.load(join("assets/db/", _databaseName));
-      List<int> bytes = data.buffer.asUint8List(
-          data.offsetInBytes, data.lengthInBytes);
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       //write
       await File(path).writeAsBytes(bytes, flush: true);
@@ -47,7 +50,7 @@ class DatabaseHelper {
       print("Open existing database");
     }
 
-    return await openDatabase(path,version: _databaseVersion);
+    return await openDatabase(path, version: _databaseVersion);
   }
 
   //CRUD
@@ -72,17 +75,35 @@ class DatabaseHelper {
   // }
 
   //update
-  Future<int> update(Map<String,dynamic> row, String nameTable)async{
+  Future<int> update(Map<String, dynamic> row, String nameTable) async {
     Database db = await instance.database;
-    int id =row['IdPlan'];
-    return await db.update(nameTable, row,where: 'IdPlan',whereArgs: [id]);
+    int id = row['IdPlan'];
+    return await db.update(nameTable, row, where: 'IdPlan', whereArgs: [id]);
   }
 
   //delete
-  Future<int> delete(String item, String nameTable)async{
+  Future<int> delete(String item, String nameTable) async {
     Database db = await instance.database;
-    return await db.delete(nameTable,where: 'img',whereArgs: [item]);
+    return await db.delete(nameTable, where: 'img', whereArgs: [item]);
   }
 
+  Future<List<Exercise>> getExercises() async {
+    Database? db = await instance.database;
+    var data = await db.query("exercises", orderBy: "name");
+    List<Exercise> exercises =
+        data.isNotEmpty ? data.map((e) => Exercise.fromJson(e)).toList() : [];
+    return exercises;
+  }
 
+  Future<List<Instruction>> getInstructionsByIdExercise(int id) async {
+    Database? db = await instance.database;
+    var data = await db
+        .query("instruction", where: 'exercise_id = ?', whereArgs: [id]);
+    // where: 'exercise_id', whereArgs: [id], orderBy: 'step');
+    // await db.rawQuery("select * from instruction where exercise_id = $id");
+    List<Instruction> instructions = data.isNotEmpty
+        ? data.map((e) => Instruction.fromJson(e)).toList()
+        : [];
+    return instructions;
+  }
 }

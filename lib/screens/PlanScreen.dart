@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants/AppMethods.dart';
 import '../constants/AppStyles.dart';
 import 'DetailPlanScreen.dart';
+import 'ProcessPlanScreen.dart';
 
 class PlanScreen extends StatefulWidget {
   const PlanScreen({Key? key}) : super(key: key);

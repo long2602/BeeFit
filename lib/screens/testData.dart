@@ -1,5 +1,6 @@
 import 'package:beefit/models/User.dart';
 import 'package:beefit/models/databaseHelper.dart';
+import 'package:beefit/models/exercise.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,7 +13,7 @@ class TestData extends StatefulWidget {
 
 class _TestDataState extends State<TestData> {
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
-  List<User> lists = [];
+  List<Exercise> lists = [];
 
   insertData() async {
     databaseHelper.database;
@@ -26,12 +27,13 @@ class _TestDataState extends State<TestData> {
       'IdTarget': 1,
     };
     try {
-      await databaseHelper.insert('user', row).then((id) {
-        print('insert row id: $id');
-        setState(() {
-          lists.add(User.map(row));
-        });
-      });
+      // await databaseHelper.insert('user', row).then((id) {
+      //   print('insert row id: $id');
+      //   setState(() {
+      //     lists.add(User.map(row));
+      //   });
+      // });
+      // lists = await databaseHelper.getExercises();
     } on DatabaseException catch (e) {
       if (e.isUniqueConstraintError()) {}
     }
@@ -41,13 +43,13 @@ class _TestDataState extends State<TestData> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    databaseHelper.getAll('user').then((value) {
-      setState(() {
-        value.forEach((element) {
-          lists.add(User.map(element));
-        });
-      });
-    });
+    // databaseHelper.getAll('user').then((value) {
+    //   setState(() {
+    //     value.forEach((element) {
+    //       lists.add(User.map(element));
+    //     });
+    //   });
+    // });
   }
 
   @override
@@ -56,19 +58,33 @@ class _TestDataState extends State<TestData> {
       appBar: AppBar(
         title: Text('testdata'),
       ),
-      body: Container(
-        child: ListView.builder(
-          itemCount: lists.length,
-          itemBuilder: (context, index) {
-            return Text(lists[index].name ?? "hello");
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          insertData();
+      body: FutureBuilder(
+        future: databaseHelper.getExercises(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              lists = snapshot.data as List<Exercise>;
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 30,
+                ),
+                child: ListView.builder(
+                  itemCount: lists.length,
+                  itemBuilder: (context, index) {
+                    return Text(lists[index].name);
+                  },
+                ),
+              );
+            }
+          } else if (snapshot.hasError) {
+            return const Text('no data');
+          }
+          return Center(child: const CircularProgressIndicator());
         },
-        child: const Icon(Icons.add),
       ),
     );
   }
