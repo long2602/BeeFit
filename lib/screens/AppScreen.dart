@@ -1,14 +1,14 @@
 // ignore_for_file: file_names
 
 import 'package:beefit/constants/AppStyles.dart';
-import 'package:beefit/screens/DailyScreen.dart';
+import 'package:beefit/screens/Daily/DailyScreen.dart';
 import 'package:beefit/screens/HomeScreen.dart';
-import 'package:beefit/screens/PlanScreen.dart';
+import 'package:beefit/screens/Plan/PlanScreen.dart';
 import 'package:custom_top_navigator/custom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'ExerciseScreen.dart';
+import 'Exercise/ExerciseScreen.dart';
 
 class AppScreen extends StatefulWidget {
   const AppScreen({Key? key}) : super(key: key);

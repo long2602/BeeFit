@@ -10,7 +10,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../constants/AppMethods.dart';
 import 'package:beefit/controls/utils.dart';
-import 'DetailPlanScreen.dart';
+import 'Plan/DetailPlanScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
