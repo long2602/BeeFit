@@ -1,4 +1,5 @@
 import 'package:beefit/constants/AppMethods.dart';
+import 'package:beefit/screens/Plan/StartPlanScreen.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,7 +9,7 @@ import '../../constants/AppStyles.dart';
 import '../../controls/data.dart';
 import '../../controls/model.dart';
 import '../../widgets/CommonButton.dart';
-import 'StartPlanScreen.dart';
+import '../Exercise/StartExerciseScreen.dart';
 
 class DayDetailScreen extends StatefulWidget {
   final int _day;
@@ -280,7 +281,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                       ),
                       CommonButton(
                         onPressed: () {
-                          Get.to(const StartPlan());
+                          Get.to(const StartPlanScreen());
                         },
                         backgroundColor: const Color(0xffE4A248),
                         text: 'start'.toUpperCase(),

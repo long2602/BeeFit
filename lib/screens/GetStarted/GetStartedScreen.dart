@@ -55,33 +55,33 @@ class _GetStartedScreenState extends State<GetStartedScreen>
   final List _physiques = [
     {
       "title": "Thin",
-      "img": "thin.jpg",
+      "img": "thin.png",
       "des": "You have a low amount of body fat and a low muscle mass level.",
       "icon": "😐"
     },
     {
       "title": "Thin & Muscular",
-      "img": "thin-muscular.jpg",
+      "img": "thin-muscular.png",
       "des":
           "You have a low amount of body fat and a standard level off muscle mass.",
       "icon": "😄"
     },
     {
       "title": "Standard",
-      "img": "standard.jpg",
+      "img": "standard.png",
       "des": "You have average levels of both body fat and muscle mass.",
       "icon": "😃"
     },
     {
       "title": "Standard Muscular",
-      "img": "standard-muscular.jpg",
+      "img": "standard-muscular.png",
       "des":
           "You have an average amount of fat percentage and a high muscle mass level.",
       "icon": "😄"
     },
     {
       "title": "Obese",
-      "img": "obese.jpg",
+      "img": "obese.png",
       "des":
           "You have a high fat percentage and a standard level of muscle mass.",
       "icon": "😐"
@@ -91,21 +91,21 @@ class _GetStartedScreenState extends State<GetStartedScreen>
   final List _desiredPhysiques = [
     {
       "title": "Thin & Muscular",
-      "img": "thin-muscular.jpg",
+      "img": "thin-muscular.png",
       "des":
           "This is a healthy Physique rating. Watch out people can be very jealous!",
       "icon": "😉"
     },
     {
       "title": "Standard Muscular",
-      "img": "standard.jpg",
+      "img": "standard.png",
       "des":
           "You can be proud of this physique rating. This is a rating which some athletes have.",
       "icon": "😄"
     },
     {
       "title": "Very Muscular",
-      "img": "standard-muscular.jpg",
+      "img": "standard-muscular.png",
       "des":
           "You have an average amount of fat percentage and a high muscle mass level.",
       "icon": "😃"
@@ -276,7 +276,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             }
                           }
                           break;
-                        case 5:
+                        case 3:
                           {
                             if (_formKey1.currentState!.validate()) {
                               _tabController.index++;
@@ -479,7 +479,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseArm,
                             action: () {
                               setState(() {
-                                _chooseArm = true;
+                                _chooseArm
+                                    ? _chooseArm = false
+                                    : _chooseArm = true;
                                 _chooseFull = false;
                               });
                             },
@@ -492,7 +494,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseChest,
                             action: () {
                               setState(() {
-                                _chooseChest = true;
+                                _chooseChest
+                                    ? _chooseChest = false
+                                    : _chooseChest = true;
                                 _chooseFull = false;
                               });
                             },
@@ -505,7 +509,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseAbs,
                             action: () {
                               setState(() {
-                                _chooseAbs = true;
+                                _chooseAbs
+                                    ? _chooseAbs = false
+                                    : _chooseAbs = true;
                                 _chooseFull = false;
                               });
                             },
@@ -518,7 +524,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseLeg,
                             action: () {
                               setState(() {
-                                _chooseLeg = true;
+                                _chooseLeg
+                                    ? _chooseLeg = false
+                                    : _chooseLeg = true;
                                 _chooseFull = false;
                               });
                             },
@@ -531,7 +539,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseFull,
                             action: () {
                               setState(() {
-                                _chooseFull = true;
+                                _chooseFull
+                                    ? _chooseFull = false
+                                    : _chooseFull = true;
                                 _chooseAbs = false;
                                 _chooseArm = false;
                                 _chooseButt = false;
@@ -593,7 +603,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseArm,
                             action: () {
                               setState(() {
-                                _chooseArm = true;
+                                _chooseArm
+                                    ? _chooseArm = false
+                                    : _chooseArm = true;
                                 _chooseFull = false;
                               });
                             },
@@ -606,7 +618,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseAbs,
                             action: () {
                               setState(() {
-                                _chooseAbs = true;
+                                _chooseAbs
+                                    ? _chooseAbs = false
+                                    : _chooseAbs = true;
                                 _chooseFull = false;
                               });
                             },
@@ -619,7 +633,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseButt,
                             action: () {
                               setState(() {
-                                _chooseButt = true;
+                                _chooseButt
+                                    ? _chooseButt = false
+                                    : _chooseButt = true;
                                 _chooseFull = false;
                               });
                             },
@@ -632,7 +648,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseLeg,
                             action: () {
                               setState(() {
-                                _chooseLeg = true;
+                                _chooseLeg
+                                    ? _chooseLeg = false
+                                    : _chooseLeg = true;
                                 _chooseFull = false;
                               });
                             },
@@ -645,7 +663,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             isTapped: _chooseFull,
                             action: () {
                               setState(() {
-                                _chooseFull = true;
+                                _chooseFull
+                                    ? _chooseFull = false
+                                    : _chooseFull = true;
                                 _chooseAbs = false;
                                 _chooseArm = false;
                                 _chooseButt = false;
@@ -658,7 +678,205 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       ),
                     ],
                   )),
-          //Current physique 3
+          //Year old 3
+          TabChild(
+            title1: "How ",
+            keyword: "old ",
+            title2: "are you?",
+            widget: Form(
+              key: _formKey1,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(50, 30, 50, 0),
+                    child: TextFormField(
+                      cursorColor: Color(AppMethods.hexColor("#fb9b28")),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autofocus: true,
+                      validator: (val) {
+                        if (val == "") return "Please enter your age.";
+                        return null;
+                      },
+                      controller: _ageController,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(
+                          color: Color(AppMethods.hexColor("#383B53")),
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //Current height 4
+          TabChild(
+            title1: "What is your ",
+            keyword: "height",
+            title2: "?",
+            widget: Center(
+              child: Transform.rotate(
+                angle: -pi / 2,
+                child: RulerPicker(
+                  controller: _hRulerController,
+                  beginValue: 100,
+                  endValue: 250,
+                  initValue: _currentHeight + 3,
+                  scaleLineStyleList: const [
+                    ScaleLineStyle(
+                        color: Colors.black, width: 1.5, height: 30, scale: 0),
+                  ],
+                  onValueChange: (value) {
+                    setState(() {
+                      _currentHeight = value - 3;
+                    });
+                  },
+                  width: MediaQuery.of(context).size.width,
+                  height: 80,
+                  rulerMarginTop: 200,
+                  rulerScaleTextStyle: const TextStyle(color: Colors.black),
+                  marker: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Transform.rotate(
+                        origin: const Offset(-5, 25),
+                        angle: pi / 2,
+                        child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                                style: TextStyle(
+                                    fontFamily: "Poppins",
+                                    color:
+                                        Color(AppMethods.hexColor("#fb9b28")),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        30 * AppMethods.fontScale(context)),
+                                children: [
+                                  TextSpan(text: _currentHeight.toString()),
+                                  const TextSpan(
+                                      text: " cm",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 18))
+                                ])),
+                      ),
+                      Transform.translate(
+                        offset: const Offset(0, -30),
+                        child: Container(
+                            width: 5,
+                            height: 230,
+                            decoration: BoxDecoration(
+                                color: Color(AppMethods.hexColor("fb9b28"))
+                                    .withAlpha(200),
+                                borderRadius: BorderRadius.circular(5))),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          //Current weight 5
+          TabChild(
+            title1: "What is your ",
+            keyword: "weight",
+            title2: "?",
+            widget: Column(
+              children: [
+                const SizedBox(height: 50),
+                RulerPicker(
+                  controller: _wRulerController,
+                  beginValue: 30,
+                  endValue: 200,
+                  initValue: _currentWeight + 3,
+                  scaleLineStyleList: const [
+                    ScaleLineStyle(
+                        color: Colors.black, width: 1.5, height: 30, scale: 0),
+                  ],
+                  onValueChange: (value) {
+                    setState(() {
+                      _currentWeight = value - 3;
+                    });
+                  },
+                  width: MediaQuery.of(context).size.width,
+                  height: 80,
+                  rulerMarginTop: 100,
+                  rulerScaleTextStyle: const TextStyle(color: Colors.black),
+                  marker: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              style: TextStyle(
+                                  fontFamily: "Poppins",
+                                  color: Color(AppMethods.hexColor("#fb9b28")),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30 * AppMethods.fontScale(context)),
+                              children: [
+                                TextSpan(text: _currentWeight.toString()),
+                                const TextSpan(
+                                    text: " kg",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 18))
+                              ])),
+                      Container(
+                          width: 5,
+                          height: 65,
+                          decoration: BoxDecoration(
+                              color: Color(AppMethods.hexColor("fb9b28"))
+                                  .withAlpha(200),
+                              borderRadius: BorderRadius.circular(5))),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Current BMI",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            _bmi.toStringAsFixed(1),
+                            style: TextStyle(
+                                color: Color(AppMethods.hexColor("fb9b28")),
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Poppins"),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          _bmi < 18.5
+                              ? "You have a great potential to get in a better shape, move now!"
+                              : _bmi >= 18.5 && _bmi <= 25
+                                  ? "You've got a great figure! Keep it up to be more perfect!"
+                                  : _bmi > 25 && _bmi < 27
+                                      ? "You only need a bit more sweaty exercises to see a fitter you!"
+                                      : "You may need to do more workouts to be better and healthier!",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    color: Color(AppMethods.hexColor("FFFBF5")),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          //Current physique 6
           TabChild(
             title1: "What is your current ",
             keyword: "physique",
@@ -764,7 +982,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
               ],
             ),
           ),
-          //Desired physique 4
+          //Desired physique 7
           TabChild(
             title1: "What is your ",
             keyword: "ideal physique",
@@ -870,204 +1088,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
               ],
             ),
           ),
-          //Year old 5
-          TabChild(
-            title1: "How ",
-            keyword: "old ",
-            title2: "are you?",
-            widget: Form(
-              key: _formKey1,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(50, 30, 50, 0),
-                    child: TextFormField(
-                      cursorColor: Color(AppMethods.hexColor("#fb9b28")),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      autofocus: true,
-                      validator: (val) {
-                        if (val == "") return "Please enter your age.";
-                        return null;
-                      },
-                      controller: _ageController,
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(
-                          color: Color(AppMethods.hexColor("#383B53")),
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          //Current height 6
-          TabChild(
-            title1: "What is your ",
-            keyword: "height",
-            title2: "?",
-            widget: Center(
-              child: Transform.rotate(
-                angle: -pi / 2,
-                child: RulerPicker(
-                  controller: _hRulerController,
-                  beginValue: 100,
-                  endValue: 250,
-                  initValue: _currentHeight + 3,
-                  scaleLineStyleList: const [
-                    ScaleLineStyle(
-                        color: Colors.black, width: 1.5, height: 30, scale: 0),
-                  ],
-                  onValueChange: (value) {
-                    setState(() {
-                      _currentHeight = value - 3;
-                    });
-                  },
-                  width: MediaQuery.of(context).size.width,
-                  height: 80,
-                  rulerMarginTop: 200,
-                  rulerScaleTextStyle: const TextStyle(color: Colors.black),
-                  marker: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Transform.rotate(
-                        origin: const Offset(-5, 25),
-                        angle: pi / 2,
-                        child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                                style: TextStyle(
-                                    fontFamily: "Poppins",
-                                    color:
-                                        Color(AppMethods.hexColor("#fb9b28")),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        30 * AppMethods.fontScale(context)),
-                                children: [
-                                  TextSpan(text: _currentHeight.toString()),
-                                  const TextSpan(
-                                      text: " cm",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 18))
-                                ])),
-                      ),
-                      Transform.translate(
-                        offset: const Offset(0, -30),
-                        child: Container(
-                            width: 5,
-                            height: 230,
-                            decoration: BoxDecoration(
-                                color: Color(AppMethods.hexColor("fb9b28"))
-                                    .withAlpha(200),
-                                borderRadius: BorderRadius.circular(5))),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          //Current weight 7
-          TabChild(
-            title1: "What is your ",
-            keyword: "weight",
-            title2: "?",
-            widget: Column(
-              children: [
-                const SizedBox(height: 50),
-                RulerPicker(
-                  controller: _wRulerController,
-                  beginValue: 30,
-                  endValue: 200,
-                  initValue: _currentWeight + 3,
-                  scaleLineStyleList: const [
-                    ScaleLineStyle(
-                        color: Colors.black, width: 1.5, height: 30, scale: 0),
-                  ],
-                  onValueChange: (value) {
-                    setState(() {
-                      _currentWeight = value - 3;
-                    });
-                  },
-                  width: MediaQuery.of(context).size.width,
-                  height: 80,
-                  rulerMarginTop: 100,
-                  rulerScaleTextStyle: const TextStyle(color: Colors.black),
-                  marker: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  color: Color(AppMethods.hexColor("#fb9b28")),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30 * AppMethods.fontScale(context)),
-                              children: [
-                                TextSpan(text: _currentWeight.toString()),
-                                const TextSpan(
-                                    text: " kg",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 18))
-                              ])),
-                      Container(
-                          width: 5,
-                          height: 65,
-                          decoration: BoxDecoration(
-                              color: Color(AppMethods.hexColor("fb9b28"))
-                                  .withAlpha(200),
-                              borderRadius: BorderRadius.circular(5))),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Current BMI",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            _bmi.toStringAsFixed(1),
-                            style: TextStyle(
-                                color: Color(AppMethods.hexColor("fb9b28")),
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Poppins"),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          _bmi < 18.5
-                              ? "You have a great potential to get in a better shape, move now!"
-                              : _bmi >= 18.5 && _bmi <= 25
-                                  ? "You've got a great figure! Keep it up to be more perfect!"
-                                  : _bmi > 25 && _bmi < 27
-                                      ? "You only need a bit more sweaty exercises to see a fitter you!"
-                                      : "You may need to do more workouts to be better and healthier!",
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: Color(AppMethods.hexColor("FFFBF5")),
-                  ),
-                ),
-              ],
-            ),
-          ),
+
           //Ideal weight 8
           TabChild(
             title1: "What is your ",

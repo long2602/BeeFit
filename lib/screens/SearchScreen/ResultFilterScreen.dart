@@ -7,66 +7,52 @@ import '../../models/databaseHelper.dart';
 import '../../models/exercise.dart';
 import '../Exercise/DetailExerciseScreen.dart';
 
-class SearchExerciseScreen extends StatefulWidget {
-  const SearchExerciseScreen({Key? key}) : super(key: key);
+class ResultFilterScreen extends StatefulWidget {
+  final List<int> _categories, _types, _levels;
+  const ResultFilterScreen(
+      {required List<int> categories,
+      required List<int> types,
+      required List<int> levels,
+      Key? key})
+      : _categories = categories,
+        _levels = levels,
+        _types = types,
+        super(key: key);
 
   @override
-  State<SearchExerciseScreen> createState() => _SearchExerciseScreenState();
+  State<ResultFilterScreen> createState() => _ResultFilterScreenState();
 }
 
-class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
+class _ResultFilterScreenState extends State<ResultFilterScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
   List<Exercise> lists = [];
-  String _keyword = "";
-  final TextEditingController _searchController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
     return Scaffold(
+      backgroundColor: AppStyle.whiteColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppStyle.primaryColor,
-        title: TextField(
-          controller: _searchController,
-          onChanged: (value) {
-            setState(() {
-              _keyword = value;
-            });
-          },
+        titleSpacing: 30,
+        backgroundColor: AppStyle.whiteColor,
+        title: Text(
+          'Result',
           style: GoogleFonts.poppins(
-              color: AppStyle.whiteColor, fontWeight: FontWeight.w500),
-          decoration: const InputDecoration(
-            suffixIcon: Icon(
-              Icons.search,
-              color: AppStyle.whiteColor,
-            ),
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            hintText: 'Search for exercises...',
-            hintStyle: TextStyle(
-                color: AppStyle.whiteColor, fontWeight: FontWeight.w500),
+            fontWeight: FontWeight.bold,
+            color: AppStyle.secondaryColor,
+            fontSize: 24 * _scaleFont,
           ),
+        ),
+        leading: const BackButton(
+          color: AppStyle.secondaryColor,
         ),
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: FutureBuilder(
-            future: databaseHelper.searchExerciseByName(_keyword),
+            future: databaseHelper.filterExercise(
+                widget._categories, widget._levels, widget._types),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

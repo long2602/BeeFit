@@ -1,14 +1,14 @@
 // ignore_for_file: file_names
 
-import 'dart:typed_data';
-
 import 'package:beefit/screens/Exercise/DetailExerciseScreen.dart';
+import 'package:beefit/screens/SearchScreen/FilterExerciseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/exercise.dart';
+import '../SearchScreen/SearchExerciseScreen.dart';
 
 class ExerciseScreen extends StatefulWidget {
   const ExerciseScreen({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
     return DefaultTabController(
-      length: 5,
+      length: 8,
       child: Scaffold(
           backgroundColor: AppStyle.whiteColor,
           appBar: AppBar(
@@ -44,7 +44,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SearchExerciseScreen()),
+                        );
+                      },
                       icon: Icon(
                         Icons.search,
                         size: 24 * _scaleScreen,
@@ -52,7 +58,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const FilterExerciseScreen()),
+                        );
+                      },
                       icon: Icon(
                         Icons.tune,
                         size: 24 * _scaleScreen,
@@ -68,8 +80,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 Tab(text: 'Arm'),
                 Tab(text: 'Chest'),
                 Tab(text: 'Abs'),
+                Tab(text: 'Butt'),
                 Tab(text: 'Legs'),
                 Tab(text: 'Full Body'),
+                Tab(text: 'Shoulder'),
+                Tab(text: 'Back'),
               ],
               padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
               indicator: BoxDecoration(
@@ -84,13 +99,16 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               isScrollable: true,
             ),
           ),
-          body: TabBarView(
+          body: const TabBarView(
             children: [
-              TabExercise(),
-              TabExercise(),
-              TabExercise(),
-              TabExercise(),
-              TabExercise(),
+              TabExercise(idPart: 1),
+              TabExercise(idPart: 2),
+              TabExercise(idPart: 3),
+              TabExercise(idPart: 4),
+              TabExercise(idPart: 5),
+              TabExercise(idPart: 6),
+              TabExercise(idPart: 7),
+              TabExercise(idPart: 8),
             ],
           )),
     );
@@ -98,7 +116,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 }
 
 class TabExercise extends StatefulWidget {
-  const TabExercise({Key? key}) : super(key: key);
+  const TabExercise({required int idPart, Key? key})
+      : _idPart = idPart,
+        super(key: key);
+  final int _idPart;
 
   @override
   State<TabExercise> createState() => _TabExerciseState();
@@ -115,7 +136,7 @@ class _TabExerciseState extends State<TabExercise> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
       child: FutureBuilder(
-        future: databaseHelper.getExercises(),
+        future: databaseHelper.getExerciseByBodyPart(widget._idPart),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {

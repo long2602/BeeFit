@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
           ],
         ),
         nextScreen: isFirstTime ? const AppScreen() : const OnboardingScreen(),
+        // nextScreen: const OnboardingScreen(),
         backgroundColor: AppStyle.primaryColor,
         duration: 2500,
         splashTransition: SplashTransition.slideTransition,

@@ -72,6 +72,31 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> fetchMapIngredient(String id) async {
+    //https://api.spoonacular.com/food/ingredients/9266/information?amount=1&apiKey=9c83f17333b84312a5886843a1b1c750
+    //https://api.spoonacular.com/food/ingredients/9266/?amount=1&apiKey=9c83f17333b84312a5886843a1b1c750
+    Map<String, String> parameters = {
+      'amount': 1.toString(),
+      'apiKey': API_KEY,
+    };
+    Uri uri = Uri.https(
+      _baseURL,
+      'food/ingredients/$id/information',
+      parameters,
+    );
+
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+    };
+    try {
+      var response = await http.get(uri, headers: headers);
+      Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } catch (err) {
+      throw err.toString();
+    }
+  }
+
   Future<Recipe> fetchRecipe(String id) async {
     Map<String, String> parameters = {
       // 'amount': '1',

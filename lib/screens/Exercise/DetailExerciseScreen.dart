@@ -2,6 +2,7 @@
 
 import 'package:beefit/models/exercise.dart';
 import 'package:beefit/models/instruction.dart';
+import 'package:beefit/screens/Exercise/StartExerciseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
@@ -48,13 +49,34 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppStyle.whiteColor,
-        title: Text(
-          'Exercise',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: AppStyle.secondaryColor,
-            fontSize: 24 * _scaleFont,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Exercise',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                color: AppStyle.secondaryColor,
+                fontSize: 24 * _scaleFont,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StartExerciseScreen(
+                      exercise: exercise,
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.play_circle_filled_rounded,
+                color: AppStyle.secondaryColor,
+              ),
+            ),
+          ],
         ),
         leading: const BackButton(color: AppStyle.secondaryColor),
       ),

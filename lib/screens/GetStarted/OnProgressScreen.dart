@@ -82,8 +82,8 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Padding(
+                children: const [
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 52, vertical: 52),
                     child: Text(
                       "We are creating plans for you...",
@@ -95,7 +95,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 120,
                     width: 120,
                     child: CircularProgressIndicator(

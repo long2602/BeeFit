@@ -106,4 +106,82 @@ class DatabaseHelper {
         : [];
     return instructions;
   }
+
+  Future<List<Exercise>> searchExerciseByName(String keyword) async {
+    Database? db = await instance.database;
+    var data = await db
+        .rawQuery("SELECT * FROM exercises WHERE name LIKE \"$keyword\%\"");
+    List<Exercise> exercises =
+        data.isNotEmpty ? data.map((e) => Exercise.fromJson(e)).toList() : [];
+    return exercises;
+  }
+
+  Future<List<Exercise>> getExerciseByBodyPart(int idPart) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select a.id, a.name, a.description, a.gif , a.level, a.met, a.type , a.rest_duration from exercises a join bodyparts_exercises b on a.id = b.exercise_id where b.bodypart_id = $idPart");
+    List<Exercise> exercises =
+        data.isNotEmpty ? data.map((e) => Exercise.fromJson(e)).toList() : [];
+    return exercises;
+  }
+
+  Future<List<Exercise>> filterExercise(
+      List<int> categories, List<int> levels, List<int> types) async {
+    late String category, level, type;
+    String optionCategory1 = "",
+        optionCategory2 = "",
+        optionLevel = "",
+        optionType = "",
+        optionWhere = "";
+    String header =
+        "select a.id, a.name, a.description, a.gif , a.level, a.met, a.type , a.rest_duration from exercises a";
+    Database? db = await instance.database;
+    if (categories.isNotEmpty) {
+      category = categories.toString().replaceAll('[', '').replaceAll(']', '');
+      optionCategory1 = "join bodyparts_exercises b on a.id = b.exercise_id";
+      optionCategory2 = "b.bodypart_id in ($category)";
+    }
+    if (levels.isNotEmpty) {
+      level = levels.toString().replaceAll('[', '').replaceAll(']', '');
+      optionLevel = "a.level in ($level)";
+    }
+    if (types.isNotEmpty) {
+      type = types.toString().replaceAll('[', '').replaceAll(']', '');
+      optionType = "a.type in ($type)";
+    }
+
+    if (optionType.isNotEmpty &&
+        optionLevel.isNotEmpty &&
+        optionCategory2.isNotEmpty) {
+      optionWhere = "Where $optionLevel and $optionType and $optionCategory2";
+    } else if (optionType.isEmpty &&
+        optionCategory2.isEmpty &&
+        optionLevel.isNotEmpty) {
+      optionWhere = "Where $optionLevel";
+    } else if (optionType.isNotEmpty &&
+        optionCategory2.isEmpty &&
+        optionLevel.isEmpty) {
+      optionWhere = "Where $optionType";
+    } else if (optionType.isEmpty &&
+        optionCategory2.isNotEmpty &&
+        optionLevel.isEmpty) {
+      optionWhere = "Where $optionCategory2";
+    } else if (optionType.isEmpty &&
+        optionCategory2.isNotEmpty &&
+        optionLevel.isNotEmpty) {
+      optionWhere = "Where $optionCategory2 and $optionLevel";
+    } else if (optionType.isNotEmpty &&
+        optionCategory2.isEmpty &&
+        optionLevel.isNotEmpty) {
+      optionWhere = "Where $optionType and $optionLevel";
+    } else if (optionType.isNotEmpty &&
+        optionCategory2.isNotEmpty &&
+        optionLevel.isEmpty) {
+      optionWhere = "Where $optionType and $optionCategory2";
+    }
+    var data = await db.rawQuery("$header $optionCategory1 $optionWhere");
+    List<Exercise> exercises =
+        data.isNotEmpty ? data.map((e) => Exercise.fromJson(e)).toList() : [];
+    return exercises;
+  }
 }

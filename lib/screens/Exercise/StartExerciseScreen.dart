@@ -12,23 +12,28 @@ import '../../models/instruction.dart';
 import '../../widgets/TimeLine.dart';
 import 'package:video_player/video_player.dart';
 
-class StartPlanScreen extends StatefulWidget {
-  const StartPlanScreen({Key? key}) : super(key: key);
+class StartExerciseScreen extends StatefulWidget {
+  final Exercise _exercise;
+  const StartExerciseScreen({Key? key, required Exercise exercise})
+      : _exercise = exercise,
+        super(key: key);
   @override
-  _StartPlanScreenState createState() => _StartPlanScreenState();
+  _StartExerciseScreenState createState() => _StartExerciseScreenState();
 }
 
-class _StartPlanScreenState extends State<StartPlanScreen> {
+class _StartExerciseScreenState extends State<StartExerciseScreen> {
   final CountDownTimerState timerState = Get.put(CountDownTimerState());
   late VideoPlayerController _controller;
+  late Exercise exercise;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = VideoPlayerController.asset(
-        'assets/imgs/video/backward-arm-circles.mp4');
+    exercise = widget._exercise;
+    _controller =
+        VideoPlayerController.asset('assets/imgs/video/${exercise.gif}.mp4');
     _controller.setLooping(true);
     _controller.initialize().then((_) => setState(() {}));
     _controller.play();
@@ -54,22 +59,6 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
           color: AppStyle.secondaryColor,
         ),
         titleSpacing: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-              child: Text(
-                'Exercises 2/11',
-                style: GoogleFonts.poppins(
-                    color: AppStyle.secondaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20 * _scaleFont),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
       ),
       body: GetBuilder<CountDownTimerState>(
         builder: (_) => Padding(
@@ -90,12 +79,32 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "Push",
-                        style: GoogleFonts.poppins(
-                            color: AppStyle.secondaryColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 25 * _scaleFont),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          Text(
+                            exercise.name.toUpperCase(),
+                            style: GoogleFonts.poppins(
+                                color: AppStyle.secondaryColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 25 * _scaleFont),
+                          ),
+                          IconButton(
+                            onPressed: () => showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20)),
+                                ),
+                                builder: (context) => buildSheet(exercise)),
+                            icon: const Icon(
+                              Icons.help_outline,
+                              color: AppStyle.secondaryColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Padding(
@@ -239,50 +248,6 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () => showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        builder: (context) => buildSheet()),
-                    icon: const Icon(
-                      Icons.help_outline,
-                      color: AppStyle.gray3Color,
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        "NEXT",
-                        style: GoogleFonts.poppins(
-                            color: AppStyle.gray3Color,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15 * _scaleFont),
-                      ),
-                      Text(
-                        'Exercises'.toUpperCase(),
-                        style: GoogleFonts.poppins(
-                            color: AppStyle.secondaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17 * _scaleFont),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30 * _scaleScreen),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.more_horiz_outlined),
-                  ),
-                ],
-              )
             ],
           ),
         ),
@@ -290,8 +255,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
     );
   }
 
-  Widget buildSheet() {
-    // List<Instruction> lists = [];
+  Widget buildSheet(Exercise exercise) {
+    List<Instruction> lists = [];
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
     return DraggableScrollableSheet(
@@ -348,7 +313,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                "exercise.name",
+                exercise.name,
                 style: GoogleFonts.poppins(
                     fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -356,87 +321,87 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                "exercise.description",
+                exercise.description,
                 style: GoogleFonts.poppins(color: Colors.grey, fontSize: 14),
               ),
             ),
-            // FutureBuilder(
-            //   future: databaseHelper.getInstructionsByIdExercise(exercise.id!),
-            //   builder: (context, snapshot) {
-            //     if (snapshot.hasData) {
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return const Center(
-            //           child: CircularProgressIndicator(),
-            //         );
-            //       } else {
-            //         lists = snapshot.data as List<Instruction>;
-            //         return Column(
-            //           children: [
-            //             Padding(
-            //               padding: const EdgeInsets.symmetric(vertical: 4),
-            //               child: Row(
-            //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                 children: [
-            //                   Text(
-            //                     'How to do it',
-            //                     style: GoogleFonts.poppins(
-            //                       fontSize: 18 * _scaleFont,
-            //                       fontWeight: FontWeight.w600,
-            //                       color: AppStyle.secondaryColor,
-            //                     ),
-            //                   ),
-            //                   Text(
-            //                     '${lists.length} steps',
-            //                     style: GoogleFonts.poppins(
-            //                       fontSize: 12 * _scaleFont,
-            //                       fontWeight: FontWeight.w500,
-            //                       color: AppStyle.gray3Color,
-            //                     ),
-            //                   )
-            //                 ],
-            //               ),
-            //             ),
-            //             Timeline(
-            //               children: <Widget>[
-            //                 for (Instruction item in lists)
-            //                   Container(
-            //                     child: Column(
-            //                       crossAxisAlignment: CrossAxisAlignment.start,
-            //                       children: [
-            //                         Text(
-            //                           "Step ${item.step}",
-            //                           style: GoogleFonts.poppins(
-            //                             fontSize: 14 * _scaleFont,
-            //                             fontWeight: FontWeight.w500,
-            //                             color: AppStyle.black1Color,
-            //                           ),
-            //                         ),
-            //                         Text(
-            //                           item.detail,
-            //                           style: GoogleFonts.poppins(
-            //                             fontSize: 14 * _scaleFont,
-            //                             fontWeight: FontWeight.w400,
-            //                             color: const Color(0xff7B6F72),
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                   ),
-            //               ],
-            //               indicators: <Widget>[
-            //                 for (Instruction item in lists) const NodeCircle(),
-            //               ],
-            //               lineColor: AppStyle.primaryColor,
-            //             ),
-            //           ],
-            //         );
-            //       }
-            //     } else if (snapshot.hasError) {
-            //       return const Text('no data');
-            //     }
-            //     return const Center(child: CircularProgressIndicator());
-            //   },
-            // ),
+            FutureBuilder(
+              future: databaseHelper.getInstructionsByIdExercise(exercise.id!),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    lists = snapshot.data as List<Instruction>;
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'How to do it',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18 * _scaleFont,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppStyle.secondaryColor,
+                                ),
+                              ),
+                              Text(
+                                '${lists.length} steps',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12 * _scaleFont,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppStyle.gray3Color,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Timeline(
+                          children: <Widget>[
+                            for (Instruction item in lists)
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Step ${item.step}",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14 * _scaleFont,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppStyle.black1Color,
+                                      ),
+                                    ),
+                                    Text(
+                                      item.detail,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14 * _scaleFont,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xff7B6F72),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                          indicators: <Widget>[
+                            for (Instruction item in lists) const NodeCircle(),
+                          ],
+                          lineColor: AppStyle.primaryColor,
+                        ),
+                      ],
+                    );
+                  }
+                } else if (snapshot.hasError) {
+                  return const Text('no data');
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
             const SizedBox(
               height: 20,
             ),

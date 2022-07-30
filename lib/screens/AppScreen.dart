@@ -24,7 +24,7 @@ class _AppScreenState extends State<AppScreen> {
     const ExerciseScreen(),
     const PlanScreen(),
     const DailyScreen(),
-    Container(),
+    // Container(),
   ];
 
   void _onItemTapped(int index) {
@@ -87,15 +87,15 @@ class _AppScreenState extends State<AppScreen> {
               ),
               label: 'Daily',
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/imgs/svg/setting.svg',
-                color: _selectedIndex == 4
-                    ? AppStyle.primaryColor
-                    : AppStyle.gray4Color,
-              ),
-              label: 'Settings',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: SvgPicture.asset(
+            //     'assets/imgs/svg/setting.svg',
+            //     color: _selectedIndex == 4
+            //         ? AppStyle.primaryColor
+            //         : AppStyle.gray4Color,
+            //   ),
+            //   label: 'Settings',
+            // ),
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[800],
@@ -107,7 +107,7 @@ class _AppScreenState extends State<AppScreen> {
         const ExerciseScreen(),
         const PlanScreen(),
         const DailyScreen(),
-        Container(),
+        // Container(),
       ],
       onItemTap: _onItemTapped,
     );

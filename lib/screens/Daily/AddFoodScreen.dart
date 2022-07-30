@@ -7,7 +7,10 @@ import '../../models/nutrition/Ingredient.dart';
 import 'DetailFoodScreen.dart';
 
 class AddFoodScreen extends StatefulWidget {
-  const AddFoodScreen({Key? key}) : super(key: key);
+  final String _title;
+  const AddFoodScreen({required String title, Key? key})
+      : _title = title,
+        super(key: key);
 
   @override
   State<AddFoodScreen> createState() => _AddFoodScreenState();
@@ -40,7 +43,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
           elevation: 0,
           backgroundColor: AppStyle.primaryColor,
           title: Text(
-            'Add Breakfast',
+            'Add ${widget._title}',
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.bold,
               color: AppStyle.whiteColor,
@@ -130,12 +133,24 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                 itemBuilder: (context, index) {
                                   return InkWell(
                                     onTap: () {
+                                      int meal = 1;
+                                      switch (widget._title) {
+                                        case "Lunch":
+                                          meal = 2;
+                                          break;
+                                        case "Dinner":
+                                          meal = 3;
+                                          break;
+                                      }
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => DetailFoodScreen(
-                                                ingredient: _resultIngredients!
-                                                    .ingredients[index])),
+                                                  ingredient:
+                                                      _resultIngredients!
+                                                          .ingredients[index],
+                                                  meal: meal,
+                                                )),
                                       );
                                     },
                                     child: Container(
@@ -188,7 +203,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                         } else if (snapshot.hasError) {
                           return const Text('no data');
                         }
-                        return Center(child: const CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       },
                     ),
                   ),

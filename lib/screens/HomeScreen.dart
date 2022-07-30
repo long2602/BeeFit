@@ -43,14 +43,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: AppStyle.secondaryColor,
                     fontSize: 20 * _scaleFont,
                   )),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.notifications,
-                  size: 24 * _scaleScreen,
-                  color: AppStyle.secondaryColor,
-                ),
-              ),
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: Icon(
+              //     Icons.notifications,
+              //     size: 24 * _scaleScreen,
+              //     color: AppStyle.secondaryColor,
+              //   ),
+              // ),
             ],
           ),
         ),

@@ -2,7 +2,6 @@ import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/models/nutrition/Ingredient.dart';
 import 'package:beefit/screens/Daily/AddFoodScreen.dart';
 import 'package:beefit/screens/SearchScreen/SearchFoodScreen.dart';
-import 'package:beefit/screens/Test/testData.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -10,7 +9,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:beefit/controls/utils.dart';
 import 'dart:collection';
 import '../../constants/AppMethods.dart';
-import 'DetailFoodScreen.dart';
 
 class DailyScreen extends StatefulWidget {
   const DailyScreen({Key? key}) : super(key: key);
@@ -31,6 +29,9 @@ class _DailyScreenState extends State<DailyScreen> {
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  List<Ingredient> listBreakfast = [];
+  List<Ingredient> listLunch = [];
+  List<Ingredient> listDinner = [];
 
   TabBar get _tabBar => const TabBar(
         tabs: [
@@ -563,38 +564,6 @@ class _DailyScreenState extends State<DailyScreen> {
                               fontSize: 16 * _scaleFont,
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => DetailFoodScreen(
-                                          ingredient:
-                                              Ingredient.fromMap(testMap))));
-                            },
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.add_circle,
-                                  size: 16 * _scaleScreen,
-                                  color: AppStyle.secondaryColor,
-                                ),
-                                Text(
-                                  'Meal',
-                                  style: GoogleFonts.poppins(
-                                    color: AppStyle.secondaryColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              primary: AppStyle.gray5Color.withOpacity(0.5),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -632,8 +601,9 @@ class _DailyScreenState extends State<DailyScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const AddFoodScreen()),
+                                      builder: (context) => const AddFoodScreen(
+                                            title: "Breakfast",
+                                          )),
                                 );
                               },
                               icon: Icon(
@@ -676,7 +646,15 @@ class _DailyScreenState extends State<DailyScreen> {
                             ),
                             contentPadding: EdgeInsets.zero,
                             trailing: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const AddFoodScreen(
+                                            title: "Lunch",
+                                          )),
+                                );
+                              },
                               icon: Icon(
                                 Icons.add_circle,
                                 color: AppStyle.primaryColor,
@@ -717,7 +695,15 @@ class _DailyScreenState extends State<DailyScreen> {
                             ),
                             contentPadding: EdgeInsets.zero,
                             trailing: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const AddFoodScreen(
+                                            title: "Dinner",
+                                          )),
+                                );
+                              },
                               icon: Icon(
                                 Icons.add_circle,
                                 color: AppStyle.primaryColor,
@@ -725,6 +711,7 @@ class _DailyScreenState extends State<DailyScreen> {
                               ),
                             ),
                           ),
+                          Text('hello'),
                         ],
                       ),
                     ),
