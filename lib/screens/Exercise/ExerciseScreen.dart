@@ -147,8 +147,8 @@ class _TabExerciseState extends State<TabExercise> {
                       ),
                       leading: ClipRRect(
                         borderRadius: AppStyle.appBorder,
-                        child: Image.network(
-                          "https://i.pinimg.com/originals/e0/d6/2e/e0d62e32eba3542552e83bdea5ff95e8.gif",
+                        child: Image.asset(
+                          "assets/imgs/exercises/${exercise.gif}.jpg",
                           height: 60 * _scaleScreen,
                           width: 60 * _scaleScreen,
                           fit: BoxFit.cover,

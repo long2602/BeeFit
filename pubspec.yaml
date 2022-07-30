@@ -86,6 +86,7 @@ flutter:
     - assets/imgs/video/
     - assets/imgs/svg/
     - assets/db/beefit.db
+    - assets/imgs/exercises/
   
   fonts:
     - family: OpenSans
