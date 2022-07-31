@@ -1,6 +1,7 @@
 class Exercise {
   late int? id, level, type, met, restDuration;
   late String name, description, gif;
+  late double kcal;
 
   Exercise(
       {this.id,

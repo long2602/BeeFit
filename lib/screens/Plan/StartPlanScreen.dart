@@ -1,4 +1,5 @@
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/PlamExerciseDetail.dart';
 import 'package:beefit/models/exercise.dart';
 import 'package:beefit/screens/Plan/PauseScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
@@ -8,12 +9,13 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../models/databaseHelper.dart';
-import '../../models/instruction.dart';
-import '../../widgets/TimeLine.dart';
 import 'package:video_player/video_player.dart';
 
 class StartPlanScreen extends StatefulWidget {
-  const StartPlanScreen({Key? key}) : super(key: key);
+  final List<PlanExerciseDetail> _list;
+  const StartPlanScreen({required List<PlanExerciseDetail> list, Key? key})
+      : _list = list,
+        super(key: key);
   @override
   _StartPlanScreenState createState() => _StartPlanScreenState();
 }
@@ -22,7 +24,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
   final CountDownTimerState timerState = Get.put(CountDownTimerState());
   late VideoPlayerController _controller;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
-
+  late List<PlanExerciseDetail> _list = widget._list;
+  PageController _pageController = PageController(initialPage: 0);
   @override
   void initState() {
     // TODO: implement initState
@@ -60,7 +63,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
               child: Text(
-                'Exercises 2/11',
+                'Exercises 2/${_list.length}',
                 style: GoogleFonts.poppins(
                     color: AppStyle.secondaryColor,
                     fontWeight: FontWeight.bold,
@@ -74,215 +77,232 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
       body: GetBuilder<CountDownTimerState>(
         builder: (_) => Padding(
           padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-          child: Column(
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              print(index + 1);
+            },
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  // mainAxisAlignment: MainAxisAlignment.center,
+              for (int i = 0; i < _list.length; i++)
+                Column(
                   children: [
-                    ClipRRect(
-                      borderRadius: AppStyle.appBorder,
-                      child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(_controller),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "Push",
-                        style: GoogleFonts.poppins(
-                            color: AppStyle.secondaryColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 25 * _scaleFont),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10 * _scaleScreen),
-                      child: Text(
-                        '00:${timerState.count}',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w700,
-                          color: AppStyle.primaryColor,
-                          fontSize: 50 * _scaleFont,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Material(
-                              color: Colors.transparent,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
-                              ),
-                              child: InkWell(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(50)),
-                                onTap: () {},
-                                child: const Icon(
-                                  Icons.arrow_left_rounded,
-                                  size: 80,
-                                  color: AppStyle.gray4Color,
-                                ),
-                              ),
+                          ClipRRect(
+                            borderRadius: AppStyle.appBorder,
+                            child: AspectRatio(
+                              aspectRatio: _controller.value.aspectRatio,
+                              child: VideoPlayer(_controller),
                             ),
                           ),
-                          Container(
-                            height: 80 * _scaleScreen,
-                            width: 80 * _scaleScreen,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 20 * _scaleScreen),
-                            child: Stack(
-                              fit: StackFit.expand,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                CircularProgressIndicator(
-                                  value: timerState.count / timerState.max,
-                                  strokeWidth: 08,
-                                  color: const Color(0xffF6D08B),
-                                  backgroundColor: const Color(0xffEDEDED),
+                                Text(
+                                  _list[i].name,
+                                  style: GoogleFonts.poppins(
+                                      color: AppStyle.secondaryColor,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 25 * _scaleFont),
                                 ),
-                                Center(
-                                    child: !timerState.isStart
-                                        ? SizedBox(
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                timerState.stateTimerStart();
-                                              },
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.play_arrow,
-                                                  size: 40,
-                                                ),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                padding: EdgeInsets.zero,
-                                                elevation: 0,
-                                                shape: const CircleBorder(
-                                                  side: BorderSide.none,
-                                                ),
-                                                primary: AppStyle.primaryColor,
-                                              ),
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                if (timerState.isStart ==
-                                                        true &&
-                                                    timerState.isPause ==
-                                                        false) {
-                                                  timerState.pause();
-                                                  Get.to(PauseScreen(
-                                                    time: timerState.count,
-                                                  ));
-                                                } else {
-                                                  timerState.stateTimerStart();
-                                                }
-                                              },
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.pause,
-                                                  size: 40,
-                                                  color:
-                                                      AppStyle.secondaryColor,
-                                                ),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                padding: EdgeInsets.zero,
-                                                elevation: 0,
-                                                shape: const CircleBorder(
-                                                  side: BorderSide.none,
-                                                ),
-                                                primary: Colors.transparent,
-                                              ),
-                                            ),
-                                          ))
+                                IconButton(
+                                  onPressed: () => showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
+                                      ),
+                                      builder: (context) => buildSheet()),
+                                  icon: const Icon(
+                                    Icons.help_outline,
+                                    color: AppStyle.gray3Color,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Material(
-                              color: Colors.transparent,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10 * _scaleScreen),
+                            child: Text(
+                              _list[i].duration == 0
+                                  ? "x ${_list[i].rep}"
+                                  : '00:${timerState.count}',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w700,
+                                color: AppStyle.primaryColor,
+                                fontSize: 50 * _scaleFont,
                               ),
-                              child: InkWell(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(50)),
-                                onTap: () {},
-                                child: const Icon(
-                                  Icons.arrow_right_rounded,
-                                  size: 80,
-                                  color: AppStyle.gray4Color,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                    ),
+                                    child: InkWell(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(50)),
+                                      onTap: () {},
+                                      child: const Icon(
+                                        Icons.arrow_left_rounded,
+                                        size: 80,
+                                        color: AppStyle.gray4Color,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  height: 80 * _scaleScreen,
+                                  width: 80 * _scaleScreen,
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 20 * _scaleScreen),
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      CircularProgressIndicator(
+                                        value:
+                                            timerState.count / timerState.max,
+                                        strokeWidth: 08,
+                                        color: const Color(0xffF6D08B),
+                                        backgroundColor:
+                                            const Color(0xffEDEDED),
+                                      ),
+                                      Center(
+                                          child: !timerState.isStart
+                                              ? SizedBox(
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      timerState
+                                                          .stateTimerStart();
+                                                    },
+                                                    child: const Center(
+                                                      child: Icon(
+                                                        Icons.play_arrow,
+                                                        size: 40,
+                                                      ),
+                                                    ),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      padding: EdgeInsets.zero,
+                                                      elevation: 0,
+                                                      shape: const CircleBorder(
+                                                        side: BorderSide.none,
+                                                      ),
+                                                      primary:
+                                                          AppStyle.primaryColor,
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox(
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      if (timerState.isStart ==
+                                                              true &&
+                                                          timerState.isPause ==
+                                                              false) {
+                                                        timerState.pause();
+                                                        Get.to(PauseScreen(
+                                                          time:
+                                                              timerState.count,
+                                                        ));
+                                                      } else {
+                                                        timerState
+                                                            .stateTimerStart();
+                                                      }
+                                                    },
+                                                    child: const Center(
+                                                      child: Icon(
+                                                        Icons.pause,
+                                                        size: 40,
+                                                        color: AppStyle
+                                                            .secondaryColor,
+                                                      ),
+                                                    ),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      padding: EdgeInsets.zero,
+                                                      elevation: 0,
+                                                      shape: const CircleBorder(
+                                                        side: BorderSide.none,
+                                                      ),
+                                                      primary:
+                                                          Colors.transparent,
+                                                    ),
+                                                  ),
+                                                ))
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(50)),
+                                    ),
+                                    child: InkWell(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(50)),
+                                      onTap: () {},
+                                      child: const Icon(
+                                        Icons.arrow_right_rounded,
+                                        size: 80,
+                                        color: AppStyle.gray4Color,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
+                    Column(
+                      children: [
+                        Text(
+                          "NEXT",
+                          style: GoogleFonts.poppins(
+                              color: AppStyle.gray3Color,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15 * _scaleFont),
+                        ),
+                        Text(
+                          'Exercises'.toUpperCase(),
+                          style: GoogleFonts.poppins(
+                              color: AppStyle.secondaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17 * _scaleFont),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 30 * _scaleScreen),
+                      ],
+                    ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () => showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        builder: (context) => buildSheet()),
-                    icon: const Icon(
-                      Icons.help_outline,
-                      color: AppStyle.gray3Color,
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        "NEXT",
-                        style: GoogleFonts.poppins(
-                            color: AppStyle.gray3Color,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15 * _scaleFont),
-                      ),
-                      Text(
-                        'Exercises'.toUpperCase(),
-                        style: GoogleFonts.poppins(
-                            color: AppStyle.secondaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17 * _scaleFont),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30 * _scaleScreen),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.more_horiz_outlined),
-                  ),
-                ],
-              )
             ],
           ),
         ),

@@ -1,5 +1,7 @@
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/databaseHelper.dart';
+import 'package:beefit/models/food_history.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../controls/ApiService.dart';
@@ -20,6 +22,8 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
   final TextEditingController _searchController = TextEditingController();
   ResultIngredients? _resultIngredients;
   String _keyword = "";
+  DatabaseHelper databaseHelper = DatabaseHelper.instance;
+  List<FoodHistory> lists = [];
   @override
   void initState() {
     super.initState();
@@ -207,7 +211,100 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                       },
                     ),
                   ),
-                  Container(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: FutureBuilder(
+                      future: databaseHelper.getFoodHistory(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            lists = snapshot.data as List<FoodHistory>;
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30 * _scaleScreen,
+                              ),
+                              child: ListView.builder(
+                                itemCount: lists.length,
+                                itemBuilder: (context, index) {
+                                  FoodHistory foodHistory = lists[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      int meal = 1;
+                                      switch (widget._title) {
+                                        case "Lunch":
+                                          meal = 2;
+                                          break;
+                                        case "Dinner":
+                                          meal = 3;
+                                          break;
+                                      }
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => DetailFoodScreen(
+                                                  ingredient:
+                                                      foodHistory.ingredient,
+                                                  meal: meal,
+                                                )),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 6 * _scaleScreen),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16 * _scaleScreen,
+                                          vertical: 12 * _scaleScreen),
+                                      decoration: BoxDecoration(
+                                        color: AppStyle.whiteColor,
+                                        borderRadius: AppStyle.appBorder,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.network(
+                                            foodHistory.ingredient.image!,
+                                            width: 50 * _scaleScreen,
+                                            height: 50 * _scaleScreen,
+                                            fit: BoxFit.fill,
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8 * _scaleScreen),
+                                              child: Text(
+                                                foodHistory.ingredient.name!,
+                                                style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      AppStyle.secondaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.add_circle,
+                                            color: AppStyle.gray4Color,
+                                            size: 30 * _scaleScreen,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        } else if (snapshot.hasError) {
+                          return const Text('no data');
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

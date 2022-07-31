@@ -329,14 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             CommonButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DetailPlanScreen()),
-                                );
-                              },
+                              onPressed: () {},
                               backgroundColor: AppStyle.whiteColor,
                               text: 'START',
                               textColor: AppStyle.primaryColor,

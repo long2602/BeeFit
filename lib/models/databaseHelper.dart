@@ -2,7 +2,11 @@
 
 import 'dart:io';
 
+import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/food_history.dart';
 import 'package:beefit/models/instruction.dart';
+import 'package:beefit/models/plan.dart';
+import 'package:beefit/models/plan_details.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -11,7 +15,7 @@ import 'exercise.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'beefit.db';
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 2;
 
   //constructor;
   DatabaseHelper._privateConstructor();
@@ -85,6 +89,25 @@ class DatabaseHelper {
   Future<int> delete(String item, String nameTable) async {
     Database db = await instance.database;
     return await db.delete(nameTable, where: 'img', whereArgs: [item]);
+  }
+
+  Future<List<FoodHistory>> getFoodHistory() async {
+    Database? db = await instance.database;
+    var data = await db.query("food_history");
+    List<FoodHistory> exercises = data.isNotEmpty
+        ? data.map((e) => FoodHistory.fromJson(e)).toList()
+        : [];
+    return exercises;
+  }
+
+  Future<List<FoodHistory>> getFoodHistoryByMeal(int idMeal) async {
+    Database? db = await instance.database;
+    var data =
+        await db.rawQuery("Select * from food_history where meal = $idMeal");
+    List<FoodHistory> exercises = data.isNotEmpty
+        ? data.map((e) => FoodHistory.fromJson(e)).toList()
+        : [];
+    return exercises;
   }
 
   Future<List<Exercise>> getExercises() async {
@@ -183,5 +206,32 @@ class DatabaseHelper {
     List<Exercise> exercises =
         data.isNotEmpty ? data.map((e) => Exercise.fromJson(e)).toList() : [];
     return exercises;
+  }
+
+  Future<List<Plan>> getPlan() async {
+    Database? db = await instance.database;
+    var data = await db.query("plans");
+    List<Plan> plans =
+        data.isNotEmpty ? data.map((e) => Plan.fromJson(e)).toList() : [];
+    return plans;
+  }
+
+  Future<List<PlanDetail>> getPlanDetailById(int id) async {
+    Database? db = await instance.database;
+    var data =
+        await db.rawQuery("Select * from plan_details where plan_id = $id");
+    List<PlanDetail> plans =
+        data.isNotEmpty ? data.map((e) => PlanDetail.fromJson(e)).toList() : [];
+    return plans;
+  }
+
+  Future<List<PlanExerciseDetail>> getPlanDayByDay(int day) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, b.duration ,b.rep, b.kcal from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id where b.day = $day");
+    List<PlanExerciseDetail> plans = data.isNotEmpty
+        ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
+        : [];
+    return plans;
   }
 }

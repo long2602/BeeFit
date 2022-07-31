@@ -1,7 +1,24 @@
-class Plan{
-  int idPlan;
-  int focusArea;
-  int duration;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-  Plan(this.idPlan, this.focusArea, this.duration);
+class Plan {
+  late int? id;
+  late int idBodyPart;
+  late String name, des, img;
+
+  Plan(
+      {this.id,
+      required this.idBodyPart,
+      required this.name,
+      required this.des,
+      required this.img});
+
+  factory Plan.fromJson(Map<String, dynamic> jsonMap) {
+    return Plan(
+      id: jsonMap['id'],
+      name: jsonMap['name'],
+      idBodyPart: jsonMap['bodypart_id'],
+      des: jsonMap['description'],
+      img: jsonMap['image'],
+    );
+  }
 }

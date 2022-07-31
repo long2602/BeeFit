@@ -38,7 +38,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
   }
 
   insertData() async {
-    // databaseHelper.database;
+    databaseHelper.database;
     String food = json.encode(_mapIngredient);
     Map<String, dynamic> row = {
       'date': DateFormat("yyyy-MM-dd").format(DateTime.now()),
@@ -381,7 +381,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                                     });
                                   },
                                   backgroundColor: AppStyle.gray5Color,
-                                  text: isShow
+                                  text: !isShow
                                       ? 'Show Nutrition Facts'
                                       : 'Hide Nutrition Facts',
                                   textColor: AppStyle.gray2Color,
@@ -389,7 +389,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                                 ),
                               ),
                               Visibility(
-                                visible: !isShow,
+                                visible: isShow,
                                 child: ListView.separated(
                                   shrinkWrap: true,
                                   primary: false,

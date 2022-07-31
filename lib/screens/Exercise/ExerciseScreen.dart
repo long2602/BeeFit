@@ -263,13 +263,6 @@ class _TabExerciseState extends State<TabExercise> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 2, horizontal: 16),
-                      trailing: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.favorite_border_outlined,
-                          color: AppStyle.secondaryColor,
-                        ),
-                      ),
                     ),
                   );
                 },

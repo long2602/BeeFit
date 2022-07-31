@@ -1,14 +1,21 @@
+import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/plan_details.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
+import '../../models/databaseHelper.dart';
+import '../../models/plan.dart';
 import '../../widgets/TimeLine.dart';
 import 'ProcessPlanScreen.dart';
 
 class DetailPlanScreen extends StatefulWidget {
-  const DetailPlanScreen({Key? key}) : super(key: key);
+  final Plan _plan;
+  DetailPlanScreen({required Plan plan, Key? key})
+      : _plan = plan,
+        super(key: key);
 
   @override
   State<DetailPlanScreen> createState() => _DetailPlanScreenState();
@@ -17,6 +24,8 @@ class DetailPlanScreen extends StatefulWidget {
 class _DetailPlanScreenState extends State<DetailPlanScreen> {
   bool isAppbarExpand = true;
   late ScrollController _scrollController;
+  List<PlanDetail> listsPlanDetail = [];
+  late int maxWeek = 0, maxDay = 0;
   @override
   void initState() {
     // TODO: implement initState
@@ -42,152 +51,195 @@ class _DetailPlanScreenState extends State<DetailPlanScreen> {
     final _kAppBarSize = screenHeight * 0.2;
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
+    late Plan plan = widget._plan;
+    DatabaseHelper databaseHelper = DatabaseHelper.instance;
+
     return Scaffold(
       backgroundColor: AppStyle.whiteColor,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: _kAppBarSize,
-            pinned: true,
-            elevation: 0.0,
-            backgroundColor: AppStyle.primaryColor,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                isAppbarExpand ? "" : "Massive upper body",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24 * _scaleFont,
-                ),
-              ),
-              centerTitle: true,
-              background: Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 30 * _scaleScreen, vertical: 15 * _scaleScreen),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xffE9A24A),
-                      Color(0xffF2BE6A),
-                      Color(0xffF6D08B)
-                    ],
-                    end: Alignment.bottomRight,
-                    begin: Alignment.topLeft,
+      body: FutureBuilder(
+        future: Future.wait([
+          databaseHelper.getPlanDetailById(widget._plan.id!),
+        ]),
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          listsPlanDetail = snapshot.data![0] as List<PlanDetail>;
+          for (PlanDetail planDetail in listsPlanDetail) {
+            if (maxWeek < planDetail.week) maxWeek = planDetail.week;
+            if (maxDay < planDetail.day) maxDay = planDetail.day;
+          }
+
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar(
+                expandedHeight: _kAppBarSize,
+                pinned: true,
+                elevation: 0.0,
+                backgroundColor: AppStyle.primaryColor,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    isAppbarExpand ? "" : plan.name,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24 * _scaleFont,
+                    ),
                   ),
-                  image: DecorationImage(
-                    image: AssetImage("assets/imgs/appbarBackground.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Massive upper body'.toUpperCase(),
-                      style: GoogleFonts.poppins(
-                        color: AppStyle.whiteColor,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 28 * _scaleFont,
+                  centerTitle: true,
+                  background: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 30 * _scaleScreen,
+                        vertical: 15 * _scaleScreen),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xffE9A24A),
+                          Color(0xffF2BE6A),
+                          Color(0xffF6D08B)
+                        ],
+                        end: Alignment.bottomRight,
+                        begin: Alignment.topLeft,
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage("assets/imgs/appbarBackground.png"),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.clock,
-                                color: AppStyle.whiteColor,
-                                size: 16 * _scaleFont,
-                              ),
-                              SizedBox(width: 4 * _scaleScreen),
-                              Text(
-                                '8-27 minutes/ day',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14 * _scaleFont,
-                                  color: AppStyle.whiteColor,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
+                        Text(
+                          plan.name.toUpperCase(),
+                          style: GoogleFonts.poppins(
+                            color: AppStyle.whiteColor,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 28 * _scaleFont,
                           ),
                         ),
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.calendar,
-                                color: AppStyle.whiteColor,
-                                size: 16 * _scaleFont,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.clock,
+                                    color: AppStyle.whiteColor,
+                                    size: 16 * _scaleFont,
+                                  ),
+                                  SizedBox(width: 4 * _scaleScreen),
+                                  Text(
+                                    '8-27 minutes/ day',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14 * _scaleFont,
+                                      color: AppStyle.whiteColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 4 * _scaleFont),
-                              Text(
-                                '28 days',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14 * _scaleFont,
-                                  color: AppStyle.whiteColor,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.calendar,
+                                    color: AppStyle.whiteColor,
+                                    size: 16 * _scaleFont,
+                                  ),
+                                  SizedBox(width: 4 * _scaleFont),
+                                  Text(
+                                    '28 days',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14 * _scaleFont,
+                                      color: AppStyle.whiteColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            )
+                          ],
                         )
                       ],
-                    )
+                    ),
+                  ),
+                ),
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30 * _scaleScreen,
+                          vertical: 20 * _scaleScreen),
+                      child: Column(
+                        children: [
+                          Timeline(
+                            children: <Widget>[
+                              for (int i = 1; i <= maxWeek; i++)
+                                WeekContainer(
+                                  week: i,
+                                  isActive: true,
+                                  list: listsPlanDetail
+                                      .where((element) => element.week == i)
+                                      .toList(),
+                                  maxDay: maxDayOfWeek(i),
+                                ),
+                            ],
+                            indicators: <Widget>[
+                              for (int i = 0; i < maxWeek; i++) NodeCircle(),
+                            ],
+                            lineColor: AppStyle.primaryColor,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 30 * _scaleScreen,
-                      vertical: 20 * _scaleScreen),
-                  child: Column(
-                    children: [
-                      Timeline(
-                        children: const <Widget>[
-                          WeekContainer(week: 1, isActive: true),
-                          WeekContainer(week: 2, isActive: false),
-                          WeekContainer(week: 3, isActive: false),
-                          WeekContainer(week: 4, isActive: false),
-                        ],
-                        indicators: const <Widget>[
-                          NodeCircle(),
-                          NodeCircle(),
-                          NodeCircle(),
-                          NodeCircle(),
-                        ],
-                        lineColor: AppStyle.primaryColor,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
+  }
+
+  int maxDayOfWeek(int week) {
+    List<PlanDetail> list =
+        listsPlanDetail.where((element) => element.week == week).toList();
+    PlanDetail max = list
+        .reduce((curr, next) => curr.day > next.day ? curr : next); // 8 --> Max
+    PlanDetail min =
+        list.reduce((curr, next) => curr.day < next.day ? curr : next);
+    return max.day - min.day + 1;
   }
 }
 
 class WeekContainer extends StatelessWidget {
   final int _week;
   final bool _isActive;
+  final List<PlanDetail> _list;
+  final int _maxDayOfWeek;
 
-  const WeekContainer({required int week, required bool isActive, Key? key})
+  const WeekContainer(
+      {required int week,
+      required bool isActive,
+      required List<PlanDetail> list,
+      required int maxDay,
+      Key? key})
       : _week = week,
         _isActive = isActive,
+        _list = list,
+        _maxDayOfWeek = maxDay,
         super(key: key);
 
   @override
@@ -239,15 +291,21 @@ class WeekContainer extends StatelessWidget {
                       mainAxisSpacing: 10,
                       childAspectRatio: 1,
                     ),
-                    itemCount: 7 + 5,
+                    itemCount: _maxDayOfWeek,
                     itemBuilder: (BuildContext context, int index) {
-                      return (0 == ((index % 7) % 2))
-                          ? ButtonCircle(
-                              isActive: (!_isActive) ? false : true, no: _no++)
-                          : const Icon(
-                              Icons.chevron_right,
-                              color: AppStyle.whiteColor,
-                            );
+                      return
+                          // (0 == ((index % 7) % 2)) ?
+                          ButtonCircle(
+                        isActive: (!_isActive) ? false : true,
+                        no: _no++,
+                        list: _list
+                            .where((element) => element.day == index + 1)
+                            .toList(),
+                      );
+                      // : const Icon(
+                      //     Icons.chevron_right,
+                      //     color: AppStyle.whiteColor,
+                      //   );
                     },
                   ),
                 ),
@@ -309,10 +367,16 @@ class NodeCircle extends StatelessWidget {
 class ButtonCircle extends StatelessWidget {
   final bool _isActive;
   final int _no;
+  final List<PlanDetail> _list;
 
-  const ButtonCircle({required bool isActive, required int no, Key? key})
+  const ButtonCircle(
+      {required bool isActive,
+      required int no,
+      required List<PlanDetail> list,
+      Key? key})
       : _isActive = isActive,
         _no = no,
+        _list = list,
         super(key: key);
 
   @override
@@ -332,7 +396,8 @@ class ButtonCircle extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DayDetailScreen(
-                    day: _no,
+                    day: _list[0].day,
+                    planDetail: _list,
                   )),
         );
       },

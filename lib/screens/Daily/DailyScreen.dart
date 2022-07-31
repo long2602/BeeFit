@@ -1,4 +1,5 @@
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/food_history.dart';
 import 'package:beefit/models/nutrition/Ingredient.dart';
 import 'package:beefit/screens/Daily/AddFoodScreen.dart';
 import 'package:beefit/screens/SearchScreen/SearchFoodScreen.dart';
@@ -9,6 +10,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:beefit/controls/utils.dart';
 import 'dart:collection';
 import '../../constants/AppMethods.dart';
+import '../../models/databaseHelper.dart';
+import 'DetailFoodScreen.dart';
 
 class DailyScreen extends StatefulWidget {
   const DailyScreen({Key? key}) : super(key: key);
@@ -29,9 +32,10 @@ class _DailyScreenState extends State<DailyScreen> {
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOff;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  List<Ingredient> listBreakfast = [];
-  List<Ingredient> listLunch = [];
-  List<Ingredient> listDinner = [];
+  List<FoodHistory> listBreakfast = [];
+  List<FoodHistory> listLunch = [];
+  List<FoodHistory> listDinner = [];
+  DatabaseHelper databaseHelper = DatabaseHelper.instance;
 
   TabBar get _tabBar => const TabBar(
         tabs: [
@@ -331,397 +335,594 @@ class _DailyScreenState extends State<DailyScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 30 * _scaleScreen, vertical: 20 * _scaleScreen),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * _scaleScreen,
-                          vertical: 16 * _scaleScreen),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppStyle.secondaryColor,
-                        borderRadius: AppStyle.appBorder,
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: AppStyle.whiteColor,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                              ),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16 * _scaleScreen,
-                                vertical: 16 * _scaleScreen),
-                            margin: EdgeInsets.only(bottom: 8 * _scaleScreen),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: Column(
+                child: FutureBuilder(
+                  future: Future.wait([
+                    databaseHelper.getFoodHistoryByMeal(1),
+                    databaseHelper.getFoodHistoryByMeal(2),
+                    databaseHelper.getFoodHistoryByMeal(3)
+                  ]),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<List> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    listBreakfast = snapshot.data![0] as List<FoodHistory>;
+                    listLunch = snapshot.data![1] as List<FoodHistory>;
+                    listDinner = snapshot.data![2] as List<FoodHistory>;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16 * _scaleScreen,
+                              vertical: 16 * _scaleScreen),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppStyle.secondaryColor,
+                            borderRadius: AppStyle.appBorder,
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: AppStyle.whiteColor,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15),
+                                    topRight: Radius.circular(15),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16 * _scaleScreen,
+                                    vertical: 16 * _scaleScreen),
+                                margin:
+                                    EdgeInsets.only(bottom: 8 * _scaleScreen),
+                                child: Row(
                                   children: [
-                                    Image.asset('assets/imgs/eat.png'),
-                                    Text(
-                                      '860',
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: AppStyle.secondaryColor,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Ate',
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 14,
-                                        color: AppStyle.infoColor,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                                CircularPercentIndicator(
-                                  radius: 68 * AppMethods.screenScale(context),
-                                  lineWidth: 15,
-                                  animation: true,
-                                  percent: 0.7,
-                                  center: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "1625",
-                                        style: GoogleFonts.poppins(
+                                    Expanded(
+                                        child: Column(
+                                      children: [
+                                        Image.asset('assets/imgs/eat.png'),
+                                        Text(
+                                          '860',
+                                          style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: (26.0 *
-                                                AppMethods.fontScale(context)),
-                                            color: AppStyle.primaryColor),
+                                            fontSize: 18,
+                                            color: AppStyle.secondaryColor,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Ate',
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 14,
+                                            color: AppStyle.infoColor,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                    CircularPercentIndicator(
+                                      radius:
+                                          68 * AppMethods.screenScale(context),
+                                      lineWidth: 15,
+                                      animation: true,
+                                      percent: 0.7,
+                                      center: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "1625",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: (26.0 *
+                                                    AppMethods.fontScale(
+                                                        context)),
+                                                color: AppStyle.primaryColor),
+                                          ),
+                                          Text(
+                                            "kCal Left",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: (12 *
+                                                    AppMethods.fontScale(
+                                                        context)),
+                                                color: AppStyle.secondaryColor),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        "kCal Left",
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: (12 *
-                                                AppMethods.fontScale(context)),
-                                            color: AppStyle.secondaryColor),
-                                      ),
-                                    ],
-                                  ),
-                                  backgroundColor: const Color(0xffebebeb),
-                                  circularStrokeCap: CircularStrokeCap.round,
-                                  progressColor: AppStyle.primaryColor,
-                                  animationDuration: 1000,
+                                      backgroundColor: const Color(0xffebebeb),
+                                      circularStrokeCap:
+                                          CircularStrokeCap.round,
+                                      progressColor: AppStyle.primaryColor,
+                                      animationDuration: 1000,
+                                    ),
+                                    Expanded(
+                                        child: Column(
+                                      children: [
+                                        Image.asset('assets/imgs/burn.png'),
+                                        Text(
+                                          '120',
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: AppStyle.secondaryColor,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Burned',
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 14,
+                                            color: AppStyle.errorColor,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                  ],
                                 ),
-                                Expanded(
-                                    child: Column(
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: AppStyle.whiteColor,
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(15),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10 * _scaleScreen,
+                                    horizontal: 16),
+                                child: Row(
                                   children: [
-                                    Image.asset('assets/imgs/burn.png'),
-                                    Text(
-                                      '120',
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: AppStyle.secondaryColor,
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Carb',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12 * _scaleFont,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4 * _scaleScreen),
+                                              child:
+                                                  const LinearProgressIndicator(
+                                                backgroundColor:
+                                                    AppStyle.gray5Color,
+                                                color: AppStyle.primaryColor,
+                                                value: 46 / 158,
+                                              ),
+                                            ),
+                                            Text(
+                                              '46 / 158',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12 * _scaleFont),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    Text(
-                                      'Burned',
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 14,
-                                        color: AppStyle.errorColor,
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Protein',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12 * _scaleFont,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4 * _scaleScreen),
+                                              child:
+                                                  const LinearProgressIndicator(
+                                                backgroundColor:
+                                                    AppStyle.gray5Color,
+                                                color: AppStyle.primaryColor,
+                                                value: 46 / 158,
+                                              ),
+                                            ),
+                                            Text(
+                                              '46 / 158',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12 * _scaleFont),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Fat',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12 * _scaleFont,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4 * _scaleScreen),
+                                              child:
+                                                  const LinearProgressIndicator(
+                                                backgroundColor:
+                                                    AppStyle.gray5Color,
+                                                color: AppStyle.primaryColor,
+                                                value: 46 / 158,
+                                              ),
+                                            ),
+                                            Text(
+                                              '46 / 158',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12 * _scaleFont),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
-                                )),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: AppStyle.whiteColor,
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15),
+                                ),
                               ),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10 * _scaleScreen, horizontal: 16),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Carb',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 12 * _scaleFont,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4 * _scaleScreen),
-                                          child: const LinearProgressIndicator(
-                                            backgroundColor:
-                                                AppStyle.gray5Color,
-                                            color: AppStyle.primaryColor,
-                                            value: 46 / 158,
-                                          ),
-                                        ),
-                                        Text(
-                                          '46 / 158',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 12 * _scaleFont),
-                                        ),
-                                      ],
-                                    ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8 * _scaleScreen),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Your food log',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppStyle.secondaryColor,
+                                  fontSize: 16 * _scaleFont,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12 * _scaleScreen,
+                              horizontal: 16 * _scaleScreen),
+                          decoration: BoxDecoration(
+                            borderRadius: AppStyle.appBorder,
+                            color: AppStyle.whiteColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppStyle.gray5Color.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 2), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading:
+                                    Image.asset("assets/imgs/breakfast.png"),
+                                title: Text(
+                                  'Breakfast',
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppStyle.secondaryColor),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AddFoodScreen(
+                                                title: "Breakfast",
+                                              )),
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    color: AppStyle.primaryColor,
+                                    size: 30 * _scaleScreen,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Protein',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 12 * _scaleFont,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4 * _scaleScreen),
-                                          child: const LinearProgressIndicator(
-                                            backgroundColor:
-                                                AppStyle.gray5Color,
-                                            color: AppStyle.primaryColor,
-                                            value: 46 / 158,
-                                          ),
-                                        ),
-                                        Text(
-                                          '46 / 158',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 12 * _scaleFont),
-                                        ),
-                                      ],
+                              ),
+                              for (FoodHistory item in listBreakfast)
+                                ListTile(
+                                  title: Text(
+                                    item.ingredient.name!,
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppStyle.black3Color,
+                                      fontSize: 14 * _scaleFont,
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Fat',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 12 * _scaleFont,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4 * _scaleScreen),
-                                          child: const LinearProgressIndicator(
-                                            backgroundColor:
-                                                AppStyle.gray5Color,
-                                            color: AppStyle.primaryColor,
-                                            value: 46 / 158,
-                                          ),
-                                        ),
-                                        Text(
-                                          '46 / 158',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 12 * _scaleFont),
-                                        ),
-                                      ],
+                                  trailing: Text(
+                                    '${item.ingredient.nutrition!.Nutrients.firstWhere((element) => element.name == 'Calories').amount}',
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppStyle.primaryColor,
+                                      fontSize: 12 * _scaleFont,
                                     ),
                                   ),
+                                  subtitle: Text('${item.ingredient.amount}'),
+                                  onTap: () {
+                                    _deleteDialog(context, item.id!);
+
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //       builder: (_) => DetailFoodScreen(
+                                    //             ingredient: item.ingredient,
+                                    //             meal: item.meal!,
+                                    //           )),
+                                    // );
+                                  },
+                                  onLongPress: () {
+                                    _deleteDialog(context, item.id!);
+                                  },
                                 ),
-                              ],
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8 * _scaleScreen),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Your food log',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              color: AppStyle.secondaryColor,
-                              fontSize: 16 * _scaleFont,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12 * _scaleScreen,
-                          horizontal: 16 * _scaleScreen),
-                      decoration: BoxDecoration(
-                        borderRadius: AppStyle.appBorder,
-                        color: AppStyle.whiteColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppStyle.gray5Color.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: Image.asset("assets/imgs/breakfast.png"),
-                            title: Text(
-                              'Breakfast',
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppStyle.secondaryColor),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            trailing: IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const AddFoodScreen(
-                                            title: "Breakfast",
-                                          )),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.add_circle,
-                                color: AppStyle.primaryColor,
-                                size: 30 * _scaleScreen,
+                        ),
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12 * _scaleScreen,
+                              horizontal: 16 * _scaleScreen),
+                          decoration: BoxDecoration(
+                            borderRadius: AppStyle.appBorder,
+                            color: AppStyle.whiteColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppStyle.gray5Color.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 2), // changes position of shadow
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12 * _scaleScreen,
-                          horizontal: 16 * _scaleScreen),
-                      decoration: BoxDecoration(
-                        borderRadius: AppStyle.appBorder,
-                        color: AppStyle.whiteColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppStyle.gray5Color.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: Image.asset("assets/imgs/lunch.png"),
-                            title: Text(
-                              'Lunch',
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppStyle.secondaryColor),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            trailing: IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const AddFoodScreen(
-                                            title: "Lunch",
-                                          )),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.add_circle,
-                                color: AppStyle.primaryColor,
-                                size: 30 * _scaleScreen,
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Image.asset("assets/imgs/lunch.png"),
+                                title: Text(
+                                  'Lunch',
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppStyle.secondaryColor),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AddFoodScreen(
+                                                title: "Lunch",
+                                              )),
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    color: AppStyle.primaryColor,
+                                    size: 30 * _scaleScreen,
+                                  ),
+                                ),
                               ),
-                            ),
+                              for (FoodHistory item in listLunch)
+                                ListTile(
+                                  title: Text(
+                                    item.ingredient.name!,
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppStyle.black3Color,
+                                      fontSize: 14 * _scaleFont,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    '${item.ingredient.nutrition!.Nutrients.firstWhere((element) => element.name == 'Calories').amount}',
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppStyle.primaryColor,
+                                      fontSize: 12 * _scaleFont,
+                                    ),
+                                  ),
+                                  onTap: () {},
+                                )
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 12 * _scaleScreen,
-                          horizontal: 16 * _scaleScreen),
-                      decoration: BoxDecoration(
-                        borderRadius: AppStyle.appBorder,
-                        color: AppStyle.whiteColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppStyle.gray5Color.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: Image.asset("assets/imgs/dinner.png"),
-                            title: Text(
-                              'Dinner',
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppStyle.secondaryColor),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            trailing: IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const AddFoodScreen(
-                                            title: "Dinner",
-                                          )),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.add_circle,
-                                color: AppStyle.primaryColor,
-                                size: 30 * _scaleScreen,
+                        ),
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12 * _scaleScreen,
+                              horizontal: 16 * _scaleScreen),
+                          decoration: BoxDecoration(
+                            borderRadius: AppStyle.appBorder,
+                            color: AppStyle.whiteColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppStyle.gray5Color.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 2), // changes position of shadow
                               ),
-                            ),
+                            ],
                           ),
-                          Text('hello'),
-                        ],
-                      ),
-                    ),
-                  ],
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Image.asset("assets/imgs/dinner.png"),
+                                title: Text(
+                                  'Dinner',
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppStyle.secondaryColor),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AddFoodScreen(
+                                                title: "Dinner",
+                                              )),
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    color: AppStyle.primaryColor,
+                                    size: 30 * _scaleScreen,
+                                  ),
+                                ),
+                              ),
+                              for (FoodHistory item in listDinner)
+                                ListTile(
+                                  title: Text(
+                                    item.ingredient.name!,
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppStyle.black3Color,
+                                      fontSize: 14 * _scaleFont,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    '${item.ingredient.nutrition!.Nutrients.firstWhere((element) => element.name == 'Calories').amount}',
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppStyle.primaryColor,
+                                      fontSize: 12 * _scaleFont,
+                                    ),
+                                  ),
+                                  onTap: () {},
+                                )
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _deleteDialog(BuildContext context, int wid) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context1) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        elevation: 0,
+        content: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Image.asset(
+              //   AppUI.walletWarning2x,
+              //   width: 100.w,
+              // ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 22),
+                child: Text(
+                  "Deleting this wallet will also, delete all transactions under this wallet. Deleted data cannot be recovered. Are you sure you want to proceed?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: ClipRRect(
+                        borderRadius: AppStyle.appBorder,
+                        child: MaterialButton(
+                          minWidth: double.infinity,
+                          color: AppStyle.secondaryColor,
+                          elevation: 0,
+                          onPressed: () => Navigator.pop(context1),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              "No",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: AppStyle.gray4Color,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ClipRRect(
+                        borderRadius: AppStyle.appBorder,
+                        child: MaterialButton(
+                          minWidth: double.infinity,
+                          color: AppStyle.primaryColor,
+                          elevation: 0,
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() {});
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: AppStyle.whiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: AppStyle.appBorder),
+      ),
+      barrierDismissible: false,
     );
   }
 }
