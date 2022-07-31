@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class CountDownTimerState extends GetxController {
   var max = 30, count = 30;
-  bool isStart = false, isPause = false, isReset = false;
+  bool isStart = false, isPause = false, isReset = false, isFinish = false;
   late Timer _timer;
 
   void stateTimerStart() {
@@ -15,6 +15,7 @@ class CountDownTimerState extends GetxController {
         isReset = false;
         update();
       } else {
+        isFinish = true;
         _timer.cancel();
       }
     });

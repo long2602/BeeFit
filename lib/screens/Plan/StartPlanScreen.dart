@@ -4,12 +4,15 @@ import 'package:beefit/models/exercise.dart';
 import 'package:beefit/screens/Plan/PauseScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:beefit/widgets/CountDownTimerState.dart';
+import 'package:beefit/widgets/TimeLine.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../models/databaseHelper.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../models/instruction.dart';
 
 class StartPlanScreen extends StatefulWidget {
   final List<PlanExerciseDetail> _list;
@@ -25,7 +28,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
   late VideoPlayerController _controller;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
   late List<PlanExerciseDetail> _list = widget._list;
-  PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: 0);
+  int indexPage = 1;
   @override
   void initState() {
     // TODO: implement initState
@@ -63,7 +67,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
               child: Text(
-                'Exercises 2/${_list.length}',
+                'Exercises $indexPage /${_list.length}',
                 style: GoogleFonts.poppins(
                     color: AppStyle.secondaryColor,
                     fontWeight: FontWeight.bold,
@@ -75,243 +79,304 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
         ),
       ),
       body: GetBuilder<CountDownTimerState>(
-        builder: (_) => Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              print(index + 1);
-            },
-            children: [
-              for (int i = 0; i < _list.length; i++)
-                Column(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius: AppStyle.appBorder,
-                            child: AspectRatio(
-                              aspectRatio: _controller.value.aspectRatio,
-                              child: VideoPlayer(_controller),
+        builder: (_) {
+          if (timerState.isFinish == true) {
+            Get.to(PauseScreen(time: 30));
+          }
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  indexPage = index;
+                });
+              },
+              children: [
+                for (int i = 0; i < _list.length; i++)
+                  Column(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          // mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: AppStyle.appBorder,
+                              child: AspectRatio(
+                                aspectRatio: _controller.value.aspectRatio,
+                                child: VideoPlayer(_controller),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                Text(
-                                  _list[i].name,
-                                  style: GoogleFonts.poppins(
-                                      color: AppStyle.secondaryColor,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 25 * _scaleFont),
-                                ),
-                                IconButton(
-                                  onPressed: () => showModalBottomSheet(
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Text(
+                                    _list[i].name,
+                                    style: GoogleFonts.poppins(
+                                        color: AppStyle.secondaryColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 25 * _scaleFont),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
                                       shape: const RoundedRectangleBorder(
                                         borderRadius: BorderRadius.vertical(
                                             top: Radius.circular(20)),
                                       ),
-                                      builder: (context) => buildSheet()),
-                                  icon: const Icon(
-                                    Icons.help_outline,
-                                    color: AppStyle.gray3Color,
+                                      builder: (context) => buildSheet(
+                                        Exercise(
+                                            name: _list[i].name,
+                                            description: _list[i].description,
+                                            gif: _list[i].gif,
+                                            level: _list[i].level,
+                                            type: _list[i].type,
+                                            met: _list[i].met,
+                                            restDuration: _list[i].duration,
+                                            id: _list[i].id),
+                                      ),
+                                    ),
+                                    icon: const Icon(
+                                      Icons.help_outline,
+                                      color: AppStyle.gray3Color,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10 * _scaleScreen),
-                            child: Text(
-                              _list[i].duration == 0
-                                  ? "x ${_list[i].rep}"
-                                  : '00:${timerState.count}',
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w700,
-                                color: AppStyle.primaryColor,
-                                fontSize: 50 * _scaleFont,
+                                ],
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(50)),
+                            _list[i].duration != 0
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10 * _scaleScreen),
+                                    child: Text(
+                                      '00:${timerState.count}',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w700,
+                                        color: AppStyle.primaryColor,
+                                        fontSize: 50 * _scaleFont,
+                                      ),
                                     ),
-                                    child: InkWell(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(50)),
-                                      onTap: () {},
-                                      child: const Icon(
-                                        Icons.arrow_left_rounded,
-                                        size: 80,
-                                        color: AppStyle.gray4Color,
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10 * _scaleScreen),
+                                  ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(50)),
+                                      ),
+                                      child: InkWell(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(50)),
+                                        onTap: () {
+                                          _pageController.previousPage(
+                                              duration:
+                                                  const Duration(seconds: 1),
+                                              curve: Curves.easeInOut);
+                                        },
+                                        child: const Icon(
+                                          Icons.arrow_left_rounded,
+                                          size: 80,
+                                          color: AppStyle.gray4Color,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  height: 80 * _scaleScreen,
-                                  width: 80 * _scaleScreen,
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 20 * _scaleScreen),
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        value:
-                                            timerState.count / timerState.max,
-                                        strokeWidth: 08,
-                                        color: const Color(0xffF6D08B),
-                                        backgroundColor:
-                                            const Color(0xffEDEDED),
+                                  _list[i].duration != 0
+                                      ? Container(
+                                          height: 80 * _scaleScreen,
+                                          width: 80 * _scaleScreen,
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 20 * _scaleScreen),
+                                          child: Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              CircularProgressIndicator(
+                                                value: timerState.count /
+                                                    timerState.max,
+                                                strokeWidth: 08,
+                                                color: const Color(0xffF6D08B),
+                                                backgroundColor:
+                                                    const Color(0xffEDEDED),
+                                              ),
+                                              Center(
+                                                  child: !timerState.isStart
+                                                      ? SizedBox(
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              timerState
+                                                                  .stateTimerStart();
+                                                            },
+                                                            child: const Center(
+                                                              child: Icon(
+                                                                Icons
+                                                                    .play_arrow,
+                                                                size: 40,
+                                                              ),
+                                                            ),
+                                                            style:
+                                                                ElevatedButton
+                                                                    .styleFrom(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              elevation: 0,
+                                                              shape:
+                                                                  const CircleBorder(
+                                                                side: BorderSide
+                                                                    .none,
+                                                              ),
+                                                              primary: AppStyle
+                                                                  .primaryColor,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : SizedBox(
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              if (timerState
+                                                                          .isStart ==
+                                                                      true &&
+                                                                  timerState
+                                                                          .isPause ==
+                                                                      false) {
+                                                                timerState
+                                                                    .pause();
+                                                              } else {
+                                                                timerState
+                                                                    .stateTimerStart();
+                                                              }
+                                                            },
+                                                            child: const Center(
+                                                              child: Icon(
+                                                                Icons.pause,
+                                                                size: 40,
+                                                                color: AppStyle
+                                                                    .secondaryColor,
+                                                              ),
+                                                            ),
+                                                            style:
+                                                                ElevatedButton
+                                                                    .styleFrom(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              elevation: 0,
+                                                              shape:
+                                                                  const CircleBorder(
+                                                                side: BorderSide
+                                                                    .none,
+                                                              ),
+                                                              primary: Colors
+                                                                  .transparent,
+                                                            ),
+                                                          ),
+                                                        ))
+                                            ],
+                                          ),
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10 * _scaleScreen),
+                                          child: Text(
+                                            'x ${_list[i].rep}',
+                                            style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w700,
+                                              color: AppStyle.primaryColor,
+                                              fontSize: 50 * _scaleFont,
+                                            ),
+                                          ),
+                                        ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(50)),
                                       ),
-                                      Center(
-                                          child: !timerState.isStart
-                                              ? SizedBox(
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                  child: ElevatedButton(
-                                                    onPressed: () {
-                                                      timerState
-                                                          .stateTimerStart();
-                                                    },
-                                                    child: const Center(
-                                                      child: Icon(
-                                                        Icons.play_arrow,
-                                                        size: 40,
-                                                      ),
-                                                    ),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      elevation: 0,
-                                                      shape: const CircleBorder(
-                                                        side: BorderSide.none,
-                                                      ),
-                                                      primary:
-                                                          AppStyle.primaryColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              : SizedBox(
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                  child: ElevatedButton(
-                                                    onPressed: () {
-                                                      if (timerState.isStart ==
-                                                              true &&
-                                                          timerState.isPause ==
-                                                              false) {
-                                                        timerState.pause();
-                                                        Get.to(PauseScreen(
-                                                          time:
-                                                              timerState.count,
-                                                        ));
-                                                      } else {
-                                                        timerState
-                                                            .stateTimerStart();
-                                                      }
-                                                    },
-                                                    child: const Center(
-                                                      child: Icon(
-                                                        Icons.pause,
-                                                        size: 40,
-                                                        color: AppStyle
-                                                            .secondaryColor,
-                                                      ),
-                                                    ),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      elevation: 0,
-                                                      shape: const CircleBorder(
-                                                        side: BorderSide.none,
-                                                      ),
-                                                      primary:
-                                                          Colors.transparent,
-                                                    ),
-                                                  ),
-                                                ))
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(50)),
-                                    ),
-                                    child: InkWell(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(50)),
-                                      onTap: () {},
-                                      child: const Icon(
-                                        Icons.arrow_right_rounded,
-                                        size: 80,
-                                        color: AppStyle.gray4Color,
+                                      child: InkWell(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(50)),
+                                        onTap: () {
+                                          _pageController.nextPage(
+                                              duration:
+                                                  const Duration(seconds: 1),
+                                              curve: Curves.easeInOut);
+                                        },
+                                        child: const Icon(
+                                          Icons.arrow_right_rounded,
+                                          size: 80,
+                                          color: AppStyle.gray4Color,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            indexPage != _list.length ? "NEXT" : "PREVIOUS",
+                            style: GoogleFonts.poppins(
+                                color: AppStyle.gray3Color,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15 * _scaleFont),
                           ),
+                          Text(
+                            indexPage != _list.length
+                                ? _list[indexPage].name.toUpperCase()
+                                : _list[indexPage - 1].name.toUpperCase(),
+                            style: GoogleFonts.poppins(
+                                color: AppStyle.secondaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17 * _scaleFont),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 30 * _scaleScreen),
                         ],
                       ),
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          "NEXT",
-                          style: GoogleFonts.poppins(
-                              color: AppStyle.gray3Color,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15 * _scaleFont),
-                        ),
-                        Text(
-                          'Exercises'.toUpperCase(),
-                          style: GoogleFonts.poppins(
-                              color: AppStyle.secondaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17 * _scaleFont),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 30 * _scaleScreen),
-                      ],
-                    ),
-                  ],
-                ),
-            ],
-          ),
-        ),
+                    ],
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget buildSheet() {
-    // List<Instruction> lists = [];
+  Widget buildSheet(Exercise exercise) {
+    List<Instruction> lists = [];
     final _scaleFont = AppMethods.fontScale(context);
     final _scaleScreen = AppMethods.screenScale(context);
     return DraggableScrollableSheet(
@@ -349,16 +414,6 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                       alignment: Alignment.bottomCenter,
                       children: <Widget>[
                         VideoPlayer(_controller),
-                        _ControlsOverlay(controller: _controller),
-                        VideoProgressIndicator(
-                          _controller,
-                          allowScrubbing: true,
-                          colors: const VideoProgressColors(
-                            backgroundColor: Colors.transparent,
-                            playedColor: Colors.transparent,
-                            bufferedColor: Colors.transparent,
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -368,7 +423,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                "exercise.name",
+                exercise.name,
                 style: GoogleFonts.poppins(
                     fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -376,87 +431,87 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                "exercise.description",
+                exercise.description,
                 style: GoogleFonts.poppins(color: Colors.grey, fontSize: 14),
               ),
             ),
-            // FutureBuilder(
-            //   future: databaseHelper.getInstructionsByIdExercise(exercise.id!),
-            //   builder: (context, snapshot) {
-            //     if (snapshot.hasData) {
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return const Center(
-            //           child: CircularProgressIndicator(),
-            //         );
-            //       } else {
-            //         lists = snapshot.data as List<Instruction>;
-            //         return Column(
-            //           children: [
-            //             Padding(
-            //               padding: const EdgeInsets.symmetric(vertical: 4),
-            //               child: Row(
-            //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                 children: [
-            //                   Text(
-            //                     'How to do it',
-            //                     style: GoogleFonts.poppins(
-            //                       fontSize: 18 * _scaleFont,
-            //                       fontWeight: FontWeight.w600,
-            //                       color: AppStyle.secondaryColor,
-            //                     ),
-            //                   ),
-            //                   Text(
-            //                     '${lists.length} steps',
-            //                     style: GoogleFonts.poppins(
-            //                       fontSize: 12 * _scaleFont,
-            //                       fontWeight: FontWeight.w500,
-            //                       color: AppStyle.gray3Color,
-            //                     ),
-            //                   )
-            //                 ],
-            //               ),
-            //             ),
-            //             Timeline(
-            //               children: <Widget>[
-            //                 for (Instruction item in lists)
-            //                   Container(
-            //                     child: Column(
-            //                       crossAxisAlignment: CrossAxisAlignment.start,
-            //                       children: [
-            //                         Text(
-            //                           "Step ${item.step}",
-            //                           style: GoogleFonts.poppins(
-            //                             fontSize: 14 * _scaleFont,
-            //                             fontWeight: FontWeight.w500,
-            //                             color: AppStyle.black1Color,
-            //                           ),
-            //                         ),
-            //                         Text(
-            //                           item.detail,
-            //                           style: GoogleFonts.poppins(
-            //                             fontSize: 14 * _scaleFont,
-            //                             fontWeight: FontWeight.w400,
-            //                             color: const Color(0xff7B6F72),
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                   ),
-            //               ],
-            //               indicators: <Widget>[
-            //                 for (Instruction item in lists) const NodeCircle(),
-            //               ],
-            //               lineColor: AppStyle.primaryColor,
-            //             ),
-            //           ],
-            //         );
-            //       }
-            //     } else if (snapshot.hasError) {
-            //       return const Text('no data');
-            //     }
-            //     return const Center(child: CircularProgressIndicator());
-            //   },
-            // ),
+            FutureBuilder(
+              future: databaseHelper.getInstructionsByIdExercise(exercise.id!),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    lists = snapshot.data as List<Instruction>;
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'How to do it',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18 * _scaleFont,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppStyle.secondaryColor,
+                                ),
+                              ),
+                              Text(
+                                '${lists.length} steps',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12 * _scaleFont,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppStyle.gray3Color,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Timeline(
+                          children: <Widget>[
+                            for (Instruction item in lists)
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Step ${item.step}",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14 * _scaleFont,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppStyle.black1Color,
+                                      ),
+                                    ),
+                                    Text(
+                                      item.detail,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14 * _scaleFont,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xff7B6F72),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                          indicators: <Widget>[
+                            for (Instruction item in lists) const NodeCircle(),
+                          ],
+                          lineColor: AppStyle.primaryColor,
+                        ),
+                      ],
+                    );
+                  }
+                } else if (snapshot.hasError) {
+                  return const Text('no data');
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
             const SizedBox(
               height: 20,
             ),
@@ -505,42 +560,6 @@ class NodeCircle extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ControlsOverlay extends StatelessWidget {
-  const _ControlsOverlay({Key? key, required this.controller})
-      : super(key: key);
-  final VideoPlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 50),
-          reverseDuration: const Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? const SizedBox.shrink()
-              : Container(
-                  color: Colors.black26,
-                  child: const Center(
-                    child: Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 100.0,
-                      semanticLabel: 'Play',
-                    ),
-                  ),
-                ),
-        ),
-        GestureDetector(
-          onTap: () {
-            controller.value.isPlaying ? controller.pause() : controller.play();
-          },
-        ),
-      ],
     );
   }
 }
