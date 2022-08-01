@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SizedBox(
                                         width: 100 * _scaleScreen,
                                         child: LinearProgressIndicator(
-                                          value: 0.7,
+                                          value: 0,
                                           backgroundColor: AppStyle.infoColor
                                               .withOpacity(0.3),
                                           color: AppStyle.infoColor,
@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          '1200',
+                                          '0',
                                           style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20 * _scaleScreen,
