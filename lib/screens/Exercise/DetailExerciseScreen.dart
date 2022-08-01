@@ -60,22 +60,6 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
                 fontSize: 24 * _scaleFont,
               ),
             ),
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => StartExerciseScreen(
-                      exercise: exercise,
-                    ),
-                  ),
-                );
-              },
-              icon: const Icon(
-                Icons.play_circle_filled_rounded,
-                color: AppStyle.secondaryColor,
-              ),
-            ),
           ],
         ),
         leading: const BackButton(color: AppStyle.secondaryColor),

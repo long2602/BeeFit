@@ -16,6 +16,7 @@ class CountDownTimerState extends GetxController {
         update();
       } else {
         isFinish = true;
+        update();
         _timer.cancel();
       }
     });
@@ -23,7 +24,12 @@ class CountDownTimerState extends GetxController {
 
   // user can set count down seconds, from TextField
   void setNumber(var number) {
-    count = int.parse(number);
+    count = int.parse(number.toString());
+    update();
+  }
+
+  void setMaxNumber(var number) {
+    max = int.parse(number);
     update();
   }
 

@@ -1,29 +1,26 @@
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/models/exercise.dart';
-import 'package:beefit/models/plan_details.dart';
+import 'package:beefit/models/plan.dart';
 import 'package:beefit/screens/Plan/StartPlanScreen.dart';
-import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppStyles.dart';
-import '../../controls/data.dart';
-import '../../controls/model.dart';
 import '../../models/PlamExerciseDetail.dart';
 import '../../models/databaseHelper.dart';
 import '../../widgets/CommonButton.dart';
 import '../Exercise/DetailExerciseScreen.dart';
-import '../Exercise/StartExerciseScreen.dart';
 
 class DayDetailScreen extends StatefulWidget {
-  final int _day;
-  final List<PlanDetail> _planDetail;
+  final int _day, _week;
+  final Plan _plan;
 
   const DayDetailScreen(
-      {required List<PlanDetail> planDetail, required int day, Key? key})
+      {required int day, required int week, required Plan plan, Key? key})
       : _day = day,
-        _planDetail = planDetail,
+        _week = week,
+        _plan = plan,
         super(key: key);
 
   @override
@@ -31,8 +28,6 @@ class DayDetailScreen extends StatefulWidget {
 }
 
 class _DayDetailScreenState extends State<DayDetailScreen> {
-  late List<DragAndDropList> lists;
-  List<DraggableList> subLists = [];
   bool isExpand = false;
   bool isAppbarExpand = true;
   late ScrollController _scrollController;
@@ -67,18 +62,18 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
     double totalCalo = 0;
     double totalTime = 0;
     for (PlanExerciseDetail item in planExerciseDetailList) {
-      totalCalo += item.kcal;
-      if (item.duration == 0) {
-        totalTime += 30;
+      totalCalo += item.kcal!;
+      if (item.isRepCount == 0) {
+        totalTime += item.duration! + item.restDuration!;
       } else {
-        totalTime += item.duration!;
+        totalTime += item.rep! + 3 + item.restDuration!;
       }
     }
     return Scaffold(
       backgroundColor: AppStyle.whiteColor,
       body: FutureBuilder(
         future: Future.wait([
-          databaseHelper.getPlanDayByDay(day),
+          databaseHelper.getPlanDayByDay(day, 1, widget._week),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData) {
@@ -99,7 +94,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                 backgroundColor: AppStyle.primaryColor,
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
-                    isAppbarExpand ? "" : "Massive upper body",
+                    isAppbarExpand ? "" : widget._plan.name,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       color: Colors.white,
@@ -132,7 +127,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Massive upper body',
+                          widget._plan.name,
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
@@ -140,7 +135,8 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                           ),
                         ),
                         Text(
-                          'Day ${day.toString()}'.toUpperCase(),
+                          'Week ${widget._week.toString()} - Day ${day.toString()}'
+                              .toUpperCase(),
                           style: GoogleFonts.poppins(
                             fontSize: 30 * _scaleFont,
                             fontWeight: FontWeight.w900,
@@ -168,7 +164,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      '${totalTime / 60} minutes',
+                                      '${(totalTime / 60).ceil()} minutes',
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16 * _scaleFont,
@@ -267,7 +263,8 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                                               type: item.type,
                                               met: item.met,
                                               restDuration: item.duration,
-                                              id: item.id),
+                                              id: item.id,
+                                              isRepCount: item.isRepCount),
                                         ),
                                       ),
                                     );
@@ -295,7 +292,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    item.duration == 0
+                                    item.isRepCount != 0
                                         ? "x${item.rep}"
                                         : "00:${item.duration}",
                                     style: GoogleFonts.poppins(

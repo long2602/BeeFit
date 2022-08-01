@@ -29,16 +29,20 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
   late List<PlanExerciseDetail> _list = widget._list;
   final PageController _pageController = PageController(initialPage: 0);
-  int indexPage = 1;
+  int indexPage = 0;
+  late String videoName;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = VideoPlayerController.asset(
-        'assets/imgs/video/backward-arm-circles.mp4');
+    videoName = _list[0].gif;
+    _controller =
+        VideoPlayerController.asset('assets/imgs/video/$videoName.mp4');
     _controller.setLooping(true);
     _controller.initialize().then((_) => setState(() {}));
     _controller.play();
+    timerState.setNumber(_list[0].duration.toString());
+    timerState.setMaxNumber(_list[0].duration.toString());
   }
 
   @override
@@ -46,6 +50,94 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
     // TODO: implement dispose
     super.dispose();
     _controller.dispose();
+  }
+
+  Future<void> _confirmDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context1) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        elevation: 0,
+        content: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 22),
+                child: Text(
+                  "Deleting this wallet will also, delete all transactions under this wallet. Deleted data cannot be recovered. Are you sure you want to proceed?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: ClipRRect(
+                        borderRadius: AppStyle.appBorder,
+                        child: MaterialButton(
+                          minWidth: double.infinity,
+                          color: AppStyle.gray5Color,
+                          elevation: 0,
+                          onPressed: () => Navigator.pop(context1),
+                          child: const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Text(
+                              "No",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: AppStyle.gray1Color,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ClipRRect(
+                        borderRadius: AppStyle.appBorder,
+                        child: MaterialButton(
+                          minWidth: double.infinity,
+                          color: AppStyle.primaryColor,
+                          elevation: 0,
+                          onPressed: () {
+                            int count = 0;
+                            Navigator.popUntil(
+                              context,
+                              (route) {
+                                return count++ == 2;
+                              },
+                            );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: AppStyle.whiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: AppStyle.appBorder),
+      ),
+      barrierDismissible: false,
+    );
   }
 
   @override
@@ -67,7 +159,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
               child: Text(
-                'Exercises $indexPage /${_list.length}',
+                'Exercises ${indexPage + 1} /${_list.length}',
                 style: GoogleFonts.poppins(
                     color: AppStyle.secondaryColor,
                     fontWeight: FontWeight.bold,
@@ -81,7 +173,31 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
       body: GetBuilder<CountDownTimerState>(
         builder: (_) {
           if (timerState.isFinish == true) {
-            Get.to(PauseScreen(time: 30));
+            if (indexPage == _list.length - 1) {
+              Future.delayed(Duration.zero, () => _confirmDialog(context));
+            } else {
+              timerState.isFinish = false;
+              Future.delayed(
+                  Duration.zero,
+                  () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PauseScreen(
+                            list: _list,
+                            item: _list[indexPage],
+                            index: indexPage + 1,
+                          ),
+                        ),
+                      ));
+              timerState.setNumber(_list[indexPage].duration.toString());
+              timerState.setMaxNumber(_list[indexPage].duration.toString());
+
+              _pageController.nextPage(
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut);
+            }
+            // Future.delayed(Duration.zero,
+            //     () => _showMyDialog(_list[indexPage].restDuration!));
           }
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
@@ -91,6 +207,16 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
               onPageChanged: (index) {
                 setState(() {
                   indexPage = index;
+                  timerState.isFinish = false;
+                  timerState.isStart = false;
+                  timerState.isPause = false;
+                  timerState.isReset = false;
+                  videoName = _list[indexPage].gif;
+                  _controller = VideoPlayerController.asset(
+                      'assets/imgs/video/$videoName.mp4');
+                  _controller.initialize().then((_) => setState(() {}));
+                  _controller.setLooping(true);
+                  _controller.play();
                 });
               },
               children: [
@@ -138,7 +264,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                             type: _list[i].type,
                                             met: _list[i].met,
                                             restDuration: _list[i].duration,
-                                            id: _list[i].id),
+                                            id: _list[i].id,
+                                            isRepCount: _list[i].isRepCount),
                                       ),
                                     ),
                                     icon: const Icon(
@@ -149,7 +276,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                 ],
                               ),
                             ),
-                            _list[i].duration != 0
+                            _list[i].isRepCount == 0
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 10 * _scaleScreen),
@@ -162,9 +289,17 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                       ),
                                     ),
                                   )
-                                : Container(
+                                : Padding(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 10 * _scaleScreen),
+                                    child: Text(
+                                      'x ${_list[i].rep}',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w700,
+                                        color: AppStyle.primaryColor,
+                                        fontSize: 50 * _scaleFont,
+                                      ),
+                                    ),
                                   ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -198,7 +333,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                       ),
                                     ),
                                   ),
-                                  _list[i].duration != 0
+                                  _list[i].isRepCount == 0
                                       ? Container(
                                           height: 80 * _scaleScreen,
                                           width: 80 * _scaleScreen,
@@ -299,16 +434,79 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                             ],
                                           ),
                                         )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10 * _scaleScreen),
-                                          child: Text(
-                                            'x ${_list[i].rep}',
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w700,
-                                              color: AppStyle.primaryColor,
-                                              fontSize: 50 * _scaleFont,
-                                            ),
+                                      : Container(
+                                          height: 80 * _scaleScreen,
+                                          width: 80 * _scaleScreen,
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 20 * _scaleScreen),
+                                          child: Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              CircularProgressIndicator(
+                                                value: timerState.count /
+                                                    timerState.max,
+                                                strokeWidth: 08,
+                                                color: const Color(0xffF6D08B),
+                                                backgroundColor:
+                                                    const Color(0xffEDEDED),
+                                              ),
+                                              Center(
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      Future.delayed(
+                                                          Duration.zero,
+                                                          () => Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (_) =>
+                                                                      PauseScreen(
+                                                                    list: _list,
+                                                                    item: _list[
+                                                                        indexPage],
+                                                                    index:
+                                                                        indexPage +
+                                                                            1,
+                                                                  ),
+                                                                ),
+                                                              ));
+                                                      timerState.setNumber(
+                                                          _list[indexPage]
+                                                              .duration
+                                                              .toString());
+                                                      timerState.setMaxNumber(
+                                                          _list[indexPage]
+                                                              .duration
+                                                              .toString());
+                                                      _pageController.nextPage(
+                                                          duration:
+                                                              const Duration(
+                                                                  seconds: 1),
+                                                          curve:
+                                                              Curves.easeInOut);
+                                                    },
+                                                    child: const Center(
+                                                      child: Icon(
+                                                        Icons.check,
+                                                        size: 40,
+                                                      ),
+                                                    ),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      padding: EdgeInsets.zero,
+                                                      elevation: 0,
+                                                      shape: const CircleBorder(
+                                                        side: BorderSide.none,
+                                                      ),
+                                                      primary:
+                                                          AppStyle.primaryColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
                                   Padding(
@@ -324,10 +522,33 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(50)),
                                         onTap: () {
-                                          _pageController.nextPage(
-                                              duration:
-                                                  const Duration(seconds: 1),
-                                              curve: Curves.easeInOut);
+                                          if (_list[i].isRepCount != 0) {
+                                            Get.snackbar(
+                                              "Can not skip exercise!",
+                                              "You need to press button check to practice next exercise.",
+                                            );
+                                          } else {
+                                            if (!timerState.isFinish) {
+                                              timerState.pause();
+                                              Get.snackbar(
+                                                "Can not skip exercise!",
+                                                "You need to complete all exercises to get better result.",
+                                              );
+                                            } else {
+                                              timerState.setNumber(
+                                                  _list[indexPage]
+                                                      .duration
+                                                      .toString());
+                                              timerState.setMaxNumber(
+                                                  _list[indexPage]
+                                                      .duration
+                                                      .toString());
+                                              _pageController.nextPage(
+                                                  duration: const Duration(
+                                                      seconds: 1),
+                                                  curve: Curves.easeInOut);
+                                            }
+                                          }
                                         },
                                         child: const Icon(
                                           Icons.arrow_right_rounded,
@@ -346,15 +567,17 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                       Column(
                         children: [
                           Text(
-                            indexPage != _list.length ? "NEXT" : "PREVIOUS",
+                            (indexPage + 1) != _list.length
+                                ? "NEXT"
+                                : "PREVIOUS",
                             style: GoogleFonts.poppins(
                                 color: AppStyle.gray3Color,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 15 * _scaleFont),
                           ),
                           Text(
-                            indexPage != _list.length
-                                ? _list[indexPage].name.toUpperCase()
+                            (indexPage + 1) != _list.length
+                                ? _list[indexPage + 1].name.toUpperCase()
                                 : _list[indexPage - 1].name.toUpperCase(),
                             style: GoogleFonts.poppins(
                                 color: AppStyle.secondaryColor,
@@ -526,6 +749,72 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showMyDialog(int _time) async {
+    final CountDownTimerState _timerState = Get.put(CountDownTimerState());
+    _timerState.setNumber(_time);
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return GetBuilder<CountDownTimerState>(
+          builder: (_) {
+            if (_timerState.isFinish == true) {
+              _timerState.setNumber(_list[indexPage].duration.toString());
+              _timerState.setMaxNumber(_list[indexPage].duration.toString());
+              _pageController.nextPage(
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut);
+              Navigator.pop(context);
+            } else if (_timerState.isStart == true) {
+              // _timerState.setNumber(_time.toString());
+              _timerState.stateTimerStart();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'REST',
+                  style: GoogleFonts.poppins(
+                      color: AppStyle.whiteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  '00:${_timerState.count}',
+                  style: GoogleFonts.poppins(
+                      color: AppStyle.whiteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 60),
+                  textAlign: TextAlign.center,
+                ),
+                CommonButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    timerState.setNumber(_list[indexPage].duration.toString());
+                    timerState
+                        .setMaxNumber(_list[indexPage].duration.toString());
+                    _pageController.nextPage(
+                        duration: const Duration(seconds: 1),
+                        curve: Curves.easeInOut);
+                  },
+                  backgroundColor: AppStyle.whiteColor,
+                  text: "SKIP",
+                  textColor: AppStyle.primaryColor,
+                  elevation: 0,
+                  width: 100,
+                  height: 40,
+                  borderRadius: 30,
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -1,24 +1,28 @@
 import 'dart:ffi';
 
-class User{
+class User {
   String? name;
-  int? gender;
+  bool? gender;
   int? age;
-  double? height;
-  double? weight;
-  int? bodyStatus;
-  int? idTarget;
+  int? height;
+  int? weight;
+  int? goal;
+  int? level;
+  double? bmi;
+  double? bmr;
+  Map<String, dynamic>? muscle;
+  int? mainPlan;
 
-  User(this.name, this.gender, this.age, this.height, this.weight,
-      this.bodyStatus, this.idTarget);
-
-  User.map(dynamic object){
-    name = object['Name'];
-    gender = object['Gender'];
-    age = object['Age'];
-    height = double.parse(object['Height'].toString());
-    weight = double.parse(object['Weight'].toString());
-    bodyStatus = object['BodyStatus'];
-    idTarget = object['IdTarget'];
-  }
+  User(
+      {this.name,
+      this.gender,
+      this.age,
+      this.height,
+      this.weight,
+      this.goal,
+      this.level,
+      this.bmr,
+      this.bmi,
+      this.muscle,
+      this.mainPlan});
 }

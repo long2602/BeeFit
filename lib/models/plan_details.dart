@@ -1,8 +1,8 @@
 class PlanDetail {
-  late int? id;
-  late int idPlan, week, day, idExercise, rep, duration, status;
+  late int? id, idExercise;
+  late int idPlan, week, day, status, isRestDay;
   late String? date;
-  late double kcal;
+  late double? kcal;
 
   PlanDetail({
     this.id,
@@ -10,11 +10,10 @@ class PlanDetail {
     required this.idExercise,
     required this.week,
     required this.day,
-    required this.rep,
-    required this.duration,
-    required this.kcal,
+    this.kcal,
     required this.status,
     this.date,
+    required this.isRestDay,
   });
 
   factory PlanDetail.fromJson(Map<String, dynamic> jsonMap) {
@@ -24,11 +23,10 @@ class PlanDetail {
       week: jsonMap['week'],
       day: jsonMap['day'],
       idExercise: jsonMap['exercise_id'],
-      rep: jsonMap['rep'],
-      duration: jsonMap['duration'],
       kcal: jsonMap['kcal'],
       date: jsonMap['date'],
       status: jsonMap['status'],
+      isRestDay: jsonMap['is_restday'],
     );
   }
 }

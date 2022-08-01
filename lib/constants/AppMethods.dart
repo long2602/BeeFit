@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 
 class AppMethods {
   static const String NAME = 'name';
-  static const String DESIRED_WEIGHT = 'desiredWeight';
+  static const String LEVEL = 'level';
   static const String CURRENT_WEIGHT = 'currentWeight';
   static const String AGE = 'age';
   static const String HEIGHT = 'height';
   static const String IS_MALE = 'isMale';
+  static const String BMI = 'bmi';
+  static const String BMR = 'bmr';
+  static const String GOAL = 'goal';
+  static const String MUSCLES = 'muscle';
+  static const String MAINPLAN = 'firstTime';
   static const String Is_FIRSTTIME = 'firstTime';
 
   //Convert hexColor to int

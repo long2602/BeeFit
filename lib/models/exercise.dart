@@ -1,5 +1,5 @@
 class Exercise {
-  late int? id, level, type, met, restDuration;
+  late int? id, level, type, met, restDuration, isRepCount;
   late String name, description, gif;
   late double kcal;
 
@@ -11,18 +11,21 @@ class Exercise {
       required this.level,
       required this.type,
       required this.met,
-      required this.restDuration});
+      required this.restDuration,
+      required this.isRepCount});
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
     return Exercise(
-        id: json["id"],
-        name: json["name"],
-        description: json["description"],
-        gif: json["gif"],
-        level: json["level"],
-        type: json["type"],
-        met: json["met"],
-        restDuration: json["rest_duration"]);
+      id: json["id"],
+      name: json["name"],
+      description: json["description"],
+      gif: json["gif"],
+      level: json["level"],
+      type: json["type"],
+      met: json["met"],
+      restDuration: json["rest_duration"],
+      isRepCount: json['isRepCount'],
+    );
   }
 
   Map<String, dynamic> toJson() {

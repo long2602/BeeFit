@@ -10,11 +10,15 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:beefit/controls/utils.dart';
 import 'dart:collection';
 import '../../constants/AppMethods.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import 'DetailFoodScreen.dart';
 
 class DailyScreen extends StatefulWidget {
-  const DailyScreen({Key? key}) : super(key: key);
+  final User _user;
+  const DailyScreen({required User user, Key? key})
+      : _user = user,
+        super(key: key);
 
   @override
   _DailyScreenState createState() => _DailyScreenState();

@@ -194,9 +194,6 @@ class _StartExerciseScreenState extends State<StartExerciseScreen> {
                                                     timerState.isPause ==
                                                         false) {
                                                   timerState.pause();
-                                                  Get.to(PauseScreen(
-                                                    time: timerState.count,
-                                                  ));
                                                 } else {
                                                   timerState.stateTimerStart();
                                                 }

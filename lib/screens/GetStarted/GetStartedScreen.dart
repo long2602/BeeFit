@@ -28,14 +28,15 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       _chooseAbs = false,
       _chooseLeg = false,
       _chooseButt = false,
-      _chooseFull = false;
+      _chooseFull = false,
+      _chooseBeginner = false,
+      _chooseIntermediate = false,
+      _chooseAdvanced = false;
 
   int _goalListIndex = 0,
-      _physiqueIndex = 2,
-      _desiredPhyIndex = 1,
       _currentHeight = 150,
       _currentWeight = 50,
-      _idealWeight = 50,
+      _levelId = 0,
       _planListIndex = 0;
 
   late TabController _tabController;
@@ -52,76 +53,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     {"title": "Get Toned", "img": "test3.png"},
   ];
 
-  final List _physiques = [
-    {
-      "title": "Thin",
-      "img": "thin.png",
-      "des": "You have a low amount of body fat and a low muscle mass level.",
-      "icon": "😐"
-    },
-    {
-      "title": "Thin & Muscular",
-      "img": "thin-muscular.png",
-      "des":
-          "You have a low amount of body fat and a standard level off muscle mass.",
-      "icon": "😄"
-    },
-    {
-      "title": "Standard",
-      "img": "standard.png",
-      "des": "You have average levels of both body fat and muscle mass.",
-      "icon": "😃"
-    },
-    {
-      "title": "Standard Muscular",
-      "img": "standard-muscular.png",
-      "des":
-          "You have an average amount of fat percentage and a high muscle mass level.",
-      "icon": "😄"
-    },
-    {
-      "title": "Obese",
-      "img": "obese.png",
-      "des":
-          "You have a high fat percentage and a standard level of muscle mass.",
-      "icon": "😐"
-    },
-  ];
-
-  final List _desiredPhysiques = [
-    {
-      "title": "Thin & Muscular",
-      "img": "thin-muscular.png",
-      "des":
-          "This is a healthy Physique rating. Watch out people can be very jealous!",
-      "icon": "😉"
-    },
-    {
-      "title": "Standard Muscular",
-      "img": "standard.png",
-      "des":
-          "You can be proud of this physique rating. This is a rating which some athletes have.",
-      "icon": "😄"
-    },
-    {
-      "title": "Very Muscular",
-      "img": "standard-muscular.png",
-      "des":
-          "You have an average amount of fat percentage and a high muscle mass level.",
-      "icon": "😃"
-    }
-  ];
-
-  final List _plans = [
-    {"frequency": "2 times/week", "des": "I don't have much time."},
-    {"frequency": "3 times/week", "des": "I have free time, but not much."},
-    {"frequency": "4 times/week", "des": "I can work out often."},
-    {"frequency": "6 times/week", "des": "I can do the workout all day."}
-  ];
-
-  late RulerPickerController _hRulerController,
-      _wRulerController,
-      _iwRulerController;
+  late RulerPickerController _hRulerController, _wRulerController;
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
@@ -130,14 +62,13 @@ class _GetStartedScreenState extends State<GetStartedScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 11, vsync: this);
+    _tabController = TabController(length: 8, vsync: this);
     _tabController.addListener(() {
       setState(() {});
     });
 
     _hRulerController = RulerPickerController(value: 0);
     _wRulerController = RulerPickerController(value: 0);
-    _iwRulerController = RulerPickerController(value: 0);
 
     _ageController.addListener(() {
       setState(() {});
@@ -147,23 +78,20 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     });
   }
 
-  double _BMICalculate({required double weight, required double height}) {
+  double _BMICalculate({required int weight, required int height}) {
     return weight / pow((height * 0.01), 2);
   }
 
-  double _BMRCalculate({required double weight, required double height}) {
+  double _BMRCalculate({required int weight, required int height}) {
     double activeFactor = 1.2;
-    switch (_planListIndex) {
-      case 1:
-        activeFactor = 1.375;
-        break;
-      case 2:
+    switch (_goalListIndex) {
+      case 2: // keep fit
         activeFactor = 1.55;
         break;
-      case 3:
+      case 1: // build muscle
         activeFactor = 1.725;
         break;
-      case 4:
+      case 0: //lose weight
         activeFactor = 1.9;
         break;
     }
@@ -191,11 +119,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       _choosedList = _womenGoals;
     }
 
-    var _changedWeight = (_idealWeight - _currentWeight).abs();
-    var _bmi = _BMICalculate(
-        height: _currentHeight.toDouble(), weight: _currentWeight.toDouble());
-    var _newBMI = _BMICalculate(
-        weight: _idealWeight.toDouble(), height: _currentHeight.toDouble());
+    var _bmi = _BMICalculate(height: _currentHeight, weight: _currentWeight);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -246,7 +170,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                           break;
                         case 3:
                           {
-                            if (_goalListIndex == 0) {
+                            if (_goalListIndex == 0 || _goalListIndex == 2) {
                               _tabController.index -= 2;
                             } else {
                               _tabController.index--;
@@ -269,7 +193,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       switch (_tabController.index) {
                         case 1:
                           {
-                            if (_goalListIndex == 0) {
+                            if (_goalListIndex == 0 || _goalListIndex == 2) {
                               _tabController.index += 2;
                             } else {
                               _tabController.index++;
@@ -283,32 +207,36 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                             }
                           }
                           break;
-                        case 10:
+                        case 7:
                           {
                             {
                               if (_formKey2.currentState!.validate()) {
-                                var _calo = _BMRCalculate(
-                                    weight: _currentWeight.toDouble(),
-                                    height: _currentHeight.toDouble());
-                                var _newCalo = _BMRCalculate(
-                                    weight: _idealWeight.toDouble(),
-                                    height: _currentHeight.toDouble());
-                                print('[CALO]: $_calo & new $_newCalo');
-
-                                Navigator.pushReplacement(
+                                Navigator.push(
                                     context,
-                                    AppMethods.animatedRoute(OnProgressScreen(
+                                    AppMethods.animatedRoute(
+                                      OnProgressScreen(
                                         isMale: _maleIsTapped,
                                         height: _currentHeight,
                                         currentWeight: _currentWeight,
-                                        desiredWeight: _idealWeight,
                                         name: _nameController.value.text,
                                         age: int.parse(
-                                            _ageController.value.text))));
-                                // Navigator.pushReplacement(
-                                //     context,
-                                //     AppMethods.animatedRoute(WelcomeScreen(
-                                //         name: _nameController.text)));
+                                            _ageController.value.text),
+                                        level: _levelId,
+                                        bmi: _bmi,
+                                        bmr: _BMRCalculate(
+                                            height: _currentHeight,
+                                            weight: _currentWeight),
+                                        goal: _goalListIndex,
+                                        muscles: {
+                                          "arm": _chooseArm,
+                                          "abs": _chooseAbs,
+                                          "chest": _chooseChest,
+                                          "leg": _chooseLeg,
+                                          "butt": _chooseButt,
+                                          "full": _chooseFull,
+                                        },
+                                      ),
+                                    ));
                               }
                             }
                           }
@@ -395,6 +323,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       onPageChanged: (index, reason) {
                         setState(() {
                           _goalListIndex = index;
+                          print(_goalListIndex);
                         });
                       }),
                 ),
@@ -876,459 +805,69 @@ class _GetStartedScreenState extends State<GetStartedScreen>
               ],
             ),
           ),
-          //Current physique 6
+          //Current level 6
           TabChild(
             title1: "What is your current ",
-            keyword: "physique",
+            keyword: "level",
             title2: "?",
             widget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  _physiques[_physiqueIndex]["title"],
-                  style: TextStyle(
-                      color: Color(AppMethods.hexColor("383B53")),
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
+                const SizedBox(
+                  height: 50,
                 ),
-                const SizedBox(height: 25),
-                CarouselSlider.builder(
-                  itemCount: _physiques.length,
-                  itemBuilder: (context, index, realIndex) {
-                    return OptionCard(
-                      imgName: _physiques[index]["img"],
-                      fill: Color(AppMethods.hexColor("233b55")),
-                    );
+                LevelSelection(
+                  title: "Beginner",
+                  action: () {
+                    setState(() {
+                      _chooseBeginner = true;
+                      _chooseIntermediate = false;
+                      _chooseAdvanced = false;
+                      _levelId = 1;
+                    });
                   },
-                  options: CarouselOptions(
-                      autoPlay: false,
-                      height: 320 * AppMethods.screenScale(context),
-                      viewportFraction: 0.7,
-                      enableInfiniteScroll: false,
-                      initialPage: _physiqueIndex,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _physiqueIndex = index;
-                        });
-                      }),
+                  isTapped: _chooseBeginner,
+                  des: "3 - 5 push-ups",
+                  icon: '☝️😂',
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppStyle.gray4Color,
-                          borderRadius: AppStyle.appBorder,
-                        ),
-                        height: 2.5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(
-                            _physiques.length,
-                            (index) => Indicator(
-                                isActive:
-                                    _physiqueIndex == index ? true : false),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                const SizedBox(
+                  height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(23, 5, 25, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Skinny",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        "Heavy",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      Text(_physiques[_physiqueIndex]["icon"],
-                          style: const TextStyle(fontSize: 25)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          _physiques[_physiqueIndex]["des"],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: Color(AppMethods.hexColor("FFFBF5")),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          //Desired physique 7
-          TabChild(
-            title1: "What is your ",
-            keyword: "ideal physique",
-            title2: "?",
-            widget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _desiredPhysiques[_desiredPhyIndex]["title"],
-                  style: TextStyle(
-                      color: Color(AppMethods.hexColor("383B53")),
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 25),
-                CarouselSlider.builder(
-                  itemCount: _desiredPhysiques.length,
-                  itemBuilder: (context, index, realIndex) {
-                    return OptionCard(
-                      imgName: _desiredPhysiques[index]["img"],
-                      fill: Color(AppMethods.hexColor("233b55")),
-                    );
+                LevelSelection(
+                  title: "Intermediate",
+                  action: () {
+                    setState(() {
+                      _chooseBeginner = false;
+                      _chooseIntermediate = true;
+                      _chooseAdvanced = false;
+                      _levelId = 2;
+                    });
                   },
-                  options: CarouselOptions(
-                      autoPlay: false,
-                      height: 320 * AppMethods.screenScale(context),
-                      viewportFraction: 0.7,
-                      enableInfiniteScroll: false,
-                      initialPage: _desiredPhyIndex,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _desiredPhyIndex = index;
-                        });
-                      }),
+                  isTapped: _chooseIntermediate,
+                  des: '5 - 10 push-ups',
+                  icon: '✌️😄',
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppStyle.gray4Color,
-                          borderRadius: AppStyle.appBorder,
-                        ),
-                        height: 2.5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(
-                            _desiredPhysiques.length,
-                            (index) => Indicator(
-                                isActive:
-                                    _desiredPhyIndex == index ? true : false),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                const SizedBox(
+                  height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 5, 27, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Lean",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        "Bulky",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      Text(_desiredPhysiques[_desiredPhyIndex]["icon"],
-                          style: const TextStyle(fontSize: 25)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          _desiredPhysiques[_desiredPhyIndex]["des"],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: Color(AppMethods.hexColor("FFFBF5")),
-                  ),
-                ),
+                LevelSelection(
+                  title: "Advanced",
+                  action: () {
+                    setState(() {
+                      _chooseBeginner = false;
+                      _chooseIntermediate = false;
+                      _chooseAdvanced = true;
+                      _levelId = 3;
+                    });
+                  },
+                  isTapped: _chooseAdvanced,
+                  des: 'At least 10 push-ups',
+                  icon: '👍😉',
+                )
               ],
             ),
           ),
 
-          //Ideal weight 8
-          TabChild(
-            title1: "What is your ",
-            keyword: "ideal weight",
-            title2: "?",
-            widget: Column(
-              children: [
-                const SizedBox(height: 50),
-                Stack(
-                  children: [
-                    _idealWeight > _currentWeight
-                        ? Positioned(
-                            top: 100,
-                            right: MediaQuery.of(context).size.width / 2 - 30,
-                            child: Container(
-                              height: 40,
-                              width: _changedWeight.toDouble() * 10,
-                              color: Color(AppMethods.hexColor("F6CF8D")),
-                            ),
-                          )
-                        : Positioned(
-                            top: 100,
-                            left: MediaQuery.of(context).size.width / 2 - 30,
-                            child: Container(
-                              height: 40,
-                              width: _changedWeight.toDouble() * 10,
-                              color: Color(AppMethods.hexColor("F6CF8D")),
-                            ),
-                          ),
-                    RulerPicker(
-                      controller: _iwRulerController,
-                      beginValue: 30,
-                      endValue: 200,
-                      initValue: _idealWeight + 3,
-                      rulerBackgroundColor: Colors.white.withAlpha(150),
-                      scaleLineStyleList: const [
-                        ScaleLineStyle(
-                            color: Colors.black,
-                            width: 1.5,
-                            height: 30,
-                            scale: 0),
-                      ],
-                      onValueChange: (value) {
-                        setState(() {
-                          _idealWeight = value - 3;
-                        });
-                      },
-                      width: MediaQuery.of(context).size.width,
-                      height: 80,
-                      rulerMarginTop: 100,
-                      rulerScaleTextStyle: const TextStyle(color: Colors.black),
-                      marker: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                _currentWeight.toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.grey),
-                              ),
-                              const SizedBox(width: 10),
-                              SvgPicture.asset(
-                                "assets/imgs/svg/to-icon.svg",
-                                height: 10,
-                              ),
-                              const SizedBox(width: 10),
-                              RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                      style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          color: Color(
-                                              AppMethods.hexColor("#fb9b28")),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30 *
-                                              AppMethods.fontScale(context)),
-                                      children: [
-                                        TextSpan(text: _idealWeight.toString()),
-                                        const TextSpan(
-                                            text: " kg",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18))
-                                      ])),
-                              const SizedBox(width: 55),
-                            ],
-                          ),
-                          Container(
-                              width: 5,
-                              height: 65,
-                              decoration: BoxDecoration(
-                                  color: Color(AppMethods.hexColor("fb9b28"))
-                                      .withAlpha(200),
-                                  borderRadius: BorderRadius.circular(5))),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            _newBMI < 18.5
-                                ? "😧 Attention!"
-                                : _newBMI >= 18.5 && _newBMI <= 25
-                                    ? "😃 Reasonable target!"
-                                    : _newBMI > 25 && _newBMI < 27
-                                        ? "😃 Reasonable target!"
-                                        : "😧 Attention!",
-                            style: TextStyle(
-                                color: Color(AppMethods.hexColor("fb9b28")),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "You will ${_idealWeight > _currentWeight ? "gain" : "lose"} ${(100 - _idealWeight * 100 / _currentWeight).abs().toStringAsFixed(0)}% of body weight",
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        _newBMI >= 18.5 &&
-                                _newBMI <= 25 &&
-                                _idealWeight < _currentWeight
-                            ? "Moderate weight loss can also make a big difference:\n- Lower blood pressure\n- Reduce the risk of type 2 diabetes"
-                            : _newBMI >= 18.5 &&
-                                    _newBMI <= 25 &&
-                                    _idealWeight > _currentWeight
-                                ? "Moderate weight gain can also make a big difference:\n- Better focus on daily tasks\n- Better mood and better sleep"
-                                : _newBMI < 18.5
-                                    ? "It seems that your target BMI is too low, which might cause some health problems..."
-                                    : "It seems that your target BMI is too high, which might cause some health problems...",
-                        style: const TextStyle(
-                            color: Colors.grey, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: Color(AppMethods.hexColor("FFFBF5")),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          //Workout routine 9
-          TabChild(
-            title1: "How ",
-            keyword: "often ",
-            title2: "would you like to work out?",
-            widget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CarouselSlider.builder(
-                  itemCount: _plans.length,
-                  itemBuilder: (context, index, realIndex) {
-                    return OptionCard(
-                      frequency: _plans[index]["frequency"],
-                      des: _plans[index]["des"],
-                      fill: Colors.white,
-                      isPlan: true,
-                    );
-                  },
-                  options: CarouselOptions(
-                      autoPlay: false,
-                      height: 320 * AppMethods.screenScale(context),
-                      viewportFraction: 0.7,
-                      enableInfiniteScroll: false,
-                      initialPage: _planListIndex,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _planListIndex = index;
-                        });
-                      }),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 30.0, left: 40, right: 40),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppStyle.gray4Color,
-                          borderRadius: AppStyle.appBorder,
-                        ),
-                        height: 2.5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(
-                            _plans.length,
-                            (index) => Indicator(
-                                isActive:
-                                    _planListIndex == index ? true : false),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 5, 30, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Less",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        "More",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          //Name 10
+          //Name 7
           TabChild(
             title1: "What is your ",
             keyword: "name",
@@ -1361,6 +900,66 @@ class _GetStartedScreenState extends State<GetStartedScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+//Body area selection
+class LevelSelection extends StatelessWidget {
+  const LevelSelection({
+    Key? key,
+    required this.title,
+    required this.action,
+    required this.isTapped,
+    required this.des,
+    required this.icon,
+  }) : super(key: key);
+
+  final String title, des, icon;
+  final VoidCallback action;
+  final bool isTapped;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: action,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+                width: 2,
+                color: isTapped == false
+                    ? Colors.grey.shade300
+                    : Color(AppMethods.hexColor("#fb9b28"))),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
+        child: Row(
+          children: [
+            Text(
+              icon,
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: Colors.black),
+                ),
+                Text(
+                  des,
+                  style: const TextStyle(fontSize: 17, color: Colors.black),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

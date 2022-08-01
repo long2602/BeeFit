@@ -13,7 +13,7 @@ import 'ProcessPlanScreen.dart';
 
 class DetailPlanScreen extends StatefulWidget {
   final Plan _plan;
-  DetailPlanScreen({required Plan plan, Key? key})
+  const DetailPlanScreen({required Plan plan, Key? key})
       : _plan = plan,
         super(key: key);
 
@@ -122,53 +122,6 @@ class _DetailPlanScreenState extends State<DetailPlanScreen> {
                             fontSize: 28 * _scaleFont,
                           ),
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.clock,
-                                    color: AppStyle.whiteColor,
-                                    size: 16 * _scaleFont,
-                                  ),
-                                  SizedBox(width: 4 * _scaleScreen),
-                                  Text(
-                                    '8-27 minutes/ day',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14 * _scaleFont,
-                                      color: AppStyle.whiteColor,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.calendar,
-                                    color: AppStyle.whiteColor,
-                                    size: 16 * _scaleFont,
-                                  ),
-                                  SizedBox(width: 4 * _scaleFont),
-                                  Text(
-                                    '28 days',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14 * _scaleFont,
-                                      color: AppStyle.whiteColor,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )
                       ],
                     ),
                   ),
@@ -182,21 +135,51 @@ class _DetailPlanScreenState extends State<DetailPlanScreen> {
                           horizontal: 30 * _scaleScreen,
                           vertical: 20 * _scaleScreen),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            'Description',
+                            style: GoogleFonts.poppins(
+                              color: AppStyle.black1Color,
+                              fontSize: 16 * _scaleScreen,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            plan.des,
+                            style: GoogleFonts.poppins(
+                              color: AppStyle.black2Color,
+                              fontSize: 14 * _scaleScreen,
+                            ),
+                          ),
                           Timeline(
                             children: <Widget>[
                               for (int i = 1; i <= maxWeek; i++)
-                                WeekContainer(
-                                  week: i,
-                                  isActive: true,
-                                  list: listsPlanDetail
-                                      .where((element) => element.week == i)
-                                      .toList(),
-                                  maxDay: maxDayOfWeek(i),
-                                ),
+                                FutureBuilder(
+                                  future:
+                                      databaseHelper.getPlanDetailByIdAndWeek(
+                                          widget._plan.id!, i),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    List<PlanDetail> _list =
+                                        snapshot.data as List<PlanDetail>;
+                                    return WeekContainer(
+                                      week: i,
+                                      isActive: true,
+                                      list: _list,
+                                      maxDay: maxDayOfWeek(i),
+                                      plan: plan,
+                                    );
+                                  },
+                                )
                             ],
                             indicators: <Widget>[
-                              for (int i = 0; i < maxWeek; i++) NodeCircle(),
+                              for (int i = 0; i < maxWeek; i++)
+                                const NodeCircle(),
                             ],
                             lineColor: AppStyle.primaryColor,
                           ),
@@ -229,17 +212,20 @@ class WeekContainer extends StatelessWidget {
   final bool _isActive;
   final List<PlanDetail> _list;
   final int _maxDayOfWeek;
+  final Plan _plan;
 
   const WeekContainer(
       {required int week,
       required bool isActive,
       required List<PlanDetail> list,
       required int maxDay,
+      required Plan plan,
       Key? key})
       : _week = week,
         _isActive = isActive,
         _list = list,
         _maxDayOfWeek = maxDay,
+        _plan = plan,
         super(key: key);
 
   @override
@@ -250,6 +236,7 @@ class WeekContainer extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double heightGridView = ((screenWidth - 60 - 30 - 24) / 7) * 2 + 12;
     int _no = 1;
+    print("$_week $_list");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -276,39 +263,29 @@ class WeekContainer extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                height: heightGridView,
-                alignment: Alignment.center,
-                child: Center(
-                  child: GridView.builder(
-                    padding: EdgeInsets.zero,
-                    // shrinkWrap: true,
-                    // primary: false,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 1,
-                    ),
-                    itemCount: _maxDayOfWeek,
-                    itemBuilder: (BuildContext context, int index) {
-                      return
-                          // (0 == ((index % 7) % 2)) ?
-                          ButtonCircle(
-                        isActive: (!_isActive) ? false : true,
-                        no: _no++,
-                        list: _list
-                            .where((element) => element.day == index + 1)
-                            .toList(),
-                      );
-                      // : const Icon(
-                      //     Icons.chevron_right,
-                      //     color: AppStyle.whiteColor,
-                      //   );
-                    },
-                  ),
-                ),
+              Wrap(
+                children: [
+                  for (int i = 0; i < _maxDayOfWeek; i++)
+                    FutureBuilder(
+                      builder: (context, snapshot) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ButtonCircle(
+                              isActive: (!_isActive) ? false : true,
+                              no: i + 1,
+                              week: _week,
+                              plan: _plan,
+                            ),
+                            i != (_maxDayOfWeek - 1)
+                                ? const Icon(Icons.arrow_forward_ios,
+                                    color: AppStyle.whiteColor)
+                                : Container(),
+                          ],
+                        );
+                      },
+                    )
+                ],
               ),
               SizedBox(height: _isActive ? 14 * _scaleScreen : 0),
               _isActive
@@ -367,16 +344,19 @@ class NodeCircle extends StatelessWidget {
 class ButtonCircle extends StatelessWidget {
   final bool _isActive;
   final int _no;
-  final List<PlanDetail> _list;
+  final int _week;
+  final Plan _plan;
 
   const ButtonCircle(
       {required bool isActive,
       required int no,
-      required List<PlanDetail> list,
+      required int week,
+      required Plan plan,
       Key? key})
       : _isActive = isActive,
         _no = no,
-        _list = list,
+        _week = week,
+        _plan = plan,
         super(key: key);
 
   @override
@@ -396,8 +376,9 @@ class ButtonCircle extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DayDetailScreen(
-                    day: _list[0].day,
-                    planDetail: _list,
+                    day: _no,
+                    week: _week,
+                    plan: _plan,
                   )),
         );
       },

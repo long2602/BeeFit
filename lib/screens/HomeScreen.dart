@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/User.dart';
 import 'package:beefit/widgets/ButtonMain.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
@@ -10,16 +11,19 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../constants/AppMethods.dart';
 import 'package:beefit/controls/utils.dart';
-import 'Plan/DetailPlanScreen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final User _user;
+  const HomeScreen({required User user, Key? key})
+      : _user = user,
+        super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late User user = widget._user;
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
 
   @override
@@ -43,14 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: AppStyle.secondaryColor,
                     fontSize: 20 * _scaleFont,
                   )),
-              // IconButton(
-              //   onPressed: () {},
-              //   icon: Icon(
-              //     Icons.notifications,
-              //     size: 24 * _scaleScreen,
-              //     color: AppStyle.secondaryColor,
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -141,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    '1265',
+                                    user.bmr.toString(),
                                     style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20 * _scaleScreen,
@@ -237,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "1625",
+                            user.bmr!.ceil().toString(),
                             style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 fontSize:

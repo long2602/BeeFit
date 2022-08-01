@@ -6,12 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/exercise.dart';
 import '../SearchScreen/SearchExerciseScreen.dart';
 
 class ExerciseScreen extends StatefulWidget {
-  const ExerciseScreen({Key? key}) : super(key: key);
+  final User _user;
+  const ExerciseScreen({required User user, Key? key})
+      : _user = user,
+        super(key: key);
 
   @override
   State<ExerciseScreen> createState() => _ExerciseScreenState();

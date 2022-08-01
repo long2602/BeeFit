@@ -4,12 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import 'DetailPlanScreen.dart';
 import 'ProcessPlanScreen.dart';
 
 class PlanScreen extends StatefulWidget {
-  const PlanScreen({Key? key}) : super(key: key);
+  final User _user;
+  const PlanScreen({required User user, Key? key})
+      : _user = user,
+        super(key: key);
 
   @override
   State<PlanScreen> createState() => _PlanScreenState();
@@ -193,11 +197,14 @@ class _PlanScreenState extends State<PlanScreen> {
                         ),
                         for (Plan item in listPlanSuggested)
                           ListTile(
-                            leading: Image.asset(
-                              "assets/imgs/fitness1.png",
-                              height: 50 * _scaleScreen,
-                              width: 50 * _scaleScreen,
-                              fit: BoxFit.cover,
+                            leading: ClipRRect(
+                              borderRadius: AppStyle.appBorder,
+                              child: Image.asset(
+                                "assets/imgs/${item.img}.jpg",
+                                height: 60 * _scaleScreen,
+                                width: 60 * _scaleScreen,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                             title: Text(
                               item.name,

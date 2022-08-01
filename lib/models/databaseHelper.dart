@@ -10,7 +10,6 @@ import 'package:beefit/models/plan_details.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-
 import 'exercise.dart';
 
 class DatabaseHelper {
@@ -142,7 +141,7 @@ class DatabaseHelper {
   Future<List<Exercise>> getExerciseByBodyPart(int idPart) async {
     Database? db = await instance.database;
     var data = await db.rawQuery(
-        "select a.id, a.name, a.description, a.gif , a.level, a.met, a.type , a.rest_duration from exercises a join bodyparts_exercises b on a.id = b.exercise_id where b.bodypart_id = $idPart");
+        "select a.id, a.name, a.description, a.gif , a.level, a.met, a.type , a.rest_duration, a.isRepCount from exercises a join bodyparts_exercises b on a.id = b.exercise_id where b.bodypart_id = $idPart");
     List<Exercise> exercises =
         data.isNotEmpty ? data.map((e) => Exercise.fromJson(e)).toList() : [];
     return exercises;
@@ -157,7 +156,7 @@ class DatabaseHelper {
         optionType = "",
         optionWhere = "";
     String header =
-        "select a.id, a.name, a.description, a.gif , a.level, a.met, a.type , a.rest_duration from exercises a";
+        "select a.id, a.name, a.description, a.gif , a.level, a.met, a.type , a.rest_duration, a.isRepCount from exercises a";
     Database? db = await instance.database;
     if (categories.isNotEmpty) {
       category = categories.toString().replaceAll('[', '').replaceAll(']', '');
@@ -225,10 +224,22 @@ class DatabaseHelper {
     return plans;
   }
 
-  Future<List<PlanExerciseDetail>> getPlanDayByDay(int day) async {
+  Future<List<PlanDetail>> getPlanDetailByIdAndWeek(int id, int week) async {
     Database? db = await instance.database;
     var data = await db.rawQuery(
-        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, b.duration ,b.rep, b.kcal from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id where b.day = $day");
+        "Select * from plan_details where plan_id = $id and week = $week");
+    List<PlanDetail> plans =
+        data.isNotEmpty ? data.map((e) => PlanDetail.fromJson(e)).toList() : [];
+    return plans;
+  }
+
+  Future<List<PlanExerciseDetail>> getPlanDayByDay(
+      int day, int userLevel, int week) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal" +
+            " from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id join bodyparts_exercises d on c.id = d.exercise_id join default_reps e on d.bodypart_id = e.bodypart_id" +
+            " where b.day = $day and b.week = $week and e.user_level = $userLevel and e.bodypart_id = a.bodypart_id");
     List<PlanExerciseDetail> plans = data.isNotEmpty
         ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
         : [];

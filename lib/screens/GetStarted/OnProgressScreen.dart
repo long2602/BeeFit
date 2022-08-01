@@ -8,26 +8,37 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/AppStyles.dart';
+import 'dart:convert';
 
 class OnProgressScreen extends StatefulWidget {
   const OnProgressScreen(
       {required bool isMale,
       required int height,
       required int currentWeight,
-      required int desiredWeight,
       required String name,
       required int age,
+      required int level,
+      required double bmi,
+      required double bmr,
+      required int goal,
+      required Map<String, bool> muscles,
       Key? key})
       : _name = name,
         _height = height,
         _age = age,
         _currentWeight = currentWeight,
-        _desiredWeight = desiredWeight,
         _isMale = isMale,
+        _level = level,
+        _bmi = bmi,
+        _bmr = bmr,
+        _goal = goal,
+        _muscles = muscles,
         super(key: key);
   final bool _isMale;
-  final int _height, _currentWeight, _desiredWeight, _age;
+  final int _height, _currentWeight, _age, _level, _goal;
   final String _name;
+  final double _bmi, _bmr;
+  final Map<String, bool>? _muscles;
 
   @override
   State<OnProgressScreen> createState() => _OnProgressScreenState();
@@ -38,20 +49,30 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
     required bool isMale,
     required int height,
     required int currentWeight,
-    required int desiredWeight,
     required String name,
     required int age,
+    required int level,
+    required double bmi,
+    required double bmr,
+    required int goal,
+    required Map<String, dynamic> muscles,
+    required int mainPlan,
   }) async {
     bool isSuccess = false;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool(AppMethods.Is_FIRSTTIME, true);
       prefs.setString(AppMethods.NAME, name);
       prefs.setInt(AppMethods.AGE, age);
       prefs.setInt(AppMethods.CURRENT_WEIGHT, currentWeight);
-      prefs.setInt(AppMethods.DESIRED_WEIGHT, desiredWeight);
       prefs.setInt(AppMethods.HEIGHT, height);
       prefs.setBool(AppMethods.IS_MALE, isMale);
-      prefs.setBool(AppMethods.Is_FIRSTTIME, true);
+      prefs.setInt(AppMethods.LEVEL, level);
+      prefs.setInt(AppMethods.GOAL, goal);
+      prefs.setDouble(AppMethods.BMI, bmi);
+      prefs.setDouble(AppMethods.BMR, bmr);
+      prefs.setString(AppMethods.MUSCLES, json.encode(muscles));
+      prefs.setInt(AppMethods.MAINPLAN, mainPlan);
       return true;
     } catch (e) {
       print("[RESULT]: fail - " + e.toString());
@@ -71,12 +92,18 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
       ),
       body: FutureBuilder(
         future: saveInfoUser(
-            isMale: widget._isMale,
-            height: widget._height,
-            currentWeight: widget._currentWeight,
-            desiredWeight: widget._desiredWeight,
-            name: widget._name,
-            age: widget._age),
+          isMale: widget._isMale,
+          height: widget._height,
+          currentWeight: widget._currentWeight,
+          name: widget._name,
+          age: widget._age,
+          level: widget._level,
+          bmi: widget._bmi,
+          bmr: widget._bmr,
+          goal: widget._goal,
+          muscles: widget._muscles!,
+          mainPlan: 999,
+        ),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -156,13 +183,16 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
                       ),
                     ),
                     CommonButton(
-                      backgroundColor: AppStyle.primaryColor,
-                      textColor: AppStyle.whiteColor,
-                      text: 'Go to home',
-                      onPressed: () {
-                        Get.to(const AppScreen());
-                      },
-                    ),
+                        backgroundColor: AppStyle.primaryColor,
+                        textColor: AppStyle.whiteColor,
+                        text: 'Go to home',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AppScreen()),
+                          );
+                        }),
                   ],
                 ),
               );
