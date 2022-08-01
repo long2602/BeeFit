@@ -9,15 +9,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import 'package:video_player/video_player.dart';
-
 import '../../models/instruction.dart';
+import 'package:intl/intl.dart';
 
 class StartPlanScreen extends StatefulWidget {
   final List<PlanExerciseDetail> _list;
-  const StartPlanScreen({required List<PlanExerciseDetail> list, Key? key})
+  final User _user;
+  const StartPlanScreen(
+      {required List<PlanExerciseDetail> list, required User user, Key? key})
       : _list = list,
+        _user = user,
         super(key: key);
   @override
   _StartPlanScreenState createState() => _StartPlanScreenState();
@@ -43,6 +47,15 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
     _controller.play();
     timerState.setNumber(_list[0].duration.toString());
     timerState.setMaxNumber(_list[0].duration.toString());
+  }
+
+  Future<bool> UpdatePlanDetail(Map<String, dynamic> row, int id) async {
+    try {
+      databaseHelper.updateRawQuery(row, "plan_details", id, "id");
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
@@ -191,7 +204,22 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                       ));
               timerState.setNumber(_list[indexPage].duration.toString());
               timerState.setMaxNumber(_list[indexPage].duration.toString());
-
+              DateTime now = DateTime.now();
+              String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+              print(formattedDate);
+              num kcal = _list[indexPage].met! *
+                  widget._user.weight! *
+                  (_list[indexPage].isRepCount == 0
+                      ? _list[indexPage].duration
+                      : (_list[indexPage].rep! + 3) / 60)! *
+                  0.0175;
+              Map<String, dynamic> row = {
+                "status": 1,
+                "date": formattedDate,
+                "kcal": kcal.toDouble(),
+              };
+              UpdatePlanDetail(row, _list[indexPage].idPlanDetail!);
+              print('add time');
               _pageController.nextPage(
                   duration: const Duration(seconds: 1),
                   curve: Curves.easeInOut);
@@ -456,6 +484,34 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                   height: double.infinity,
                                                   child: ElevatedButton(
                                                     onPressed: () {
+                                                      DateTime now =
+                                                          DateTime.now();
+                                                      String formattedDate =
+                                                          DateFormat(
+                                                                  'yyyy-MM-dd')
+                                                              .format(now);
+                                                      print(formattedDate);
+                                                      num kcal = _list[i].met! *
+                                                          widget._user.weight! *
+                                                          (_list[i].isRepCount ==
+                                                                  0
+                                                              ? _list[i]
+                                                                  .duration
+                                                              : (_list[i].rep! +
+                                                                      3) /
+                                                                  60)! *
+                                                          0.0175;
+                                                      Map<String, dynamic> row =
+                                                          {
+                                                        "status": 1,
+                                                        "date": formattedDate,
+                                                        "kcal": kcal.toDouble(),
+                                                      };
+                                                      UpdatePlanDetail(
+                                                          row,
+                                                          _list[i]
+                                                              .idPlanDetail!);
+                                                      print('add');
                                                       Future.delayed(
                                                           Duration.zero,
                                                           () => Navigator.push(

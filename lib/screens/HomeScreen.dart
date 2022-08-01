@@ -11,7 +11,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../constants/AppMethods.dart';
 import 'package:beefit/controls/utils.dart';
-
+import 'package:intl/intl.dart';
+import '../models/PlamExerciseDetail.dart';
 import '../models/databaseHelper.dart';
 import '../models/plan.dart';
 
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late User user = widget._user;
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +60,19 @@ class _HomeScreenState extends State<HomeScreen> {
       body: FutureBuilder(
           future: Future.wait([
             databaseHelper.getPlanById(1000),
+            databaseHelper.getPlanDayByDate(formattedDate),
           ]),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
             Plan plan = snapshot.data![0] as Plan;
+            List<PlanExerciseDetail> list =
+                snapshot.data![1] as List<PlanExerciseDetail>;
+            double totalCalo = 0;
+            for (PlanExerciseDetail item in list) {
+              totalCalo += item.kcal!;
+            }
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
               child: Column(
@@ -206,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SizedBox(
                                         width: 100 * _scaleScreen,
                                         child: LinearProgressIndicator(
-                                          value: 0.7,
+                                          value: totalCalo / user.bmr!,
                                           backgroundColor: AppStyle.errorColor
                                               .withOpacity(0.3),
                                           color: AppStyle.errorColor,
@@ -214,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          '1200',
+                                          totalCalo.ceil().toString(),
                                           style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20 * _scaleScreen,
@@ -242,13 +251,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             radius: 68 * AppMethods.screenScale(context),
                             lineWidth: 15,
                             animation: true,
-                            percent: 0.7,
+                            percent: (totalCalo / user.bmr!),
                             center: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  user.bmr!.ceil().toString(),
+                                  (user.bmr!.ceil() - totalCalo.ceil())
+                                      .toString(),
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.bold,
                                       fontSize: (26.0 *

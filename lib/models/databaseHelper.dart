@@ -78,10 +78,25 @@ class DatabaseHelper {
   // }
 
   //update
-  Future<int> update(Map<String, dynamic> row, String nameTable) async {
+  Future<int> update(
+      Map<String, dynamic> row, String nameTable, int id, String title) async {
     Database db = await instance.database;
-    int id = row['IdPlan'];
-    return await db.update(nameTable, row, where: 'IdPlan', whereArgs: [id]);
+    int id = row[title];
+    return await db.update(nameTable, row, where: title, whereArgs: [id]);
+  }
+
+  Future<bool> updateRawQuery(
+      Map<String, dynamic> row, String nameTable, int id, String title) async {
+    Database db = await instance.database;
+    try {
+      print(row);
+      String day = row['date'];
+      await db.rawQuery(
+          "Update $nameTable SET date = $day, kcal = ${row['kcal']}, status = ${row['status']} where id = $id");
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   //delete
@@ -245,9 +260,21 @@ class DatabaseHelper {
       int day, int userLevel, int week) async {
     Database? db = await instance.database;
     var data = await db.rawQuery(
-        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal" +
+        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal, b.id as idPlanDetail" +
             " from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id join bodyparts_exercises d on c.id = d.exercise_id join default_reps e on d.bodypart_id = e.bodypart_id" +
             " where b.day = $day and b.week = $week and e.user_level = $userLevel and e.bodypart_id = a.bodypart_id");
+    List<PlanExerciseDetail> plans = data.isNotEmpty
+        ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
+        : [];
+    return plans;
+  }
+
+  Future<List<PlanExerciseDetail>> getPlanDayByDate(String date) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal, b.id as idPlanDetail" +
+            " from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id join bodyparts_exercises d on c.id = d.exercise_id join default_reps e on d.bodypart_id = e.bodypart_id" +
+            " where b.date = $date");
     List<PlanExerciseDetail> plans = data.isNotEmpty
         ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
         : [];

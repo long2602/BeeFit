@@ -124,6 +124,7 @@ class _PlanScreenState extends State<PlanScreen> {
                               MaterialPageRoute(
                                   builder: (context) => DetailPlanScreen(
                                         plan: personalPlan,
+                                        user: widget._user,
                                       )),
                             );
                           },
@@ -232,6 +233,7 @@ class _PlanScreenState extends State<PlanScreen> {
                                 MaterialPageRoute(
                                     builder: (context) => DetailPlanScreen(
                                           plan: item,
+                                          user: widget._user,
                                         )),
                               );
                             },

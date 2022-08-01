@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/plan.dart';
 import '../../widgets/TimeLine.dart';
@@ -13,8 +14,10 @@ import 'ProcessPlanScreen.dart';
 
 class DetailPlanScreen extends StatefulWidget {
   final Plan _plan;
-  const DetailPlanScreen({required Plan plan, Key? key})
+  final User _user;
+  const DetailPlanScreen({required Plan plan, required User user, Key? key})
       : _plan = plan,
+        _user = user,
         super(key: key);
 
   @override
@@ -173,6 +176,7 @@ class _DetailPlanScreenState extends State<DetailPlanScreen> {
                                       list: _list,
                                       maxDay: maxDayOfWeek(i),
                                       plan: plan,
+                                      user: widget._user,
                                     );
                                   },
                                 )
@@ -213,6 +217,7 @@ class WeekContainer extends StatelessWidget {
   final List<PlanDetail> _list;
   final int _maxDayOfWeek;
   final Plan _plan;
+  final User _user;
 
   const WeekContainer(
       {required int week,
@@ -220,12 +225,14 @@ class WeekContainer extends StatelessWidget {
       required List<PlanDetail> list,
       required int maxDay,
       required Plan plan,
+      required User user,
       Key? key})
       : _week = week,
         _isActive = isActive,
         _list = list,
         _maxDayOfWeek = maxDay,
         _plan = plan,
+        _user = user,
         super(key: key);
 
   @override
@@ -276,6 +283,7 @@ class WeekContainer extends StatelessWidget {
                               no: i + 1,
                               week: _week,
                               plan: _plan,
+                              user: _user,
                             ),
                             i != (_maxDayOfWeek - 1)
                                 ? const Icon(Icons.arrow_forward_ios,
@@ -346,17 +354,20 @@ class ButtonCircle extends StatelessWidget {
   final int _no;
   final int _week;
   final Plan _plan;
+  final User _user;
 
   const ButtonCircle(
       {required bool isActive,
       required int no,
       required int week,
       required Plan plan,
+      required User user,
       Key? key})
       : _isActive = isActive,
         _no = no,
         _week = week,
         _plan = plan,
+        _user = user,
         super(key: key);
 
   @override
@@ -376,10 +387,7 @@ class ButtonCircle extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DayDetailScreen(
-                    day: _no,
-                    week: _week,
-                    plan: _plan,
-                  )),
+                  day: _no, week: _week, plan: _plan, user: _user)),
         );
       },
       style: ElevatedButton.styleFrom(

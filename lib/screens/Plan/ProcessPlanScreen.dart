@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppStyles.dart';
 import '../../models/PlamExerciseDetail.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../widgets/CommonButton.dart';
 import '../Exercise/DetailExerciseScreen.dart';
@@ -15,12 +16,17 @@ import '../Exercise/DetailExerciseScreen.dart';
 class DayDetailScreen extends StatefulWidget {
   final int _day, _week;
   final Plan _plan;
-
+  final User _user;
   const DayDetailScreen(
-      {required int day, required int week, required Plan plan, Key? key})
+      {required int day,
+      required int week,
+      required Plan plan,
+      required User user,
+      Key? key})
       : _day = day,
         _week = week,
         _plan = plan,
+        _user = user,
         super(key: key);
 
   @override
@@ -309,6 +315,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                             onPressed: () {
                               Get.to(StartPlanScreen(
                                 list: planExerciseDetailList,
+                                user: widget._user,
                               ));
                             },
                             backgroundColor: const Color(0xffE4A248),

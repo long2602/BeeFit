@@ -1,5 +1,13 @@
 class PlanExerciseDetail {
-  late int? id, level, type, met, restDuration, rep, duration, isRepCount;
+  late int? id,
+      level,
+      type,
+      met,
+      restDuration,
+      rep,
+      duration,
+      isRepCount,
+      idPlanDetail;
   late String name, description, gif;
   late double? kcal;
 
@@ -15,7 +23,8 @@ class PlanExerciseDetail {
       required this.description,
       required this.gif,
       this.kcal,
-      required this.isRepCount});
+      required this.isRepCount,
+      this.idPlanDetail});
 
   factory PlanExerciseDetail.fromJson(Map<String, dynamic> json) {
     return PlanExerciseDetail(
@@ -30,6 +39,7 @@ class PlanExerciseDetail {
         kcal: json['kcal'] ?? 0,
         rep: json['rep'],
         duration: json['duration'],
-        isRepCount: json['isRepCount']);
+        isRepCount: json['isRepCount'],
+        idPlanDetail: json['idPlanDetail']);
   }
 }
