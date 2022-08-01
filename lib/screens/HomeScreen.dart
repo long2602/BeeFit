@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Welcome back, Long',
+              Text('Welcome back, ${widget._user.name}',
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.bold,
                     color: AppStyle.secondaryColor,
@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          user.bmr.toString(),
+                                          '1200',
                                           style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20 * _scaleScreen,

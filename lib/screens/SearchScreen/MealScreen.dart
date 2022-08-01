@@ -1,4 +1,6 @@
+import 'package:beefit/constants/AppStyles.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../controls/ApiService.dart';
 
@@ -36,9 +38,9 @@ The child is a column widget that returns nutrient information in Rows
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text(
+          Text(
             'Total Nutrients',
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               fontSize: 24,
               fontWeight: FontWeight.w600,
             ),
@@ -49,7 +51,7 @@ The child is a column widget that returns nutrient information in Rows
             children: <Widget>[
               Text(
                 'Calories: ${widget.mealPlan.calories.toString()} cal',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                 ),
@@ -179,7 +181,10 @@ mealType returns Breakfast, Lunch or Dinner, depending on the index value
   Widget build(BuildContext context) {
     return Scaffold(
       //has an appBar
-      appBar: AppBar(title: Text('Your Meal Plan')),
+      appBar: AppBar(
+          elevation: 0,
+          backgroundColor: AppStyle.primaryColor,
+          title: Text('Your Meal Plan')),
       //and body as a ListView builder
       body: ListView.builder(
           /*

@@ -108,13 +108,14 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                 //   _ingredient,
                 // );
                 insertData();
-                // int count = 0;
-                // Navigator.popUntil(
-                //   context,
-                //   (route) {
-                //     return count++ == 2;
-                //   },
-                // );
+
+                int count = 0;
+                Navigator.popUntil(
+                  context,
+                  (route) {
+                    return count++ == 2;
+                  },
+                );
               },
               icon: Icon(
                 Icons.check,
