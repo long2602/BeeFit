@@ -6,6 +6,7 @@ import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
+import '../SearchScreen/SearchFoodScreen.dart';
 import 'DetailPlanScreen.dart';
 import 'ProcessPlanScreen.dart';
 
@@ -47,7 +48,10 @@ class _PlanScreenState extends State<PlanScreen> {
           padding: EdgeInsets.symmetric(
               horizontal: 30 * _scaleScreen, vertical: 20 * _scaleScreen),
           child: FutureBuilder(
-            future: Future.wait([databaseHelper.getPlan()]),
+            future: Future.wait([
+              databaseHelper.getPlan(),
+              databaseHelper.getPlanById(1000),
+            ]),
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
               if (!snapshot.hasData) {
                 return const Center(
@@ -55,49 +59,9 @@ class _PlanScreenState extends State<PlanScreen> {
                 );
               }
               listPlanSuggested = snapshot.data![0] as List<Plan>;
+              Plan personalPlan = snapshot.data![1] as Plan;
               return Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: AppStyle.appBorder,
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xffE9A24A),
-                          Color(0xffF2BE6A),
-                          Color(0xffF6D08B)
-                        ],
-                        end: Alignment.bottomRight,
-                        begin: Alignment.topLeft,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Weekly active days',
-                              style: GoogleFonts.poppins(
-                                color: AppStyle.whiteColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16 * _scaleFont,
-                              ),
-                            ),
-                            Text(
-                              '1/4',
-                              style: GoogleFonts.poppins(
-                                color: AppStyle.whiteColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16 * _scaleFont,
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 12 * _scaleScreen),
                     padding: EdgeInsets.symmetric(
@@ -128,40 +92,80 @@ class _PlanScreenState extends State<PlanScreen> {
                             fontSize: 16 * _scaleFont,
                           ),
                         ),
-                        for (Plan item in listPlanSuggested)
-                          ListTile(
-                            leading: Image.asset(
-                              "assets/imgs/fitness1.png",
-                              height: 50 * _scaleScreen,
-                              width: 50 * _scaleScreen,
+                        ListTile(
+                          leading: ClipRRect(
+                            borderRadius: AppStyle.appBorder,
+                            child: Image.asset(
+                              "assets/imgs/${personalPlan.img}.png",
+                              height: 60 * _scaleScreen,
+                              width: 60 * _scaleScreen,
                               fit: BoxFit.cover,
                             ),
-                            title: Text(
-                              item.name,
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppStyle.secondaryColor),
+                          ),
+                          title: Text(
+                            personalPlan.name,
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                color: AppStyle.secondaryColor),
+                          ),
+                          subtitle: Text('27 days left'),
+                          contentPadding: EdgeInsets.zero,
+                          trailing: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              color: AppStyle.primaryColor,
+                              size: 30 * _scaleScreen,
                             ),
-                            subtitle: Text('27 days left'),
-                            contentPadding: EdgeInsets.zero,
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                color: AppStyle.primaryColor,
-                                size: 30 * _scaleScreen,
-                              ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailPlanScreen(
+                                        plan: personalPlan,
+                                      )),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: ClipRRect(
+                            borderRadius: AppStyle.appBorder,
+                            child: Image.asset(
+                              "assets/imgs/dinner.png",
+                              height: 60 * _scaleScreen,
+                              width: 60 * _scaleScreen,
+                              fit: BoxFit.cover,
                             ),
-                            onTap: () {
+                          ),
+                          title: Text(
+                            'Food',
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                color: AppStyle.secondaryColor),
+                          ),
+                          subtitle: Text('3 Meal'),
+                          contentPadding: EdgeInsets.zero,
+                          trailing: IconButton(
+                            onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => DetailPlanScreen(
-                                          plan: item,
+                                    builder: (context) => SearchScreen(
+                                          calo: widget._user.bmr!
+                                              .ceil()
+                                              .toDouble(),
                                         )),
                               );
                             },
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              color: AppStyle.primaryColor,
+                              size: 30 * _scaleScreen,
+                            ),
                           ),
+                          onTap: () {},
+                        ),
                       ],
                     ),
                   ),
@@ -200,7 +204,7 @@ class _PlanScreenState extends State<PlanScreen> {
                             leading: ClipRRect(
                               borderRadius: AppStyle.appBorder,
                               child: Image.asset(
-                                "assets/imgs/${item.img}.jpg",
+                                "assets/imgs/${item.img}.png",
                                 height: 60 * _scaleScreen,
                                 width: 60 * _scaleScreen,
                                 fit: BoxFit.cover,

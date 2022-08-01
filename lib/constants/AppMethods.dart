@@ -13,7 +13,7 @@ class AppMethods {
   static const String BMR = 'bmr';
   static const String GOAL = 'goal';
   static const String MUSCLES = 'muscle';
-  static const String MAINPLAN = 'firstTime';
+  static const String MAINPLAN = 'mainplan';
   static const String Is_FIRSTTIME = 'firstTime';
 
   //Convert hexColor to int

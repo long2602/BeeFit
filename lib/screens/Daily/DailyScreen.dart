@@ -140,20 +140,6 @@ class _DailyScreenState extends State<DailyScreen> {
                   fontSize: 24 * _scaleFont,
                 ),
               ),
-              IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchScreen()),
-                  );
-                },
-                icon: Icon(
-                  Icons.search,
-                  size: 24 * _scaleScreen,
-                  color: AppStyle.secondaryColor,
-                ),
-              ),
             ],
           ),
           bottom: PreferredSize(

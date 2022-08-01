@@ -5,10 +5,12 @@ import 'package:beefit/screens/AppScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 import '../../constants/AppStyles.dart';
 import 'dart:convert';
+
+import '../../models/databaseHelper.dart';
 
 class OnProgressScreen extends StatefulWidget {
   const OnProgressScreen(
@@ -45,6 +47,9 @@ class OnProgressScreen extends StatefulWidget {
 }
 
 class _OnProgressScreenState extends State<OnProgressScreen> {
+  DatabaseHelper databaseHelper = DatabaseHelper.instance;
+  late int idPlan = 1000;
+
   Future<bool> saveInfoUser({
     required bool isMale,
     required int height,
@@ -80,6 +85,29 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
     }
   }
 
+  Future<bool> insertPlan() async {
+    databaseHelper.database;
+    Map<String, dynamic> row = {
+      'id': idPlan,
+      'name': "Personal Plan",
+      'bodypart_id': widget._goal != 2 ? 6 : 2,
+      'image': "fitness1",
+      'description':
+          "A personal development plan is a set of goals and objectives you create to help you achieve the life you want.",
+      'user_level': widget._level,
+    };
+    try {
+      await databaseHelper.insert('plans', row).then((id) {
+        idPlan = id;
+        print('insert row id: $id');
+      });
+      return true;
+    } on DatabaseException catch (e) {
+      if (e.isUniqueConstraintError()) {}
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double _scaleScreen = AppMethods.screenScale(context);
@@ -91,20 +119,23 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
         backgroundColor: AppStyle.whiteColor,
       ),
       body: FutureBuilder(
-        future: saveInfoUser(
-          isMale: widget._isMale,
-          height: widget._height,
-          currentWeight: widget._currentWeight,
-          name: widget._name,
-          age: widget._age,
-          level: widget._level,
-          bmi: widget._bmi,
-          bmr: widget._bmr,
-          goal: widget._goal,
-          muscles: widget._muscles!,
-          mainPlan: 999,
-        ),
-        builder: (context, snapshot) {
+        future: Future.wait([
+          insertPlan(),
+          saveInfoUser(
+            isMale: widget._isMale,
+            height: widget._height,
+            currentWeight: widget._currentWeight,
+            name: widget._name,
+            age: widget._age,
+            level: widget._level,
+            bmi: widget._bmi,
+            bmr: widget._bmr,
+            goal: widget._goal,
+            muscles: widget._muscles!,
+            mainPlan: idPlan,
+          ),
+        ]),
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Column(

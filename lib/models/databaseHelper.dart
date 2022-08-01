@@ -14,7 +14,7 @@ import 'exercise.dart';
 
 class DatabaseHelper {
   static const _databaseName = 'beefit.db';
-  static final _databaseVersion = 2;
+  static final _databaseVersion = 3;
 
   //constructor;
   DatabaseHelper._privateConstructor();
@@ -212,6 +212,14 @@ class DatabaseHelper {
     var data = await db.query("plans");
     List<Plan> plans =
         data.isNotEmpty ? data.map((e) => Plan.fromJson(e)).toList() : [];
+    return plans;
+  }
+
+  Future<Plan> getPlanById(int id) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery("Select * from plans where id = $id");
+    print(data);
+    Plan plans = Plan.fromJson(data[0] as Map<String, dynamic>);
     return plans;
   }
 

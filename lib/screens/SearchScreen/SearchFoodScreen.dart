@@ -8,6 +8,10 @@ import '../../models/nutrition/MealPlan.dart';
 import 'MealScreen.dart';
 
 class SearchScreen extends StatefulWidget {
+  final double _calo;
+  const SearchScreen({required double calo, Key? key})
+      : _calo = calo,
+        super(key: key);
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
@@ -33,8 +37,14 @@ class _SearchScreenState extends State<SearchScreen> {
     'Primal',
     'Whole30',
   ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _targetCalories = widget._calo;
+  }
 
-  double _targetCalories = 2250;
+  late double _targetCalories;
   String _diet = 'None';
 
   @override

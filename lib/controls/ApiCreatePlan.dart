@@ -1,0 +1,4 @@
+class ApiCreatePlan {
+  //beginner
+  createLoseWeightBeginner() {}
+}
