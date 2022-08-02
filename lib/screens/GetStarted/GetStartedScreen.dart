@@ -37,7 +37,6 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       _currentHeight = 150,
       _currentWeight = 50,
       _levelId = 0,
-      _planListIndex = 0,
       _bdpId = 0;
 
   late TabController _tabController;
@@ -216,13 +215,19 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                 Navigator.pushReplacement(
                                     context,
                                     AppMethods.animatedRoute(OnProgressScreen(
-                                        isMale: _maleIsTapped,
-                                        height: _currentHeight,
-                                        currentWeight: _currentWeight,
-                                        desiredWeight: 0,
-                                        name: _nameController.value.text,
-                                        age: int.parse(
-                                            _ageController.value.text))));
+                                      isMale: _maleIsTapped,
+                                      height: _currentHeight,
+                                      currentWeight: _currentWeight,
+                                      name: _nameController.value.text,
+                                      age: int.parse(_ageController.value.text),
+                                      bmi: _bmi,
+                                      bmr: _BMRCalculate(
+                                          weight: _currentWeight.toDouble(),
+                                          height: _currentHeight.toDouble()),
+                                      goal: _goalListIndex,
+                                      level: _levelId,
+                                      muscles: {},
+                                    )));
                               }
                             }
                           }
