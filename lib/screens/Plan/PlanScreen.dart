@@ -1,14 +1,14 @@
+import 'package:beefit/models/challenge.dart';
 import 'package:beefit/models/plan.dart';
+import 'package:beefit/screens/Plan/DetailChallengeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../SearchScreen/SearchFoodScreen.dart';
 import 'DetailPlanScreen.dart';
-import 'ProcessPlanScreen.dart';
 
 class PlanScreen extends StatefulWidget {
   final User _user;
@@ -27,6 +27,7 @@ class _PlanScreenState extends State<PlanScreen> {
     final _scaleScreen = AppMethods.screenScale(context);
     DatabaseHelper databaseHelper = DatabaseHelper.instance;
     List<Plan> listPlanSuggested = [];
+    List<Challenge> listChallenges = [];
 
     return Scaffold(
       backgroundColor: AppStyle.whiteColor,
@@ -51,6 +52,7 @@ class _PlanScreenState extends State<PlanScreen> {
             future: Future.wait([
               databaseHelper.getPlan(),
               databaseHelper.getPlanById(1000),
+              databaseHelper.getChallenges(),
             ]),
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
               if (!snapshot.hasData) {
@@ -60,6 +62,7 @@ class _PlanScreenState extends State<PlanScreen> {
               }
               listPlanSuggested = snapshot.data![0] as List<Plan>;
               Plan personalPlan = snapshot.data![1] as Plan;
+              listChallenges = snapshot.data![2] as List<Challenge>;
               return Column(
                 children: [
                   Container(
@@ -108,7 +111,8 @@ class _PlanScreenState extends State<PlanScreen> {
                                 fontWeight: FontWeight.w600,
                                 color: AppStyle.secondaryColor),
                           ),
-                          subtitle: Text('27 days left'),
+                          subtitle: Text(EnumBodyPart
+                              .values[personalPlan.idBodyPart - 1].name),
                           contentPadding: EdgeInsets.zero,
                           trailing: IconButton(
                             onPressed: () {},
@@ -217,7 +221,8 @@ class _PlanScreenState extends State<PlanScreen> {
                                   fontWeight: FontWeight.w600,
                                   color: AppStyle.secondaryColor),
                             ),
-                            subtitle: Text('27 days left'),
+                            subtitle: Text(
+                                EnumBodyPart.values[item.idBodyPart - 1].name),
                             contentPadding: EdgeInsets.zero,
                             trailing: IconButton(
                               onPressed: () {},
@@ -233,6 +238,78 @@ class _PlanScreenState extends State<PlanScreen> {
                                 MaterialPageRoute(
                                     builder: (context) => DetailPlanScreen(
                                           plan: item,
+                                          user: widget._user,
+                                        )),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 12 * _scaleScreen),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 16 * _scaleScreen,
+                        horizontal: 16 * _scaleScreen),
+                    decoration: BoxDecoration(
+                      borderRadius: AppStyle.appBorder,
+                      color: AppStyle.whiteColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppStyle.gray5Color.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset:
+                              const Offset(0, 2), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Challenges',
+                          style: GoogleFonts.poppins(
+                            color: AppStyle.primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16 * _scaleFont,
+                          ),
+                        ),
+                        for (Challenge item in listChallenges)
+                          ListTile(
+                            leading: ClipRRect(
+                              borderRadius: AppStyle.appBorder,
+                              child: Image.asset(
+                                "assets/imgs/${item.image}.png",
+                                height: 60 * _scaleScreen,
+                                width: 60 * _scaleScreen,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            title: Text(
+                              item.name,
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppStyle.secondaryColor),
+                            ),
+                            subtitle: Text(
+                                EnumBodyPart.values[item.bodyPartId - 1].name),
+                            contentPadding: EdgeInsets.zero,
+                            trailing: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.arrow_forward,
+                                color: AppStyle.primaryColor,
+                                size: 30 * _scaleScreen,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailChallengeScreen(
+                                          challenge: item,
                                           user: widget._user,
                                         )),
                               );

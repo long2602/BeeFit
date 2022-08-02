@@ -14,11 +14,11 @@ import '../../models/defaultReps.dart';
 import '../../widgets/CommonButton.dart';
 import '../Exercise/DetailExerciseScreen.dart';
 
-class DayDetailScreen extends StatefulWidget {
+class DetailDayPlanScreen extends StatefulWidget {
   final int _day, _week;
   final Plan _plan;
   final User _user;
-  const DayDetailScreen(
+  const DetailDayPlanScreen(
       {required int day,
       required int week,
       required Plan plan,
@@ -31,10 +31,10 @@ class DayDetailScreen extends StatefulWidget {
         super(key: key);
 
   @override
-  _DayDetailScreenState createState() => _DayDetailScreenState();
+  _DetailDayPlanScreenState createState() => _DetailDayPlanScreenState();
 }
 
-class _DayDetailScreenState extends State<DayDetailScreen> {
+class _DetailDayPlanScreenState extends State<DetailDayPlanScreen> {
   bool isExpand = false;
   bool isAppbarExpand = true;
   late ScrollController _scrollController;

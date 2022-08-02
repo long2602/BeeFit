@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 
+enum EnumBodyPart { Arm, Chest, Abs, Butt, Leg, Full_body, Shoulder, Back }
+// enum Level {}
+
 class AppMethods {
   static const String NAME = 'name';
   static const String LEVEL = 'level';

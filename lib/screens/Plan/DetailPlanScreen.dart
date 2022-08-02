@@ -10,7 +10,7 @@ import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/plan.dart';
 import '../../widgets/TimeLine.dart';
-import 'ProcessPlanScreen.dart';
+import 'DetailDayPlanScreen.dart';
 
 class DetailPlanScreen extends StatefulWidget {
   final Plan _plan;
@@ -386,7 +386,7 @@ class ButtonCircle extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => DayDetailScreen(
+              builder: (context) => DetailDayPlanScreen(
                   day: _no, week: _week, plan: _plan, user: _user)),
         );
       },

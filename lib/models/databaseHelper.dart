@@ -3,6 +3,8 @@
 import 'dart:io';
 
 import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/challenge.dart';
+import 'package:beefit/models/challenge_detail.dart';
 import 'package:beefit/models/food_history.dart';
 import 'package:beefit/models/instruction.dart';
 import 'package:beefit/models/plan.dart';
@@ -329,4 +331,27 @@ class DatabaseHelper {
         : [];
     return defaultReps;
   }
+
+  Future<List<Challenge>> getChallenges() async {
+    Database? db = await instance.database;
+    var data = await db.query("challenges");
+    List<Challenge> plans =
+        data.isNotEmpty ? data.map((e) => Challenge.fromJson(e)).toList() : [];
+    return plans;
+  }
+
+  Future<List<ChallengeDetail>> getChallengeDetailById(
+      int id, int level) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select b.exercise_id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.id, b.kcal, b.\"date\",b.status " +
+            "from challenges a join challenge_details b on a.id = b.challenge_id join exercises c on b.exercise_id = c.id join bodyparts_exercises d on c.id = d.exercise_id join default_reps e on d.bodypart_id = e.bodypart_id " +
+            "where challenge_id = $id and e.user_level = $level and a.bodypart_id = e.bodypart_id");
+    List<ChallengeDetail> plans = data.isNotEmpty
+        ? data.map((e) => ChallengeDetail.fromJson(e)).toList()
+        : [];
+    return plans;
+  }
+
+  //
 }
