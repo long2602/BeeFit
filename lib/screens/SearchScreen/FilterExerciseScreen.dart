@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/AppMethods.dart';
+import '../../models/User.dart';
 import '../../widgets/CommonButton.dart';
 
 class FilterExerciseScreen extends StatefulWidget {
-  const FilterExerciseScreen({Key? key}) : super(key: key);
+  final User _user;
+  const FilterExerciseScreen({required User user, Key? key})
+      : _user = user,
+        super(key: key);
 
   @override
   State<FilterExerciseScreen> createState() => _FilterExerciseScreenState();
@@ -425,6 +429,7 @@ class _FilterExerciseScreenState extends State<FilterExerciseScreen> {
                       categories: categories,
                       levels: levels,
                       types: types,
+                      user: widget._user,
                     ),
                   ),
                 );

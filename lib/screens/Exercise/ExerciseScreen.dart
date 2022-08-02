@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:beefit/models/defaultReps.dart';
 import 'package:beefit/screens/Exercise/DetailExerciseScreen.dart';
 import 'package:beefit/screens/SearchScreen/FilterExerciseScreen.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const SearchExerciseScreen()),
+                              builder: (_) => SearchExerciseScreen(
+                                    user: widget._user,
+                                  )),
                         );
                       },
                       icon: Icon(
@@ -66,7 +69,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const FilterExerciseScreen()),
+                              builder: (_) => FilterExerciseScreen(
+                                    user: widget._user,
+                                  )),
                         );
                       },
                       icon: Icon(
@@ -103,16 +108,16 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               isScrollable: true,
             ),
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              TabExercise(idPart: 1),
-              TabExercise(idPart: 2),
-              TabExercise(idPart: 3),
-              TabExercise(idPart: 4),
-              TabExercise(idPart: 5),
-              TabExercise(idPart: 6),
-              TabExercise(idPart: 7),
-              TabExercise(idPart: 8),
+              TabExercise(idPart: 1, user: widget._user),
+              TabExercise(idPart: 2, user: widget._user),
+              TabExercise(idPart: 3, user: widget._user),
+              TabExercise(idPart: 4, user: widget._user),
+              TabExercise(idPart: 5, user: widget._user),
+              TabExercise(idPart: 6, user: widget._user),
+              TabExercise(idPart: 7, user: widget._user),
+              TabExercise(idPart: 8, user: widget._user),
             ],
           )),
     );
@@ -120,10 +125,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 }
 
 class TabExercise extends StatefulWidget {
-  const TabExercise({required int idPart, Key? key})
+  const TabExercise({required int idPart, required User user, Key? key})
       : _idPart = idPart,
+        _user = user,
         super(key: key);
   final int _idPart;
+  final User _user;
 
   @override
   State<TabExercise> createState() => _TabExerciseState();
@@ -140,15 +147,20 @@ class _TabExerciseState extends State<TabExercise> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
       child: FutureBuilder(
-        future: databaseHelper.getExerciseByBodyPart(widget._idPart),
-        builder: (context, snapshot) {
+        future: Future.wait([
+          databaseHelper.getExerciseByBodyPart(widget._idPart),
+          databaseHelper.getDefaultRepByIdBodyPart(
+              widget._idPart, widget._user.level!),
+        ]),
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             } else {
-              lists = snapshot.data as List<Exercise>;
+              lists = snapshot.data![0] as List<Exercise>;
+              DefaultReps defaultReps = snapshot.data![1] as DefaultReps;
               return ListView.builder(
                 itemCount: lists.length,
                 itemBuilder: (context, index) {
@@ -162,6 +174,8 @@ class _TabExerciseState extends State<TabExercise> {
                           MaterialPageRoute(
                             builder: (_) => DetailExerciseScreen(
                               exercise: exercise,
+                              defaultReps: defaultReps,
+                              user: widget._user,
                             ),
                           ),
                         );
@@ -211,7 +225,9 @@ class _TabExerciseState extends State<TabExercise> {
                                       width: 6 * _scaleScreen,
                                     ),
                                     Text(
-                                      "10 min",
+                                      exercise.isRepCount == 0
+                                          ? "${defaultReps.duration} sec"
+                                          : "x ${defaultReps.rep}",
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.bold,
                                         color: AppStyle.secondaryColor,
@@ -247,7 +263,7 @@ class _TabExerciseState extends State<TabExercise> {
                                       width: 10 * _scaleScreen,
                                     ),
                                     Text(
-                                      "100 kcal",
+                                      "${AppMethods.calculateMet(widget._user.weight!, defaultReps.rep!, defaultReps.duration!, exercise.isRepCount!, exercise.met!).ceilToDouble()} kcal",
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.bold,
                                         color: AppStyle.secondaryColor,

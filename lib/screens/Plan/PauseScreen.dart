@@ -3,27 +3,32 @@ import 'dart:async';
 import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../constants/AppMethods.dart';
 import '../../models/PlamExerciseDetail.dart';
+import '../../models/User.dart';
+import '../../models/defaultReps.dart';
 import '../../models/exercise.dart';
-import '../../widgets/CountDownTimerState.dart';
 import '../Exercise/DetailExerciseScreen.dart';
 
 class PauseScreen extends StatefulWidget {
   final List<PlanExerciseDetail> _list;
   final PlanExerciseDetail _item;
+  final DefaultReps _defaultReps;
+  final User _user;
   final _index;
-  const PauseScreen(
-      {Key? key,
-      required List<PlanExerciseDetail> list,
-      required PlanExerciseDetail item,
-      required int index})
-      : _list = list,
+  const PauseScreen({
+    Key? key,
+    required List<PlanExerciseDetail> list,
+    required PlanExerciseDetail item,
+    required int index,
+    required DefaultReps defaultReps,
+    required User user,
+  })  : _list = list,
         _item = item,
         _index = index,
+        _defaultReps = defaultReps,
+        _user = user,
         super(key: key);
 
   @override
@@ -172,6 +177,8 @@ class _PauseScreenState extends State<PauseScreen> {
                                   restDuration: item.duration,
                                   id: item.id,
                                   isRepCount: item.isRepCount),
+                              defaultReps: widget._defaultReps,
+                              user: widget._user,
                             ),
                           ),
                         );
@@ -245,6 +252,8 @@ class _PauseScreenState extends State<PauseScreen> {
                                   restDuration: item.duration,
                                   id: item.id,
                                   isRepCount: item.isRepCount),
+                              defaultReps: widget._defaultReps,
+                              user: widget._user,
                             ),
                           ),
                         );

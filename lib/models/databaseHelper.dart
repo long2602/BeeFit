@@ -10,6 +10,7 @@ import 'package:beefit/models/plan_details.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'defaultReps.dart';
 import 'exercise.dart';
 
 class DatabaseHelper {
@@ -118,6 +119,27 @@ class DatabaseHelper {
     Database? db = await instance.database;
     var data =
         await db.rawQuery("Select * from food_history where meal = $idMeal");
+    List<FoodHistory> exercises = data.isNotEmpty
+        ? data.map((e) => FoodHistory.fromJson(e)).toList()
+        : [];
+    return exercises;
+  }
+
+  Future<List<FoodHistory>> getFoodHistoryByMealAndDay(
+      int idMeal, String date) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "Select * from food_history where meal = $idMeal and fday = \"$date\"");
+    List<FoodHistory> exercises = data.isNotEmpty
+        ? data.map((e) => FoodHistory.fromJson(e)).toList()
+        : [];
+    return exercises;
+  }
+
+  Future<List<FoodHistory>> getFoodHistoryByDay(String date) async {
+    Database? db = await instance.database;
+    var data =
+        await db.rawQuery("Select * from food_history where fday = \"$date\"");
     List<FoodHistory> exercises = data.isNotEmpty
         ? data.map((e) => FoodHistory.fromJson(e)).toList()
         : [];
@@ -279,5 +301,32 @@ class DatabaseHelper {
         ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
         : [];
     return plans;
+  }
+
+  Future<DefaultReps> getDefaultRepByIdBodyPart(int id, int level) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select  * from default_reps where bodypart_id = $id and user_level = $level");
+    DefaultReps defaultReps = DefaultReps.fromJson(data[0]);
+    return defaultReps;
+  }
+
+  Future<List<DefaultReps>> getDefaultRepByLevel(int level) async {
+    Database? db = await instance.database;
+    var data = await db
+        .rawQuery("select  * from default_reps where user_level = $level");
+    List<DefaultReps> defaultReps = data.isNotEmpty
+        ? data.map((e) => DefaultReps.fromJson(e)).toList()
+        : [];
+    return defaultReps;
+  }
+
+  Future<List<DefaultReps>> getDefaultRep() async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery("select  * from default_reps");
+    List<DefaultReps> defaultReps = data.isNotEmpty
+        ? data.map((e) => DefaultReps.fromJson(e)).toList()
+        : [];
+    return defaultReps;
   }
 }

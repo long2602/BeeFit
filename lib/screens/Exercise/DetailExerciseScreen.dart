@@ -1,21 +1,29 @@
 // ignore_for_file: file_names
 
+import 'package:beefit/models/defaultReps.dart';
 import 'package:beefit/models/exercise.dart';
 import 'package:beefit/models/instruction.dart';
-import 'package:beefit/screens/Exercise/StartExerciseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../widgets/TimeLine.dart';
-
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
 
 class DetailExerciseScreen extends StatefulWidget {
   final Exercise _exercise;
-  const DetailExerciseScreen({required Exercise exercise, Key? key})
+  final DefaultReps _defaultReps;
+  final User _user;
+  const DetailExerciseScreen(
+      {required Exercise exercise,
+      required DefaultReps defaultReps,
+      required User user,
+      Key? key})
       : _exercise = exercise,
+        _defaultReps = defaultReps,
+        _user = user,
         super(key: key);
 
   @override
@@ -64,155 +72,165 @@ class _DetailExerciseScreenState extends State<DetailExerciseScreen> {
         ),
         leading: const BackButton(color: AppStyle.secondaryColor),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-              right: 30 * _scaleScreen, left: 30 * _scaleScreen),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: ClipRRect(
-                  borderRadius: AppStyle.appBorder,
-                  child: AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
-                  ),
+      body: Padding(
+        padding:
+            EdgeInsets.only(right: 30 * _scaleScreen, left: 30 * _scaleScreen),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: ClipRRect(
+                borderRadius: AppStyle.appBorder,
+                child: AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: ListView(
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      exercise.name,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18 * _scaleFont,
-                        fontWeight: FontWeight.w600,
-                        color: AppStyle.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      '10 min - 100 Calories burn',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12 * _scaleFont,
-                        fontWeight: FontWeight.w500,
-                        color: AppStyle.gray3Color,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Descriptions',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18 * _scaleFont,
-                        fontWeight: FontWeight.w600,
-                        color: AppStyle.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      exercise.description,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12 * _scaleFont,
-                        fontWeight: FontWeight.w500,
-                        color: AppStyle.gray3Color,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              FutureBuilder(
-                future:
-                    databaseHelper.getInstructionsByIdExercise(exercise.id!),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      lists = snapshot.data as List<Instruction>;
-                      return Column(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'How to do it',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18 * _scaleFont,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppStyle.secondaryColor,
-                                  ),
-                                ),
-                                Text(
-                                  '${lists.length} steps',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12 * _scaleFont,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppStyle.gray3Color,
-                                  ),
-                                )
-                              ],
+                          Text(
+                            exercise.name,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18 * _scaleFont,
+                              fontWeight: FontWeight.w600,
+                              color: AppStyle.secondaryColor,
                             ),
                           ),
-                          Timeline(
-                            children: <Widget>[
-                              for (Instruction item in lists)
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                          Text(
+                            exercise.isRepCount == 0
+                                ? '${widget._defaultReps.duration} sec - ${AppMethods.calculateMet(widget._user.weight!, widget._defaultReps.rep!, widget._defaultReps.duration!, exercise.isRepCount!, exercise.met!).ceilToDouble()} Calories burn'
+                                : '',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12 * _scaleFont,
+                              fontWeight: FontWeight.w500,
+                              color: AppStyle.gray3Color,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Descriptions',
+                            style: GoogleFonts.poppins(
+                              fontSize: 18 * _scaleFont,
+                              fontWeight: FontWeight.w600,
+                              color: AppStyle.secondaryColor,
+                            ),
+                          ),
+                          Text(
+                            exercise.description,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12 * _scaleFont,
+                              fontWeight: FontWeight.w500,
+                              color: AppStyle.gray3Color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FutureBuilder(
+                      future: databaseHelper
+                          .getInstructionsByIdExercise(exercise.id!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            lists = snapshot.data as List<Instruction>;
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "Step ${item.step}",
+                                        'How to do it',
                                         style: GoogleFonts.poppins(
-                                          fontSize: 14 * _scaleFont,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppStyle.black1Color,
+                                          fontSize: 18 * _scaleFont,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppStyle.secondaryColor,
                                         ),
                                       ),
                                       Text(
-                                        item.detail,
+                                        '${lists.length} steps',
                                         style: GoogleFonts.poppins(
-                                          fontSize: 14 * _scaleFont,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xff7B6F72),
+                                          fontSize: 12 * _scaleFont,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppStyle.gray3Color,
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
-                            ],
-                            indicators: <Widget>[
-                              for (Instruction item in lists)
-                                const NodeCircle(),
-                            ],
-                            lineColor: AppStyle.primaryColor,
-                          ),
-                        ],
-                      );
-                    }
-                  } else if (snapshot.hasError) {
-                    return const Text('no data');
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
+                                Timeline(
+                                  children: <Widget>[
+                                    for (Instruction item in lists)
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Step ${item.step}",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14 * _scaleFont,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppStyle.black1Color,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.detail,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14 * _scaleFont,
+                                              fontWeight: FontWeight.w400,
+                                              color: const Color(0xff7B6F72),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                  indicators: <Widget>[
+                                    for (Instruction item in lists)
+                                      const NodeCircle(),
+                                  ],
+                                  lineColor: AppStyle.primaryColor,
+                                ),
+                              ],
+                            );
+                          }
+                        } else if (snapshot.hasError) {
+                          return const Text('no data');
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,15 +1,19 @@
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/defaultReps.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/AppMethods.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/exercise.dart';
 import '../Exercise/DetailExerciseScreen.dart';
 
 class SearchExerciseScreen extends StatefulWidget {
-  const SearchExerciseScreen({Key? key}) : super(key: key);
-
+  final User _user;
+  const SearchExerciseScreen({required User user, Key? key})
+      : _user = user,
+        super(key: key);
   @override
   State<SearchExerciseScreen> createState() => _SearchExerciseScreenState();
 }
@@ -17,6 +21,7 @@ class SearchExerciseScreen extends StatefulWidget {
 class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
   List<Exercise> lists = [];
+  List<DefaultReps> defaults = [];
   String _keyword = "";
   final TextEditingController _searchController = TextEditingController();
   @override
@@ -66,15 +71,23 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: FutureBuilder(
-            future: databaseHelper.searchExerciseByName(_keyword),
-            builder: (context, snapshot) {
+            future: Future.wait([
+              databaseHelper.searchExerciseByName(_keyword),
+              databaseHelper.getDefaultRepByLevel(widget._user.level!),
+            ]),
+            builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 } else {
-                  lists = snapshot.data as List<Exercise>;
+                  lists = snapshot.data![0] as List<Exercise>;
+                  defaults = snapshot.data![1] as List<DefaultReps>;
+                  List<DefaultReps> defaultReps = defaults
+                      .where(
+                          (element) => element.idBodyPart == widget._user.level)
+                      .toList();
                   return ListView.builder(
                     itemCount: lists.length,
                     itemBuilder: (context, index) {
@@ -89,6 +102,8 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
                               MaterialPageRoute(
                                 builder: (_) => DetailExerciseScreen(
                                   exercise: exercise,
+                                  defaultReps: defaultReps[0],
+                                  user: widget._user,
                                 ),
                               ),
                             );
@@ -140,7 +155,9 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
                                           width: 6 * _scaleScreen,
                                         ),
                                         Text(
-                                          "10 min",
+                                          exercise.isRepCount == 0
+                                              ? "${defaultReps[0].duration} sec"
+                                              : "x ${defaultReps[0].rep}",
                                           style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             color: AppStyle.secondaryColor,
@@ -178,7 +195,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
                                           width: 10 * _scaleScreen,
                                         ),
                                         Text(
-                                          "100 kcal",
+                                          "${AppMethods.calculateMet(widget._user.weight!, defaultReps[0].rep!, defaultReps[0].duration!, exercise.isRepCount!, exercise.met!).ceilToDouble()} kcal",
                                           style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             color: AppStyle.secondaryColor,
@@ -198,13 +215,6 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 2, horizontal: 16),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.favorite_border_outlined,
-                              color: AppStyle.secondaryColor,
-                            ),
-                          ),
                         ),
                       );
                     },

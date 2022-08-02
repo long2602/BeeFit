@@ -16,6 +16,15 @@ class AppMethods {
   static const String MAINPLAN = 'mainplan';
   static const String Is_FIRSTTIME = 'firstTime';
 
+  //calculate met
+  static num calculateMet(
+      int weight, int rep, int duration, int isRepCount, int met) {
+    return met *
+        weight *
+        (isRepCount == 0 ? (duration / 60) : (rep * 2 / 60)) *
+        0.0175;
+  }
+
   //Convert hexColor to int
   static int hexColor(String a) {
     String newColor = '0xff' + a;

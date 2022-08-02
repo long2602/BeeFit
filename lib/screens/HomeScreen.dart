@@ -14,6 +14,7 @@ import 'package:beefit/controls/utils.dart';
 import 'package:intl/intl.dart';
 import '../models/PlamExerciseDetail.dart';
 import '../models/databaseHelper.dart';
+import '../models/food_history.dart';
 import '../models/plan.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -61,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
           future: Future.wait([
             databaseHelper.getPlanById(1000),
             databaseHelper.getPlanDayByDate(formattedDate),
+            databaseHelper.getFoodHistoryByDay(formattedDate),
           ]),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData) {
@@ -70,8 +72,15 @@ class _HomeScreenState extends State<HomeScreen> {
             List<PlanExerciseDetail> list =
                 snapshot.data![1] as List<PlanExerciseDetail>;
             double totalCalo = 0;
+            double totalEat = 0;
             for (PlanExerciseDetail item in list) {
               totalCalo += item.kcal!;
+            }
+            List<FoodHistory> listFood = snapshot.data![2] as List<FoodHistory>;
+            for (FoodHistory item in listFood) {
+              totalEat += (item.ingredient.nutrition!.Nutrients
+                  .firstWhere((element) => element.name == 'Calories')
+                  .amount);
             }
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
@@ -153,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SizedBox(
                                         width: 100 * _scaleScreen,
                                         child: LinearProgressIndicator(
-                                          value: 0,
+                                          value: totalEat / user.bmr!,
                                           backgroundColor: AppStyle.infoColor
                                               .withOpacity(0.3),
                                           color: AppStyle.infoColor,
@@ -161,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          '0',
+                                          totalEat.ceil().toString(),
                                           style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20 * _scaleScreen,
@@ -251,13 +260,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             radius: 68 * AppMethods.screenScale(context),
                             lineWidth: 15,
                             animation: true,
-                            percent: (totalCalo / user.bmr!),
+                            percent: ((user.bmr!.ceil() +
+                                    totalCalo.ceil() -
+                                    totalEat.ceil()) /
+                                user.bmr!),
                             center: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  (user.bmr!.ceil() - totalCalo.ceil())
+                                  (user.bmr!.ceil() +
+                                          totalCalo.ceil() -
+                                          totalEat.ceil())
                                       .toString(),
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.bold,

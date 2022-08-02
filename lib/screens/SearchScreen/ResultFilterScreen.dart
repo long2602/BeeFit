@@ -1,22 +1,27 @@
 import 'package:beefit/constants/AppStyles.dart';
+import 'package:beefit/models/defaultReps.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/AppMethods.dart';
+import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/exercise.dart';
 import '../Exercise/DetailExerciseScreen.dart';
 
 class ResultFilterScreen extends StatefulWidget {
   final List<int> _categories, _types, _levels;
+  final User _user;
   const ResultFilterScreen(
       {required List<int> categories,
       required List<int> types,
       required List<int> levels,
+      required User user,
       Key? key})
       : _categories = categories,
         _levels = levels,
         _types = types,
+        _user = user,
         super(key: key);
 
   @override
@@ -26,6 +31,7 @@ class ResultFilterScreen extends StatefulWidget {
 class _ResultFilterScreenState extends State<ResultFilterScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
   List<Exercise> lists = [];
+  List<DefaultReps> defaultReps = [];
   @override
   Widget build(BuildContext context) {
     final _scaleFont = AppMethods.fontScale(context);
@@ -51,16 +57,20 @@ class _ResultFilterScreenState extends State<ResultFilterScreen> {
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: FutureBuilder(
-            future: databaseHelper.filterExercise(
-                widget._categories, widget._levels, widget._types),
-            builder: (context, snapshot) {
+            future: Future.wait([
+              databaseHelper.filterExercise(
+                  widget._categories, widget._levels, widget._types),
+              databaseHelper.getDefaultRep(),
+            ]),
+            builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 } else {
-                  lists = snapshot.data as List<Exercise>;
+                  lists = snapshot.data![0] as List<Exercise>;
+                  defaultReps = snapshot.data![1] as List<DefaultReps>;
                   return ListView.builder(
                     itemCount: lists.length,
                     itemBuilder: (context, index) {
@@ -75,6 +85,9 @@ class _ResultFilterScreenState extends State<ResultFilterScreen> {
                               MaterialPageRoute(
                                 builder: (_) => DetailExerciseScreen(
                                   exercise: exercise,
+                                  defaultReps:
+                                      DefaultReps(duration: 20, rep: 20),
+                                  user: widget._user,
                                 ),
                               ),
                             );
@@ -184,13 +197,6 @@ class _ResultFilterScreenState extends State<ResultFilterScreen> {
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 2, horizontal: 16),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.favorite_border_outlined,
-                              color: AppStyle.secondaryColor,
-                            ),
-                          ),
                         ),
                       );
                     },

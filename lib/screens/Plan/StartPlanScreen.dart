@@ -1,5 +1,6 @@
 import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/defaultReps.dart';
 import 'package:beefit/models/exercise.dart';
 import 'package:beefit/screens/Plan/PauseScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
@@ -199,6 +200,10 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                             list: _list,
                             item: _list[indexPage],
                             index: indexPage + 1,
+                            defaultReps: DefaultReps(
+                                rep: _list[indexPage].rep,
+                                duration: _list[indexPage].duration),
+                            user: widget._user,
                           ),
                         ),
                       ));
@@ -525,6 +530,13 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                                     index:
                                                                         indexPage +
                                                                             1,
+                                                                    defaultReps: DefaultReps(
+                                                                        rep: _list[indexPage]
+                                                                            .rep,
+                                                                        duration:
+                                                                            _list[indexPage].duration),
+                                                                    user: widget
+                                                                        ._user,
                                                                   ),
                                                                 ),
                                                               ));

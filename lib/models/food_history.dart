@@ -19,8 +19,8 @@ class FoodHistory {
     String map = jsonMap['ingredient'];
     Ingredient _ingredient = Ingredient.fromMap(json.decode(map));
     return FoodHistory(
-      time: jsonMap['time'],
-      date: jsonMap['date'],
+      time: jsonMap['ftime'],
+      date: jsonMap['fday'],
       ingredient: _ingredient,
       id: jsonMap[''],
       idPlanDetail: jsonMap['id_planDetail'],

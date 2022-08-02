@@ -41,8 +41,8 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
     databaseHelper.database;
     String food = json.encode(_mapIngredient);
     Map<String, dynamic> row = {
-      'date': DateFormat("yyyy-MM-dd").format(DateTime.now()),
-      'time': DateFormat("HH:mm:ss").format(DateTime.now()),
+      'fday': DateFormat("yyyy-MM-dd").format(DateTime.now()),
+      'ftime': DateFormat("HH:mm:ss").format(DateTime.now()),
       'meal': widget._meal,
       'ingredient': food,
       'id_planDetail': 1,

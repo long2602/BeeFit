@@ -10,6 +10,7 @@ import '../../constants/AppStyles.dart';
 import '../../models/PlamExerciseDetail.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
+import '../../models/defaultReps.dart';
 import '../../widgets/CommonButton.dart';
 import '../Exercise/DetailExerciseScreen.dart';
 
@@ -39,6 +40,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
   late ScrollController _scrollController;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
   List<PlanExerciseDetail> planExerciseDetailList = [];
+  List<DefaultReps> defaults = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -80,6 +82,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
       body: FutureBuilder(
         future: Future.wait([
           databaseHelper.getPlanDayByDay(day, 1, widget._week),
+          databaseHelper.getDefaultRepByLevel(widget._user.level!),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData) {
@@ -89,6 +92,10 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
           }
           planExerciseDetailList =
               snapshot.data![0] as List<PlanExerciseDetail>;
+          defaults = snapshot.data![1] as List<DefaultReps>;
+          List<DefaultReps> defaultReps = defaults
+              .where((element) => element.idBodyPart == widget._user.level)
+              .toList();
           return CustomScrollView(
             controller: _scrollController,
             slivers: [
@@ -271,6 +278,8 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
                                               restDuration: item.duration,
                                               id: item.id,
                                               isRepCount: item.isRepCount),
+                                          defaultReps: defaultReps[0],
+                                          user: widget._user,
                                         ),
                                       ),
                                     );
