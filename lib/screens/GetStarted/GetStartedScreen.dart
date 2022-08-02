@@ -37,7 +37,8 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       _currentHeight = 150,
       _currentWeight = 50,
       _levelId = 0,
-      _planListIndex = 0;
+      _planListIndex = 0,
+      _bdpId = 0;
 
   late TabController _tabController;
 
@@ -78,20 +79,20 @@ class _GetStartedScreenState extends State<GetStartedScreen>
     });
   }
 
-  double _BMICalculate({required int weight, required int height}) {
+  double _BMICalculate({required double weight, required double height}) {
     return weight / pow((height * 0.01), 2);
   }
 
-  double _BMRCalculate({required int weight, required int height}) {
+  double _BMRCalculate({required double weight, required double height}) {
     double activeFactor = 1.2;
     switch (_goalListIndex) {
-      case 2: // keep fit
+      case 2:
         activeFactor = 1.55;
         break;
-      case 1: // build muscle
+      case 1:
         activeFactor = 1.725;
         break;
-      case 0: //lose weight
+      case 0:
         activeFactor = 1.9;
         break;
     }
@@ -119,7 +120,8 @@ class _GetStartedScreenState extends State<GetStartedScreen>
       _choosedList = _womenGoals;
     }
 
-    var _bmi = _BMICalculate(height: _currentHeight, weight: _currentWeight);
+    var _bmi = _BMICalculate(
+        height: _currentHeight.toDouble(), weight: _currentWeight.toDouble());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -211,32 +213,16 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                           {
                             {
                               if (_formKey2.currentState!.validate()) {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
-                                    AppMethods.animatedRoute(
-                                      OnProgressScreen(
+                                    AppMethods.animatedRoute(OnProgressScreen(
                                         isMale: _maleIsTapped,
                                         height: _currentHeight,
                                         currentWeight: _currentWeight,
+                                        desiredWeight: 0,
                                         name: _nameController.value.text,
                                         age: int.parse(
-                                            _ageController.value.text),
-                                        level: _levelId,
-                                        bmi: _bmi,
-                                        bmr: _BMRCalculate(
-                                            height: _currentHeight,
-                                            weight: _currentWeight),
-                                        goal: _goalListIndex,
-                                        muscles: {
-                                          "arm": _chooseArm,
-                                          "abs": _chooseAbs,
-                                          "chest": _chooseChest,
-                                          "leg": _chooseLeg,
-                                          "butt": _chooseButt,
-                                          "full": _chooseFull,
-                                        },
-                                      ),
-                                    ));
+                                            _ageController.value.text))));
                               }
                             }
                           }
@@ -412,6 +398,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseArm = false
                                     : _chooseArm = true;
                                 _chooseFull = false;
+                                _chooseAbs = false;
+                                _chooseChest = false;
+                                _chooseLeg = false;
+                                _bdpId = 1;
                               });
                             },
                           ),
@@ -427,6 +417,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseChest = false
                                     : _chooseChest = true;
                                 _chooseFull = false;
+                                _chooseAbs = false;
+                                _chooseArm = false;
+                                _chooseLeg = false;
+                                _bdpId = 2;
                               });
                             },
                           ),
@@ -442,6 +436,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseAbs = false
                                     : _chooseAbs = true;
                                 _chooseFull = false;
+                                _chooseArm = false;
+                                _chooseChest = false;
+                                _chooseLeg = false;
+                                _bdpId = 3;
                               });
                             },
                           ),
@@ -457,6 +455,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseLeg = false
                                     : _chooseLeg = true;
                                 _chooseFull = false;
+                                _chooseAbs = false;
+                                _chooseChest = false;
+                                _chooseArm = false;
+                                _bdpId = 5;
                               });
                             },
                           ),
@@ -473,9 +475,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     : _chooseFull = true;
                                 _chooseAbs = false;
                                 _chooseArm = false;
-                                _chooseButt = false;
                                 _chooseChest = false;
                                 _chooseLeg = false;
+                                _bdpId = 6;
                               });
                             },
                           ),
@@ -536,6 +538,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseArm = false
                                     : _chooseArm = true;
                                 _chooseFull = false;
+                                _chooseAbs = false;
+                                _chooseChest = false;
+                                _chooseLeg = false;
+                                _bdpId = 1;
                               });
                             },
                           ),
@@ -551,6 +557,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseAbs = false
                                     : _chooseAbs = true;
                                 _chooseFull = false;
+                                _chooseArm = false;
+                                _chooseChest = false;
+                                _chooseLeg = false;
+                                _bdpId = 3;
                               });
                             },
                           ),
@@ -566,6 +576,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseButt = false
                                     : _chooseButt = true;
                                 _chooseFull = false;
+                                _chooseAbs = false;
+                                _chooseArm = false;
+                                _chooseLeg = false;
+                                _bdpId = 4;
                               });
                             },
                           ),
@@ -581,6 +595,10 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                     ? _chooseLeg = false
                                     : _chooseLeg = true;
                                 _chooseFull = false;
+                                _chooseAbs = false;
+                                _chooseButt = false;
+                                _chooseArm = false;
+                                _bdpId = 5;
                               });
                             },
                           ),
@@ -598,8 +616,8 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                 _chooseAbs = false;
                                 _chooseArm = false;
                                 _chooseButt = false;
-                                _chooseChest = false;
                                 _chooseLeg = false;
+                                _bdpId = 6;
                               });
                             },
                           ),
