@@ -314,7 +314,12 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       onPageChanged: (index, reason) {
                         setState(() {
                           _goalListIndex = index;
-                          print(_goalListIndex);
+                          if (_goalListIndex == 0 || _goalListIndex == 2) {
+                            _bdpId = 6;
+                          } else {
+                            _bdpId = 0;
+                          }
+                          print(_bdpId);
                         });
                       }),
                 ),
