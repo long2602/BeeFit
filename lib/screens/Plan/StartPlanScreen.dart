@@ -1,5 +1,5 @@
 import 'package:beefit/constants/AppStyles.dart';
-import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/PlanExerciseDetail.dart';
 import 'package:beefit/models/defaultReps.dart';
 import 'package:beefit/models/exercise.dart';
 import 'package:beefit/screens/Plan/PauseScreen.dart';

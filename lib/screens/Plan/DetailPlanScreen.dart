@@ -1,4 +1,4 @@
-import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/PlanExerciseDetail.dart';
 import 'package:beefit/models/plan_details.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';

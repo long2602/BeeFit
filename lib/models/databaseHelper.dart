@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/PlanExerciseDetail.dart';
 import 'package:beefit/models/challenge.dart';
 import 'package:beefit/models/challenge_detail.dart';
 import 'package:beefit/models/food_history.dart';
@@ -253,7 +253,7 @@ class DatabaseHelper {
 
   Future<List<Plan>> getPlan() async {
     Database? db = await instance.database;
-    var data = await db.query("plans");
+    var data = await db.rawQuery("Select * from plans where id != 2");
     List<Plan> plans =
         data.isNotEmpty ? data.map((e) => Plan.fromJson(e)).toList() : [];
     return plans;
@@ -401,7 +401,7 @@ class DatabaseHelper {
     bool isDone = false;
 
     //Add personal plan
-    await db!
+    await db
         .rawInsert(
             "INSERT INTO plans(name, bodypart_id, image, description, user_level) VALUES ('Personal Workout Plan', $bodypartId, 'personal-workout-plan','This personal workout plan is a set of exercises for 4 weeks, we created to help you achieve your goal and your desired physique. Try it out now to see how your body will change.', $userLevel)")
         .then((value) => planID = value);

@@ -6,7 +6,9 @@ import 'package:beefit/screens/AppScreen.dart';
 import 'package:beefit/screens/GetStarted/OnboardingScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
@@ -45,11 +47,11 @@ class MyApp extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Image.asset("assets/imgs/bee 1.png"),
+            Image.asset("assets/imgs/Logo.png"),
             const SizedBox(width: 10),
-            const Text(
+            Text(
               "BeeFit",
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                   fontSize: 40,
                   fontWeight: FontWeight.w900,
                   color: Colors.white),
@@ -57,7 +59,6 @@ class MyApp extends StatelessWidget {
           ],
         ),
         nextScreen: isFirstTime ? const AppScreen() : const OnboardingScreen(),
-        // nextScreen: const OnboardingScreen(),
         backgroundColor: AppStyle.primaryColor,
         duration: 2500,
         splashTransition: SplashTransition.slideTransition,

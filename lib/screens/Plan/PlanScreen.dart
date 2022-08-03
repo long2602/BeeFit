@@ -111,6 +111,7 @@ class _PlanScreenState extends State<PlanScreen> {
                                 fontWeight: FontWeight.w600,
                                 color: AppStyle.secondaryColor),
                           ),
+                          //TODO: idboy
                           subtitle: Text(EnumBodyPart
                               .values[personalPlan.idBodyPart].name),
                           contentPadding: EdgeInsets.zero,

@@ -6,7 +6,7 @@ import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
-import '../../models/PlamExerciseDetail.dart';
+import '../../models/PlanExerciseDetail.dart';
 import '../../models/User.dart';
 import '../../models/defaultReps.dart';
 import '../../models/exercise.dart';

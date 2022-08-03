@@ -88,137 +88,166 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
                       .where(
                           (element) => element.idBodyPart == widget._user.level)
                       .toList();
-                  return ListView.builder(
-                    itemCount: lists.length,
-                    itemBuilder: (context, index) {
-                      Exercise exercise = lists[index];
-                      return Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DetailExerciseScreen(
-                                  exercise: exercise,
-                                  defaultReps: defaultReps[0],
-                                  user: widget._user,
+                  return lists.isEmpty
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Icon(
+                              Icons.search,
+                              size: 36 * _scaleFont,
+                              color: AppStyle.gray3Color,
+                            ),
+                            Text(
+                              'No results found',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  color: AppStyle.gray3Color,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Try other keywords?',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  color: AppStyle.gray3Color, fontSize: 14),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          itemCount: lists.length,
+                          itemBuilder: (context, index) {
+                            Exercise exercise = lists[index];
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 6 * _scaleScreen),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DetailExerciseScreen(
+                                        exercise: exercise,
+                                        defaultReps: defaultReps[0],
+                                        user: widget._user,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                tileColor: AppStyle.gray5Color.withOpacity(0.5),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: AppStyle.appBorder,
                                 ),
-                              ),
-                            );
-                          },
-                          tileColor: AppStyle.gray5Color.withOpacity(0.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: AppStyle.appBorder,
-                          ),
-                          leading: ClipRRect(
-                            borderRadius: AppStyle.appBorder,
-                            child: Image.asset(
-                              "assets/imgs/exercises/${exercise.gif}.jpg",
-                              height: 60 * _scaleScreen,
-                              width: 60 * _scaleScreen,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          title: Text(
-                            exercise.name.toUpperCase(),
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              color: AppStyle.secondaryColor,
-                              fontSize: 18 * _scaleFont,
-                            ),
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppStyle.whiteColor,
-                                      borderRadius: AppStyle.appBorder,
-                                    ),
+                                leading: ClipRRect(
+                                  borderRadius: AppStyle.appBorder,
+                                  child: Image.asset(
+                                    "assets/imgs/exercises/${exercise.gif}.jpg",
+                                    height: 60 * _scaleScreen,
+                                    width: 60 * _scaleScreen,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                title: Text(
+                                  exercise.name.toUpperCase(),
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppStyle.secondaryColor,
+                                    fontSize: 18 * _scaleFont,
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          Icons.play_arrow,
-                                          color: AppStyle.secondaryColor,
-                                          size: 18 * _scaleFont,
-                                        ),
-                                        SizedBox(
-                                          width: 6 * _scaleScreen,
-                                        ),
-                                        Text(
-                                          exercise.isRepCount == 0
-                                              ? "${defaultReps[0].duration} sec"
-                                              : "x ${defaultReps[0].rep}",
-                                          style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppStyle.secondaryColor,
-                                            fontSize: 12 * _scaleFont,
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: AppStyle.whiteColor,
+                                            borderRadius: AppStyle.appBorder,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12 * _scaleScreen,
-                                      vertical: 4 * _scaleScreen,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10 * _scaleScreen,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppStyle.whiteColor,
-                                      borderRadius: AppStyle.appBorder,
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/imgs/fire.png",
-                                          width: 12 * _scaleScreen,
-                                          height: 12 * _scaleScreen,
-                                          fit: BoxFit.cover,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.play_arrow,
+                                                color: AppStyle.secondaryColor,
+                                                size: 18 * _scaleFont,
+                                              ),
+                                              SizedBox(
+                                                width: 6 * _scaleScreen,
+                                              ),
+                                              Text(
+                                                exercise.isRepCount == 0
+                                                    ? "${defaultReps[0].duration} sec"
+                                                    : "x ${defaultReps[0].rep}",
+                                                style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      AppStyle.secondaryColor,
+                                                  fontSize: 12 * _scaleFont,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12 * _scaleScreen,
+                                            vertical: 4 * _scaleScreen,
+                                          ),
                                         ),
                                         SizedBox(
                                           width: 10 * _scaleScreen,
                                         ),
-                                        Text(
-                                          "${AppMethods.calculateMet(widget._user.weight!, defaultReps[0].rep!, defaultReps[0].duration!, exercise.isRepCount!, exercise.met!).ceilToDouble()} kcal",
-                                          style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppStyle.secondaryColor,
-                                            fontSize: 12 * _scaleFont,
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: AppStyle.whiteColor,
+                                            borderRadius: AppStyle.appBorder,
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                "assets/imgs/fire.png",
+                                                width: 12 * _scaleScreen,
+                                                height: 12 * _scaleScreen,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              SizedBox(
+                                                width: 10 * _scaleScreen,
+                                              ),
+                                              Text(
+                                                "${AppMethods.calculateMet(widget._user.weight!, defaultReps[0].rep!, defaultReps[0].duration!, exercise.isRepCount!, exercise.met!).ceilToDouble()} kcal",
+                                                style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      AppStyle.secondaryColor,
+                                                  fontSize: 12 * _scaleFont,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12 * _scaleScreen,
+                                            vertical: 4 * _scaleScreen,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12 * _scaleScreen,
-                                      vertical: 4 * _scaleScreen,
-                                    ),
                                   ),
-                                ],
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 16),
                               ),
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 16),
-                        ),
-                      );
-                    },
-                  );
+                            );
+                          },
+                        );
                 }
               } else if (snapshot.hasError) {
                 return const Text('no data');

@@ -13,7 +13,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../constants/AppMethods.dart';
 import 'package:beefit/controls/utils.dart';
 import 'package:intl/intl.dart';
-import '../models/PlamExerciseDetail.dart';
+import '../models/PlanExerciseDetail.dart';
 import '../models/challenge.dart';
 import '../models/databaseHelper.dart';
 import '../models/food_history.dart';
@@ -73,7 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
+            //get data
             Plan plan = snapshot.data![0] as Plan;
+            //get plan base on datetime.now
             List<PlanExerciseDetail> list =
                 snapshot.data![1] as List<PlanExerciseDetail>;
             double totalCalo = 0;
@@ -343,7 +345,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           SizedBox(
                                               width: 100 * _scaleScreen,
                                               child: LinearProgressIndicator(
-                                                value: totalCalo / user.bmr!,
+                                                value: (totalCalo / user.bmr!) >
+                                                        1
+                                                    ? 1
+                                                    : (totalCalo / user.bmr!),
                                                 backgroundColor: AppStyle
                                                     .errorColor
                                                     .withOpacity(0.3),

@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, file_names
 
 import 'dart:math';
-
 import 'package:beefit/constants/AppMethods.dart';
 import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/GetStarted/OnProgressScreen.dart';
@@ -36,8 +35,8 @@ class _GetStartedScreenState extends State<GetStartedScreen>
   int _goalListIndex = 0,
       _currentHeight = 150,
       _currentWeight = 50,
-      _levelId = 0,
-      _bdpId = 0;
+      _levelId = 1,
+      _bdpId = 6;
 
   late TabController _tabController;
 
@@ -650,6 +649,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       autofocus: true,
                       validator: (val) {
                         if (val == "") return "Please enter your age.";
+                        if (int.parse(val!) < 6) {
+                          return "Please enter age larger than 6.";
+                        }
                         return null;
                       },
                       controller: _ageController,

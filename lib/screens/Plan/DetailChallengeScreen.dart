@@ -1,4 +1,4 @@
-import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/PlanExerciseDetail.dart';
 import 'package:beefit/models/challenge.dart';
 import 'package:beefit/models/challenge_detail.dart';
 import 'package:beefit/models/plan_details.dart';

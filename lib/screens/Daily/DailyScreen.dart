@@ -8,7 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:beefit/controls/utils.dart';
 import 'dart:collection';
 import '../../constants/AppMethods.dart';
-import '../../models/PlamExerciseDetail.dart';
+import '../../models/PlanExerciseDetail.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import 'package:intl/intl.dart';

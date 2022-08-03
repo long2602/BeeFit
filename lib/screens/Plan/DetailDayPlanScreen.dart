@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppStyles.dart';
-import '../../models/PlamExerciseDetail.dart';
+import '../../models/PlanExerciseDetail.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import '../../models/defaultReps.dart';
