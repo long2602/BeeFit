@@ -226,7 +226,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                           height: _currentHeight.toDouble()),
                                       goal: _goalListIndex,
                                       level: _levelId,
-                                      muscles: {},
+                                      muscleId: _bdpId,
                                     )));
                               }
                             }

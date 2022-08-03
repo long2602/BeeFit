@@ -10,7 +10,7 @@ class User {
   int? level;
   double? bmi;
   double? bmr;
-  Map<String, dynamic>? muscle;
+  int? muscleId;
   int? mainPlan;
 
   User(
@@ -23,6 +23,6 @@ class User {
       this.level,
       this.bmr,
       this.bmi,
-      this.muscle,
+      this.muscleId,
       this.mainPlan});
 }

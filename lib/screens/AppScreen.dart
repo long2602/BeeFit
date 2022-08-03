@@ -47,9 +47,9 @@ class _AppScreenState extends State<AppScreen> {
       weight: prefs.getInt(AppMethods.CURRENT_WEIGHT),
       goal: prefs.getInt(AppMethods.GOAL),
       level: prefs.getInt(AppMethods.LEVEL),
-      bmr: prefs.getDouble(AppMethods.BMR),
+      bmr: prefs.getDouble(AppMethods.BMR), 
       bmi: prefs.getDouble(AppMethods.BMI),
-      muscle: json.decode(prefs.getString(AppMethods.MUSCLES)!),
+      muscleId: prefs.getInt(AppMethods.MUSCLES),
       mainPlan: prefs.getInt(AppMethods.MAINPLAN),
     );
   }

@@ -23,7 +23,7 @@ class OnProgressScreen extends StatefulWidget {
       required double bmi,
       required double bmr,
       required int goal,
-      required Map<String, bool> muscles,
+      required int muscleId,
       Key? key})
       : _name = name,
         _height = height,
@@ -34,13 +34,13 @@ class OnProgressScreen extends StatefulWidget {
         _bmi = bmi,
         _bmr = bmr,
         _goal = goal,
-        _muscles = muscles,
+        _muscleId = muscleId,
         super(key: key);
   final bool _isMale;
   final int _height, _currentWeight, _age, _level, _goal;
   final String _name;
   final double _bmi, _bmr;
-  final Map<String, bool>? _muscles;
+  final int? _muscleId;
 
   @override
   State<OnProgressScreen> createState() => _OnProgressScreenState();
@@ -60,7 +60,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
     required double bmi,
     required double bmr,
     required int goal,
-    required Map<String, dynamic> muscles,
+    required int muscleId,
     required int mainPlan,
   }) async {
     bool isSuccess = false;
@@ -76,7 +76,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
       prefs.setInt(AppMethods.GOAL, goal);
       prefs.setDouble(AppMethods.BMI, bmi);
       prefs.setDouble(AppMethods.BMR, bmr);
-      prefs.setString(AppMethods.MUSCLES, json.encode(muscles));
+      prefs.setInt(AppMethods.MUSCLES, muscleId);
       prefs.setInt(AppMethods.MAINPLAN, mainPlan);
       return true;
     } catch (e) {
@@ -85,28 +85,28 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
     }
   }
 
-  Future<bool> insertPlan() async {
-    databaseHelper.database;
-    Map<String, dynamic> row = {
-      'id': idPlan,
-      'name': "Personal Plan",
-      'bodypart_id': widget._goal != 2 ? 6 : 2,
-      'image': "fitness1",
-      'description':
-          "A personal development plan is a set of goals and objectives you create to help you achieve the life you want.",
-      'user_level': widget._level,
-    };
-    try {
-      await databaseHelper.insert('plans', row).then((id) {
-        idPlan = id;
-        print('insert row id: $id');
-      });
-      return true;
-    } on DatabaseException catch (e) {
-      if (e.isUniqueConstraintError()) {}
-      return false;
-    }
-  }
+  // Future<bool> insertPlan() async {
+  //   databaseHelper.database;
+  //   Map<String, dynamic> row = {
+  //     'id': idPlan,
+  //     'name': "Personal Plan",
+  //     'bodypart_id': widget._goal != 2 ? 6 : 2,
+  //     'image': "fitness1",
+  //     'description':
+  //         "A personal development plan is a set of goals and objectives you create to help you achieve the life you want.",
+  //     'user_level': widget._level,
+  //   };
+  //   try {
+  //     await databaseHelper.insert('plans', row).then((id) {
+  //       idPlan = id;
+  //       print('insert row id: $id');
+  //     });
+  //     return true;
+  //   } on DatabaseException catch (e) {
+  //     if (e.isUniqueConstraintError()) {}
+  //     return false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
       ),
       body: FutureBuilder(
         future: Future.wait([
-          insertPlan(),
+          databaseHelper.generatePlan(bodypartId: widget._muscleId!, goalIndex: widget._goal, userLevel: widget._level),
           saveInfoUser(
             isMale: widget._isMale,
             height: widget._height,
@@ -131,7 +131,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
             bmi: widget._bmi,
             bmr: widget._bmr,
             goal: widget._goal,
-            muscles: widget._muscles!,
+            muscleId: widget._muscleId!,
             mainPlan: idPlan,
           ),
         ]),
