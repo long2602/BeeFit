@@ -358,5 +358,353 @@ class DatabaseHelper {
     return plans;
   }
 
-  //
+  //======================================================================================
+
+  Future<bool> generatePlan(
+      {required int goalIndex,
+      required int bodypartId,
+      required int userLevel}) async {
+    final db = await instance.database;
+
+    //Warm up exercises
+    int absWU = 1;
+    List<int> armchestWU = [32, 25, 31, 71];
+    List<int> legbuttWU = [1, 43, 42, 70];
+
+    //Main exercises by each level
+    List<int> fullbodyEXs = [26, 33]; //Fullbody or cardio exercises
+
+    List<int> absEXs1 = [58, 2, 48, 53, 12, 5, 4, 3, 46];
+    List<int> absEXs2 = [13, 10, 6, 7, 11, 15, 16];
+    int absEXs3 = 3;
+
+    List<int> armchestEXs1 = [17, 18, 38, 34];
+    List<int> armchestEXs2 = [37, 19, 45, 64, 39, 20];
+    List<int> armchestEXs3 = [23, 28, 27, 29, 21, 40, 68, 41];
+
+    List<int> legbuttEXs1 = [58, 48, 53, 12, 66, 46, 57, 61, 67];
+    List<int> legbuttEXs2 = [59, 54, 47, 44, 55, 56];
+    int legbuttEXs3 = 60;
+
+    List<int> shoulderbackEXs1 = [69, 69, 72, 62, 77];
+    List<int> shoulderbackEXs2 = [45, 64, 39, 20];
+    List<int> shoulderbackEXs3 = [28, 29, 21, 68, 41];
+
+    //Stretch exercises
+    List<int> armchestSTs = [22, 8, 30, 36, 35];
+    List<int> absSTs = [22, 65, 8];
+    List<int> legbuttSTs = [65, 50, 49, 52];
+    List<int> shoulderbackSTs = [22, 63, 65, 24, 9];
+    List<int> upperSTs = [22, 63, 65, 8, 24, 30, 36, 9, 35];
+
+    var planID = 0;
+    bool isDone = false;
+
+    //Add personal plan
+    await db!
+        .rawInsert(
+            "INSERT INTO plans(name, bodypart_id, image, description, user_level) VALUES ('Personal Workout Plan', $bodypartId, 'personal-workout-plan','This personal workout plan is a set of exercises for 4 weeks, we created to help you achieve your goal and your desired physique. Try it out now to see how your body will change.', $userLevel)")
+        .then((value) => planID = value);
+
+    if (planID != 0) {
+      //Beginner
+      if (userLevel == 1) {
+        //Lose weight lv1
+        if (goalIndex == 0) {
+          for (var w = 1; w < 5; w++) {
+            for (var d = 1; d < 8; d++) {
+              //1 warm up
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttWU.toList()..shuffle()).first})");
+              //2 chest/arm lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs1.toList()..shuffle()).first})");
+              //2 abs lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs1.toList()..shuffle()).first})");
+              //2 back/shoulder lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs1.toList()..shuffle()).first})");
+              //1 fullbody
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(fullbodyEXs.toList()..shuffle()).first})");
+              //2 leg/butt lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs1.toList()..shuffle()).first})");
+              //1 upper stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(upperSTs.toList()..shuffle()).first})");
+              //1 lower stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttSTs.toList()..shuffle()).first})");
+              //For the rest day
+              if (d == 7) {
+                await db.rawInsert(
+                    "INSERT INTO plan_details(plan_id, week, day, is_restday)VALUES ($planID, $w, 7, 1)");
+              }
+              isDone = true;
+            }
+          }
+        }
+        //Build muscle lv1
+        else if (goalIndex == 1) {
+        }
+        //Keep fit lv1
+        else {
+          for (var w = 1; w < 5; w++) {
+            for (var d = 1; d < 8; d++) {
+              //1 warm up
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttWU.toList()..shuffle()).first})");
+              //2 chest/arm lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs1.toList()..shuffle()).first})");
+              //2 abs lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs1.toList()..shuffle()).first})");
+              //2 back/shoulder lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs1.toList()..shuffle()).first})");
+              //1 fullbody
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(fullbodyEXs.toList()..shuffle()).first})");
+              //2 leg/butt lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs1.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs1.toList()..shuffle()).first})");
+              //1 upper stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(upperSTs.toList()..shuffle()).first})");
+              //1 lower stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttSTs.toList()..shuffle()).first})");
+              //For the rest day
+              if (d == 6 || d == 7) {
+                await db.rawInsert(
+                    "INSERT INTO plan_details(plan_id, week, day, is_restday)VALUES ($planID, $w, $d, 1)");
+              }
+              isDone = true;
+            }
+          }
+        }
+      }
+      //Intermediate
+      else if (userLevel == 2) {
+        //Lose weight lv2
+        if (goalIndex == 0) {
+          for (var w = 1; w < 5; w++) {
+            for (var d = 1; d < 8; d++) {
+              //1 warm up
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttWU.toList()..shuffle()).first})");
+              //1 chest/arm lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs1.toList()..shuffle()).first})");
+              //1 chest/arm lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs2.toList()..shuffle()).first})");
+              //2 abs lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs2.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs2.toList()..shuffle()).first})");
+              //1 back/shoulder lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs1.toList()..shuffle()).first})");
+              //1 back/shoulder lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs2.toList()..shuffle()).first})");
+              //1 fullbody
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(fullbodyEXs.toList()..shuffle()).first})");
+              //1 leg/butt lv1
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs1.toList()..shuffle()).first})");
+              //1 leg/butt lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs2.toList()..shuffle()).first})");
+              //1 upper stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(upperSTs.toList()..shuffle()).first})");
+              //1 lower stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttSTs.toList()..shuffle()).first})");
+              //For the rest day
+              if (d == 7) {
+                await db.rawInsert(
+                    "INSERT INTO plan_details(plan_id, week, day, is_restday)VALUES ($planID, $w, 7, 1)");
+              }
+              isDone = true;
+            }
+          }
+        }
+        //Build muscle lv2
+        else if (goalIndex == 1) {
+        }
+        //Keep fit lv2
+        else {
+          for (var w = 1; w < 5; w++) {
+            for (var d = 1; d < 8; d++) {
+              //1 warm up
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttWU.toList()..shuffle()).first})");
+              //2 chest/arm lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs2.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs2.toList()..shuffle()).first})");
+              //2 abs lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs2.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(absEXs2.toList()..shuffle()).first})");
+              //2 back/shoulder lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs2.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs2.toList()..shuffle()).first})");
+              //1 fullbody
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(fullbodyEXs.toList()..shuffle()).first})");
+              //2 leg/butt lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs2.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs2.toList()..shuffle()).first})");
+              //1 upper stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(upperSTs.toList()..shuffle()).first})");
+              //1 lower stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttSTs.toList()..shuffle()).first})");
+              //For the rest day
+              if (d == 6 || d == 7) {
+                await db.rawInsert(
+                    "INSERT INTO plan_details(plan_id, week, day, is_restday)VALUES ($planID, $w, $d, 1)");
+              }
+              isDone = true;
+            }
+          }
+        }
+      }
+      //Advanced
+      else {
+        //Lose weight lv3
+        if (goalIndex == 0) {
+          for (var w = 1; w < 5; w++) {
+            for (var d = 1; d < 8; d++) {
+              //1 warm up
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttWU.toList()..shuffle()).first})");
+              //1 chest/arm lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs2.toList()..shuffle()).first})");
+              //1 chest/arm lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs3.toList()..shuffle()).first})");
+              //2 abs lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $absEXs3)");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $absEXs3})");
+              //1 back/shoulder lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs2.toList()..shuffle()).first})");
+              //1 back/shoulder lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs3.toList()..shuffle()).first})");
+              //1 fullbody
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(fullbodyEXs.toList()..shuffle()).first})");
+              //1 leg/butt lv2
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttEXs2.toList()..shuffle()).first})");
+              //1 leg/butt lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $legbuttEXs3)");
+              //1 upper stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(upperSTs.toList()..shuffle()).first})");
+              //1 lower stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttSTs.toList()..shuffle()).first})");
+              //For the rest day
+              if (d == 7) {
+                await db.rawInsert(
+                    "INSERT INTO plan_details(plan_id, week, day, is_restday)VALUES ($planID, $w, 7, 1)");
+              }
+              isDone = true;
+            }
+          }
+        }
+        //Build muscle lv3
+        else if (goalIndex == 1) {
+        }
+        //Keep fit lv3
+        else {
+          for (var w = 1; w < 5; w++) {
+            for (var d = 1; d < 8; d++) {
+              //1 warm up
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttWU.toList()..shuffle()).first})");
+              //2 chest/arm lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs3.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(armchestEXs3.toList()..shuffle()).first})");
+              //2 abs lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $absEXs3)");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $absEXs3)");
+              //2 back/shoulder lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs3.toList()..shuffle()).first})");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(shoulderbackEXs3.toList()..shuffle()).first})");
+              //1 fullbody
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(fullbodyEXs.toList()..shuffle()).first})");
+              //2 leg/butt lv3
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $legbuttEXs3)");
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, $legbuttEXs3)");
+              //1 upper stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(upperSTs.toList()..shuffle()).first})");
+              //1 lower stretch
+              await db.rawInsert(
+                  "INSERT INTO plan_details(plan_id, week, day, exercise_id)VALUES ($planID, $w, $d, ${(legbuttSTs.toList()..shuffle()).first})");
+              //For the rest day
+              if (d == 6 || d == 7) {
+                await db.rawInsert(
+                    "INSERT INTO plan_details(plan_id, week, day, is_restday)VALUES ($planID, $w, $d, 1)");
+              }
+              isDone = true;
+            }
+          }
+        }
+      }
+    } else {
+      print("Something wrong with query or variables. Check them!");
+      isDone = false;
+    }
+    return isDone;
+  }
 }
