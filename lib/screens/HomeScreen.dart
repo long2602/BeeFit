@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: FutureBuilder(
           future: Future.wait([
-            databaseHelper.getPlanById(1000),
+            databaseHelper.getPlanById(2),
             databaseHelper.getPlanDayByDate(formattedDate),
             databaseHelper.getFoodHistoryByDay(formattedDate),
             databaseHelper.getChallenges(),

@@ -261,7 +261,8 @@ class DatabaseHelper {
 
   Future<Plan> getPlanById(int id) async {
     Database? db = await instance.database;
-    var data = await db.rawQuery("Select * from plans where id = $id");
+    var data = await db.rawQuery(
+        "SELECT * from plans where name='Personal Workout Plan' order by id desc limit 1");
     print(data);
     Plan plans = Plan.fromJson(data[0] as Map<String, dynamic>);
     return plans;

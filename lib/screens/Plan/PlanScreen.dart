@@ -51,7 +51,7 @@ class _PlanScreenState extends State<PlanScreen> {
           child: FutureBuilder(
             future: Future.wait([
               databaseHelper.getPlan(),
-              databaseHelper.getPlanById(1000),
+              databaseHelper.getPlanById(2),
               databaseHelper.getChallenges(),
             ]),
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
