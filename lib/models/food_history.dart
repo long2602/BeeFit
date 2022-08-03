@@ -22,7 +22,7 @@ class FoodHistory {
       time: jsonMap['ftime'],
       date: jsonMap['fday'],
       ingredient: _ingredient,
-      id: jsonMap[''],
+      id: jsonMap['idfood'],
       idPlanDetail: jsonMap['id_planDetail'],
       meal: jsonMap['meal'],
     );

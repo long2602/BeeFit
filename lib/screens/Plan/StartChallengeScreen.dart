@@ -1,8 +1,8 @@
 import 'package:beefit/constants/AppStyles.dart';
-import 'package:beefit/models/PlamExerciseDetail.dart';
+import 'package:beefit/models/challenge_detail.dart';
 import 'package:beefit/models/defaultReps.dart';
 import 'package:beefit/models/exercise.dart';
-import 'package:beefit/screens/Plan/PauseScreen.dart';
+import 'package:beefit/screens/Plan/PauseChallengeScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:beefit/widgets/CountDownTimerState.dart';
 import 'package:beefit/widgets/TimeLine.dart';
@@ -16,23 +16,24 @@ import 'package:video_player/video_player.dart';
 import '../../models/instruction.dart';
 import 'package:intl/intl.dart';
 
-class StartPlanScreen extends StatefulWidget {
-  final List<PlanExerciseDetail> _list;
+class StartChallengeScreen extends StatefulWidget {
+  final List<ChallengeDetail> _list;
   final User _user;
-  const StartPlanScreen(
-      {required List<PlanExerciseDetail> list, required User user, Key? key})
+  const StartChallengeScreen(
+      {required List<ChallengeDetail> list, required User user, Key? key})
       : _list = list,
         _user = user,
         super(key: key);
   @override
-  _StartPlanScreenState createState() => _StartPlanScreenState();
+  _StartChallengeScreenState createState() => _StartChallengeScreenState();
 }
 
-class _StartPlanScreenState extends State<StartPlanScreen> {
-  final CountDownTimerState timerState = Get.put(CountDownTimerState());
+class _StartChallengeScreenState extends State<StartChallengeScreen> {
   late VideoPlayerController _controller;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
-  late List<PlanExerciseDetail> _list = widget._list;
+  final CountDownTimerState timerState = Get.put(CountDownTimerState());
+
+  late List<ChallengeDetail> _list;
   final PageController _pageController = PageController(initialPage: 0);
   int indexPage = 0;
   late String videoName;
@@ -42,7 +43,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    videoName = _list[0].gif;
+    _list = widget._list;
+    videoName = _list[0].gif!;
     _controller =
         VideoPlayerController.asset('assets/imgs/video/$videoName.mp4');
     _controller.setLooping(true);
@@ -54,7 +56,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
 
   Future<bool> UpdatePlanDetail(Map<String, dynamic> row, int id) async {
     try {
-      databaseHelper.updateRawQuery(row, "plan_details", id, "id");
+      databaseHelper.updateRawQuery(row, "challenge_details", id, "id");
       return true;
     } catch (e) {
       return false;
@@ -94,7 +96,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                             ),
                           ),
                           Text(
-                            _list.length.toString(),
+                            TotalTime.toString(),
                             style: GoogleFonts.poppins(
                               color: AppStyle.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -146,7 +148,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                             ),
                           ),
                           Text(
-                            TotalTime.toString(),
+                            _list.length.toString(),
                             style: GoogleFonts.poppins(
                               color: AppStyle.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -240,7 +242,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                   () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => PauseScreen(
+                          builder: (_) => PauseChallengeScreen(
                             list: _list,
                             item: _list[indexPage],
                             index: indexPage + 1,
@@ -258,7 +260,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
               print(formattedDate);
               num kcal = _list[indexPage].met! *
                   widget._user.weight! *
-                  (_list[indexPage].isRepCount == 0
+                  (_list[indexPage].isRep == 0
                       ? _list[indexPage].duration
                       : (_list[indexPage].rep! + 3) / 60)! *
                   0.0175;
@@ -267,14 +269,14 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                 "date": formattedDate,
                 "kcal": kcal.toDouble(),
               };
-              UpdatePlanDetail(row, _list[indexPage].idPlanDetail!);
+              TotalKcal += kcal;
+              TotalTime += _list[indexPage].duration!;
+              UpdatePlanDetail(row, _list[indexPage].idChallenge!);
               print('add time');
               _pageController.nextPage(
                   duration: const Duration(seconds: 1),
                   curve: Curves.easeInOut);
             }
-            // Future.delayed(Duration.zero,
-            //     () => _showMyDialog(_list[indexPage].restDuration!));
           }
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
@@ -288,7 +290,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                   timerState.isStart = false;
                   timerState.isPause = false;
                   timerState.isReset = false;
-                  videoName = _list[indexPage].gif;
+                  videoName = _list[indexPage].gif!;
                   _controller = VideoPlayerController.asset(
                       'assets/imgs/video/$videoName.mp4');
                   _controller.initialize().then((_) => setState(() {}));
@@ -318,7 +320,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
                                   Text(
-                                    _list[i].name,
+                                    _list[i].name!,
                                     style: GoogleFonts.poppins(
                                         color: AppStyle.secondaryColor,
                                         fontWeight: FontWeight.w700,
@@ -334,15 +336,15 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                       ),
                                       builder: (context) => buildSheet(
                                         Exercise(
-                                            name: _list[i].name,
-                                            description: _list[i].description,
-                                            gif: _list[i].gif,
+                                            name: _list[i].name!,
+                                            description: _list[i].des!,
+                                            gif: _list[i].gif!,
                                             level: _list[i].level,
                                             type: _list[i].type,
                                             met: _list[i].met,
                                             restDuration: _list[i].duration,
-                                            id: _list[i].id,
-                                            isRepCount: _list[i].isRepCount),
+                                            id: _list[i].idExercise,
+                                            isRepCount: _list[i].isRep),
                                       ),
                                     ),
                                     icon: const Icon(
@@ -353,7 +355,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                 ],
                               ),
                             ),
-                            _list[i].isRepCount == 0
+                            _list[i].isRep == 0
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 10 * _scaleScreen),
@@ -410,7 +412,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                       ),
                                     ),
                                   ),
-                                  _list[i].isRepCount == 0
+                                  _list[i].isRep == 0
                                       ? Container(
                                           height: 80 * _scaleScreen,
                                           width: 80 * _scaleScreen,
@@ -542,14 +544,17 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                       print(formattedDate);
                                                       num kcal = _list[i].met! *
                                                           widget._user.weight! *
-                                                          (_list[i].isRepCount ==
-                                                                  0
+                                                          (_list[i].isRep == 0
                                                               ? _list[i]
                                                                   .duration
                                                               : (_list[i].rep! +
                                                                       3) /
                                                                   60)! *
                                                           0.0175;
+                                                      TotalKcal += kcal;
+                                                      TotalTime +=
+                                                          (_list[i].isRep! * 2 +
+                                                              3);
                                                       Map<String, dynamic> row =
                                                           {
                                                         "status": 1,
@@ -559,7 +564,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                       UpdatePlanDetail(
                                                           row,
                                                           _list[i]
-                                                              .idPlanDetail!);
+                                                              .idChallenge!);
                                                       print('add');
                                                       Future.delayed(
                                                           Duration.zero,
@@ -567,7 +572,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                                 context,
                                                                 MaterialPageRoute(
                                                                   builder: (_) =>
-                                                                      PauseScreen(
+                                                                      PauseChallengeScreen(
                                                                     list: _list,
                                                                     item: _list[
                                                                         indexPage],
@@ -634,7 +639,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(50)),
                                         onTap: () {
-                                          if (_list[i].isRepCount != 0) {
+                                          if (_list[i].isRep != 0) {
                                             Get.snackbar(
                                               "Can not skip exercise!",
                                               "You need to press button check to practice next exercise.",
@@ -689,8 +694,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                           ),
                           Text(
                             (indexPage + 1) != _list.length
-                                ? _list[indexPage + 1].name.toUpperCase()
-                                : _list[indexPage - 1].name.toUpperCase(),
+                                ? _list[indexPage + 1].name!.toUpperCase()
+                                : _list[indexPage - 1].name!.toUpperCase(),
                             style: GoogleFonts.poppins(
                                 color: AppStyle.secondaryColor,
                                 fontWeight: FontWeight.bold,

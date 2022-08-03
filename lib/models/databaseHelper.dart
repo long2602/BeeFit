@@ -103,9 +103,14 @@ class DatabaseHelper {
   }
 
   //delete
-  Future<int> delete(String item, String nameTable) async {
+  Future<bool> deleteRaw(int item, String nameTable, String column) async {
     Database db = await instance.database;
-    return await db.delete(nameTable, where: 'img', whereArgs: [item]);
+    try {
+      await db.rawQuery("Delete from $nameTable where $column = $item");
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<List<FoodHistory>> getFoodHistory() async {

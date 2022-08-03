@@ -12,6 +12,7 @@ import '../../models/PlamExerciseDetail.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
 import 'package:intl/intl.dart';
+import 'DetailFoodScreen.dart';
 
 class DailyScreen extends StatefulWidget {
   final User _user;
@@ -39,8 +40,13 @@ class _DailyScreenState extends State<DailyScreen> {
   List<FoodHistory> listBreakfast = [];
   List<FoodHistory> listLunch = [];
   List<FoodHistory> listDinner = [];
+  List<FoodHistory> listFood = [];
+  List<PlanExerciseDetail> listExercise = [];
   late User user;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
+  double _totalExercise = 0;
+  double _totalEat = 0;
+  double _totalTime = 0;
 
   TabBar get _tabBar => const TabBar(
         tabs: [
@@ -172,171 +178,199 @@ class _DailyScreenState extends State<DailyScreen> {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * _scaleScreen,
-                          vertical: 16 * _scaleScreen),
-                      margin: EdgeInsets.symmetric(vertical: 16 * _scaleScreen),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: AppStyle.appBorder,
-                        color: AppStyle.secondaryColor,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Column(
+        body: FutureBuilder(
+          future: Future.wait([
+            databaseHelper.getPlanDayByDate(formattedDate),
+            databaseHelper.getFoodHistoryByDay(formattedDate),
+          ]),
+          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            _totalExercise = 0;
+            _totalEat = 0;
+            _totalTime = 0;
+            listExercise = snapshot.data![0] as List<PlanExerciseDetail>;
+
+            for (PlanExerciseDetail item in listExercise) {
+              _totalExercise += item.kcal!;
+              if (item.isRepCount == 0) {
+                _totalTime += item.duration! + item.restDuration!;
+              } else {
+                _totalTime += item.rep! + 3 + item.restDuration!;
+              }
+            }
+            listFood = snapshot.data![1] as List<FoodHistory>;
+            for (FoodHistory item in listFood) {
+              _totalEat += (item.ingredient.nutrition!.Nutrients
+                  .firstWhere((element) => element.name == 'Calories')
+                  .amount);
+            }
+            return TabBarView(
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16 * _scaleScreen,
+                              vertical: 16 * _scaleScreen),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 16 * _scaleScreen),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: AppStyle.appBorder,
+                            color: AppStyle.secondaryColor,
+                          ),
+                          child: Row(
                             children: [
-                              Text(
-                                'Workout',
-                                style: GoogleFonts.poppins(
-                                  color: AppStyle.whiteColor,
-                                  fontWeight: FontWeight.w600,
+                              Expanded(
+                                  child: Column(
+                                children: [
+                                  Text(
+                                    'Workout',
+                                    style: GoogleFonts.poppins(
+                                      color: AppStyle.whiteColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    '0',
+                                    style: GoogleFonts.poppins(
+                                      color: AppStyle.primaryColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                              Expanded(
+                                  child: Container(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'kcal',
+                                      style: GoogleFonts.poppins(
+                                        color: AppStyle.whiteColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      _totalExercise.ceil().toString(),
+                                      style: GoogleFonts.poppins(
+                                        color: AppStyle.primaryColor,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                '0',
-                                style: GoogleFonts.poppins(
-                                  color: AppStyle.primaryColor,
-                                  fontWeight: FontWeight.w700,
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(
+                                        color: AppStyle.gray5Color, width: 1),
+                                    left: BorderSide(
+                                        color: AppStyle.gray5Color, width: 1),
+                                  ),
+                                ),
+                              )),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Time (min)',
+                                      style: GoogleFonts.poppins(
+                                        color: AppStyle.whiteColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      (_totalTime / 60).ceil().toString(),
+                                      style: GoogleFonts.poppins(
+                                        color: AppStyle.primaryColor,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
-                          )),
-                          Expanded(
-                              child: Container(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'kcal',
-                                  style: GoogleFonts.poppins(
-                                    color: AppStyle.whiteColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  '0',
-                                  style: GoogleFonts.poppins(
-                                    color: AppStyle.primaryColor,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )
-                              ],
-                            ),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                right: BorderSide(
-                                    color: AppStyle.gray5Color, width: 1),
-                                left: BorderSide(
-                                    color: AppStyle.gray5Color, width: 1),
-                              ),
-                            ),
-                          )),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Time (min)',
-                                  style: GoogleFonts.poppins(
-                                    color: AppStyle.whiteColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  '0',
-                                  style: GoogleFonts.poppins(
-                                    color: AppStyle.primaryColor,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 8 * _scaleScreen,
-                          horizontal: 10 * _scaleScreen),
-                      decoration: BoxDecoration(
-                        borderRadius: AppStyle.appBorder,
-                        color: AppStyle.whiteColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppStyle.gray5Color.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(
-                                0, 2), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: TableCalendar<Event>(
-                        firstDay: kFirstDay,
-                        lastDay: kLastDay,
-                        focusedDay: _focusedDay.value,
-                        headerVisible: true,
-                        selectedDayPredicate: (day) =>
-                            _selectedDays.contains(day),
-                        // rangeStartDay: _rangeStart,
-                        // rangeEndDay: _rangeEnd,
-                        calendarFormat: _calendarFormat,
-                        // rangeSelectionMode: _rangeSelectionMode,
-                        // eventLoader: _getEventsForDay,
-                        // holidayPredicate: (day) {
-                        //   // Every 20th day of the month will be treated as a holiday
-                        //   return day.day == 20;
-                        // },
-                        onDaySelected: _onDaySelected,
-                        // onRangeSelected: _onRangeSelected,
-                        // onCalendarCreated: (controller) =>
-                        //     _pageController = controller,
-                        onPageChanged: (focusedDay) =>
-                            _focusedDay.value = focusedDay,
-                        onFormatChanged: (format) {
-                          if (_calendarFormat != format) {
-                            setState(() => _calendarFormat = format);
-                          }
-                        },
-                        calendarStyle: const CalendarStyle(
-                          selectedDecoration: BoxDecoration(
-                            color: AppStyle.primaryColor,
-                            shape: BoxShape.circle,
-                          ),
-                          todayDecoration: BoxDecoration(
-                            color: AppStyle.secondaryColor,
-                            shape: BoxShape.circle,
                           ),
                         ),
-                      ),
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 6 * _scaleScreen),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8 * _scaleScreen,
+                              horizontal: 10 * _scaleScreen),
+                          decoration: BoxDecoration(
+                            borderRadius: AppStyle.appBorder,
+                            color: AppStyle.whiteColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppStyle.gray5Color.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 2), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: TableCalendar<Event>(
+                            firstDay: kFirstDay,
+                            lastDay: kLastDay,
+                            focusedDay: _focusedDay.value,
+                            headerVisible: true,
+                            selectedDayPredicate: (day) =>
+                                _selectedDays.contains(day),
+                            // rangeStartDay: _rangeStart,
+                            // rangeEndDay: _rangeEnd,
+                            calendarFormat: _calendarFormat,
+                            // rangeSelectionMode: _rangeSelectionMode,
+                            // eventLoader: _getEventsForDay,
+                            // holidayPredicate: (day) {
+                            //   // Every 20th day of the month will be treated as a holiday
+                            //   return day.day == 20;
+                            // },
+                            onDaySelected: _onDaySelected,
+                            // onRangeSelected: _onRangeSelected,
+                            // onCalendarCreated: (controller) =>
+                            //     _pageController = controller,
+                            onPageChanged: (focusedDay) =>
+                                _focusedDay.value = focusedDay,
+                            onFormatChanged: (format) {
+                              if (_calendarFormat != format) {
+                                setState(() => _calendarFormat = format);
+                              }
+                            },
+                            calendarStyle: const CalendarStyle(
+                              selectedDecoration: BoxDecoration(
+                                color: AppStyle.primaryColor,
+                                shape: BoxShape.circle,
+                              ),
+                              todayDecoration: BoxDecoration(
+                                color: AppStyle.secondaryColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            nutritionTab(_scaleScreen, _scaleFont),
-          ],
+                nutritionTab(_scaleScreen, _scaleFont),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
   SingleChildScrollView nutritionTab(double _scaleScreen, double _scaleFont) {
-    num totalCarb = 0,
-        totalProtein = 0,
-        totalFat = 0,
-        totalBurned = 0,
-        totalAte = 0,
-        totalCalories = user.bmr!;
+    num totalCarb = 0, totalProtein = 0, totalFat = 0;
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -346,7 +380,6 @@ class _DailyScreenState extends State<DailyScreen> {
             databaseHelper.getFoodHistoryByMealAndDay(1, formattedDate),
             databaseHelper.getFoodHistoryByMealAndDay(2, formattedDate),
             databaseHelper.getFoodHistoryByMealAndDay(3, formattedDate),
-            databaseHelper.getPlanDayByDate(formattedDate),
           ]),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData) {
@@ -354,18 +387,11 @@ class _DailyScreenState extends State<DailyScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-            List<PlanExerciseDetail> list =
-                snapshot.data![3] as List<PlanExerciseDetail>;
-            for (PlanExerciseDetail item in list) {
-              totalBurned += item.kcal!;
-            }
             listBreakfast = snapshot.data![0] as List<FoodHistory>;
             listLunch = snapshot.data![1] as List<FoodHistory>;
             listDinner = snapshot.data![2] as List<FoodHistory>;
+
             for (FoodHistory item in listBreakfast) {
-              totalAte += (item.ingredient.nutrition!.Nutrients
-                  .firstWhere((element) => element.name == 'Calories')
-                  .amount);
               totalProtein += (item.ingredient.nutrition!.Nutrients
                   .firstWhere((element) => element.name == 'Protein')
                   .amount);
@@ -377,9 +403,6 @@ class _DailyScreenState extends State<DailyScreen> {
                   .amount);
             }
             for (FoodHistory item in listDinner) {
-              totalAte += (item.ingredient.nutrition!.Nutrients
-                  .firstWhere((element) => element.name == 'Calories')
-                  .amount);
               totalProtein += (item.ingredient.nutrition!.Nutrients
                   .firstWhere((element) => element.name == 'Protein')
                   .amount);
@@ -391,9 +414,6 @@ class _DailyScreenState extends State<DailyScreen> {
                   .amount);
             }
             for (FoodHistory item in listLunch) {
-              totalAte += (item.ingredient.nutrition!.Nutrients
-                  .firstWhere((element) => element.name == 'Calories')
-                  .amount);
               totalProtein += (item.ingredient.nutrition!.Nutrients
                   .firstWhere((element) => element.name == 'Protein')
                   .amount);
@@ -439,7 +459,7 @@ class _DailyScreenState extends State<DailyScreen> {
                               children: [
                                 Image.asset('assets/imgs/eat.png'),
                                 Text(
-                                  totalAte.ceil().toString(),
+                                  _totalEat.ceil().toString(),
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
@@ -457,17 +477,23 @@ class _DailyScreenState extends State<DailyScreen> {
                               ],
                             )),
                             CircularPercentIndicator(
-                              radius: 68 * AppMethods.screenScale(context),
-                              lineWidth: 15,
+                              radius: 72 * AppMethods.screenScale(context),
+                              lineWidth: 12,
                               animation: true,
-                              percent: (user.bmr! - totalAte + totalBurned) /
-                                  user.bmr!,
+                              percent:
+                                  (user.bmr! - _totalEat + _totalExercise) >= 0
+                                      ? (user.bmr! -
+                                              _totalEat +
+                                              _totalExercise) /
+                                          user.bmr!
+                                      : ((_totalExercise - _totalEat).abs() /
+                                          user.bmr!),
                               center: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    (user.bmr! - totalAte + totalBurned)
+                                    (user.bmr! - _totalEat + _totalExercise)
                                         .ceil()
                                         .toString(),
                                     style: GoogleFonts.poppins(
@@ -477,7 +503,10 @@ class _DailyScreenState extends State<DailyScreen> {
                                         color: AppStyle.primaryColor),
                                   ),
                                   Text(
-                                    "kCal Left",
+                                    (user.bmr! - _totalEat + _totalExercise) >=
+                                            0
+                                        ? "Remaining"
+                                        : 'Over',
                                     style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.w600,
                                         fontSize: (12 *
@@ -486,9 +515,15 @@ class _DailyScreenState extends State<DailyScreen> {
                                   ),
                                 ],
                               ),
-                              backgroundColor: const Color(0xffebebeb),
+                              backgroundColor:
+                                  (user.bmr! - _totalEat + _totalExercise) >= 0
+                                      ? const Color(0xffebebeb)
+                                      : AppStyle.primaryColor,
                               circularStrokeCap: CircularStrokeCap.round,
-                              progressColor: AppStyle.primaryColor,
+                              progressColor:
+                                  (user.bmr! - _totalEat + _totalExercise) >= 0
+                                      ? AppStyle.primaryColor
+                                      : AppStyle.secondaryColor,
                               animationDuration: 1000,
                             ),
                             Expanded(
@@ -496,7 +531,7 @@ class _DailyScreenState extends State<DailyScreen> {
                               children: [
                                 Image.asset('assets/imgs/burn.png'),
                                 Text(
-                                  totalBurned.ceil().toString(),
+                                  _totalExercise.ceil().toString(),
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
@@ -688,6 +723,16 @@ class _DailyScreenState extends State<DailyScreen> {
                       ),
                       for (FoodHistory item in listBreakfast)
                         ListTile(
+                          leading: IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              databaseHelper
+                                  .deleteRaw(item.id!, "food_history", "idfood")
+                                  .then((value) {
+                                setState(() {});
+                              });
+                            },
+                          ),
                           title: Text(
                             item.ingredient.name!,
                             style: GoogleFonts.poppins(
@@ -697,28 +742,23 @@ class _DailyScreenState extends State<DailyScreen> {
                             ),
                           ),
                           trailing: Text(
-                            '${item.ingredient.nutrition!.Nutrients.firstWhere((element) => element.name == 'Calories').amount}',
+                            '${item.ingredient.nutrition!.Nutrients.firstWhere((element) => element.name == 'Calories').amount.ceil()} kcal',
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: AppStyle.primaryColor,
-                              fontSize: 12 * _scaleFont,
+                              fontSize: 16 * _scaleFont,
                             ),
                           ),
-                          subtitle: Text('${item.ingredient.amount}'),
+                          subtitle: Text('${item.ingredient.amount!.ceil()}'),
                           onTap: () {
-                            _deleteDialog(context, item.id!);
-
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (_) => DetailFoodScreen(
-                            //             ingredient: item.ingredient,
-                            //             meal: item.meal!,
-                            //           )),
-                            // );
-                          },
-                          onLongPress: () {
-                            _deleteDialog(context, item.id!);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => DetailFoodScreen(
+                                        ingredient: item.ingredient,
+                                        meal: item.meal!,
+                                      )),
+                            );
                           },
                         ),
                     ],
@@ -867,93 +907,6 @@ class _DailyScreenState extends State<DailyScreen> {
           },
         ),
       ),
-    );
-  }
-
-  Future<void> _deleteDialog(BuildContext context, int wid) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context1) => AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        elevation: 0,
-        content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Image.asset(
-              //   AppUI.walletWarning2x,
-              //   width: 100.w,
-              // ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 22),
-                child: Text(
-                  "Deleting this wallet will also, delete all transactions under this wallet. Deleted data cannot be recovered. Are you sure you want to proceed?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: ClipRRect(
-                        borderRadius: AppStyle.appBorder,
-                        child: MaterialButton(
-                          minWidth: double.infinity,
-                          color: AppStyle.secondaryColor,
-                          elevation: 0,
-                          onPressed: () => Navigator.pop(context1),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              "No",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppStyle.gray4Color,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: ClipRRect(
-                        borderRadius: AppStyle.appBorder,
-                        child: MaterialButton(
-                          minWidth: double.infinity,
-                          color: AppStyle.primaryColor,
-                          elevation: 0,
-                          onPressed: () {
-                            Navigator.pop(context);
-                            setState(() {});
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              "Yes",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppStyle.whiteColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-        shape: RoundedRectangleBorder(borderRadius: AppStyle.appBorder),
-      ),
-      barrierDismissible: false,
     );
   }
 }

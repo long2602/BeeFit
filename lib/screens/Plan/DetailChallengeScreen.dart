@@ -2,16 +2,21 @@ import 'package:beefit/models/PlamExerciseDetail.dart';
 import 'package:beefit/models/challenge.dart';
 import 'package:beefit/models/challenge_detail.dart';
 import 'package:beefit/models/plan_details.dart';
+import 'package:beefit/screens/Plan/StartChallengeScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
 import '../../constants/AppStyles.dart';
 import '../../models/User.dart';
 import '../../models/databaseHelper.dart';
+import '../../models/defaultReps.dart';
+import '../../models/exercise.dart';
 import '../../models/plan.dart';
 import '../../widgets/TimeLine.dart';
+import '../Exercise/DetailExerciseScreen.dart';
 import 'DetailDayPlanScreen.dart';
 
 class DetailChallengeScreen extends StatefulWidget {
@@ -31,6 +36,7 @@ class _DetailChallengeScreenState extends State<DetailChallengeScreen> {
   bool isAppbarExpand = true;
   late ScrollController _scrollController;
   List<ChallengeDetail> listsChallengeDetail = [];
+  List<DefaultReps> defaults = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -65,6 +71,7 @@ class _DetailChallengeScreenState extends State<DetailChallengeScreen> {
         future: Future.wait([
           databaseHelper.getChallengeDetailById(
               widget._challenge.id!, widget._user.level!),
+          databaseHelper.getDefaultRepByLevel(widget._user.level!),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData) {
@@ -73,6 +80,10 @@ class _DetailChallengeScreenState extends State<DetailChallengeScreen> {
             );
           }
           listsChallengeDetail = snapshot.data![0] as List<ChallengeDetail>;
+          defaults = snapshot.data![1] as List<DefaultReps>;
+          List<DefaultReps> defaultReps = defaults
+              .where((element) => element.idBodyPart == widget._user.level)
+              .toList();
           return CustomScrollView(
             controller: _scrollController,
             slivers: [
@@ -187,25 +198,25 @@ class _DetailChallengeScreenState extends State<DetailChallengeScreen> {
                                     vertical: 6 * _scaleScreen),
                                 child: ListTile(
                                   onTap: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (_) => DetailExerciseScreen(
-                                    //       exercise: Exercise(
-                                    //           name: item.name,
-                                    //           description: item.description,
-                                    //           gif: item.gif,
-                                    //           level: item.level,
-                                    //           type: item.type,
-                                    //           met: item.met,
-                                    //           restDuration: item.duration,
-                                    //           id: item.id,
-                                    //           isRepCount: item.isRepCount),
-                                    //       defaultReps: defaultReps[0],
-                                    //       user: widget._user,
-                                    //     ),
-                                    //   ),
-                                    // );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => DetailExerciseScreen(
+                                          exercise: Exercise(
+                                              name: item.name!,
+                                              description: item.des!,
+                                              gif: item.gif!,
+                                              level: item.level,
+                                              type: item.type,
+                                              met: item.met,
+                                              restDuration: item.duration,
+                                              id: item.idExercise,
+                                              isRepCount: item.isRep),
+                                          defaultReps: defaultReps[0],
+                                          user: widget._user,
+                                        ),
+                                      ),
+                                    );
                                   },
                                   tileColor:
                                       AppStyle.gray5Color.withOpacity(0.5),
@@ -242,6 +253,17 @@ class _DetailChallengeScreenState extends State<DetailChallengeScreen> {
                               );
                             },
                             itemCount: listsChallengeDetail.length,
+                          ),
+                          CommonButton(
+                            onPressed: () {
+                              Get.to(StartChallengeScreen(
+                                list: listsChallengeDetail,
+                                user: widget._user,
+                              ));
+                            },
+                            backgroundColor: const Color(0xffE4A248),
+                            text: 'start'.toUpperCase(),
+                            textColor: Colors.white,
                           ),
                         ],
                       ),

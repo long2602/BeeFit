@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 enum EnumBodyPart { Arm, Chest, Abs, Butt, Leg, Full_body, Shoulder, Back }
+enum EnumGoal { LOSE_WEIGHT, BUILD_MUSCLE, KEEP_FIT }
 // enum Level {}
 
 class AppMethods {
@@ -26,6 +27,13 @@ class AppMethods {
         weight *
         (isRepCount == 0 ? (duration / 60) : (rep * 2 / 60)) *
         0.0175;
+  }
+
+  static Map<String, dynamic> MacroPercentNutrition(int goal, double calories) {
+    Map<String, dynamic> map = {};
+    int perFat = 0, perProtein = 0, perCarb = 0;
+    if (goal == EnumGoal.LOSE_WEIGHT) {}
+    return map;
   }
 
   //Convert hexColor to int
