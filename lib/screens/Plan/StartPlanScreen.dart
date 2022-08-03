@@ -571,8 +571,13 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                                     list: _list,
                                                                     item: _list[
                                                                         indexPage],
-                                                                    index:
-                                                                        indexPage +
+                                                                    index: (indexPage +
+                                                                                1) >
+                                                                            _list
+                                                                                .length
+                                                                        ? _list.length -
+                                                                            1
+                                                                        : indexPage +
                                                                             1,
                                                                     defaultReps: DefaultReps(
                                                                         rep: _list[indexPage]

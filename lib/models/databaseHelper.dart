@@ -261,8 +261,7 @@ class DatabaseHelper {
 
   Future<Plan> getPlanById(int id) async {
     Database? db = await instance.database;
-    var data = await db.rawQuery(
-        "SELECT * from plans where name='Personal Workout Plan' order by id desc limit 1");
+    var data = await db.rawQuery("Select * from plans where id = $id");
     print(data);
     Plan plans = Plan.fromJson(data[0] as Map<String, dynamic>);
     return plans;
@@ -361,7 +360,7 @@ class DatabaseHelper {
 
   //======================================================================================
 
-  Future<bool> generatePlan(
+  Future<int> generatePlan(
       {required int goalIndex,
       required int bodypartId,
       required int userLevel}) async {
@@ -1252,6 +1251,9 @@ class DatabaseHelper {
       print("Something wrong with query or variables. Check them!");
       isDone = false;
     }
-    return isDone;
+    if (isDone == false) {
+      return 0;
+    }
+    return planID;
   }
 }

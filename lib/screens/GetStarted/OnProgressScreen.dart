@@ -120,7 +120,12 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
       ),
       body: FutureBuilder(
         future: Future.wait([
-          databaseHelper.generatePlan(bodypartId: widget._muscleId!, goalIndex: widget._goal, userLevel: widget._level),
+          databaseHelper
+              .generatePlan(
+                  bodypartId: widget._muscleId!,
+                  goalIndex: widget._goal,
+                  userLevel: widget._level)
+              .then((value) => idPlan = value),
           saveInfoUser(
             isMale: widget._isMale,
             height: widget._height,

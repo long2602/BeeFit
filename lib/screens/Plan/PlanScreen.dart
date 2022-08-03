@@ -112,7 +112,7 @@ class _PlanScreenState extends State<PlanScreen> {
                                 color: AppStyle.secondaryColor),
                           ),
                           subtitle: Text(EnumBodyPart
-                              .values[personalPlan.idBodyPart - 1].name),
+                              .values[personalPlan.idBodyPart].name),
                           contentPadding: EdgeInsets.zero,
                           trailing: IconButton(
                             onPressed: () {},

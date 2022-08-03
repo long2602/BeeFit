@@ -316,8 +316,6 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                           _goalListIndex = index;
                           if (_goalListIndex == 0 || _goalListIndex == 2) {
                             _bdpId = 6;
-                          } else {
-                            _bdpId = 0;
                           }
                           print(_bdpId);
                         });
@@ -913,6 +911,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                       validator: (val) {
                         if (val == "") return "Please enter your name.";
                         return null;
+                      },
+                      onTap: () {
+                        print(_bdpId);
                       },
                       controller: _nameController,
                       textAlign: TextAlign.center,

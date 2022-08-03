@@ -295,18 +295,18 @@ class WeekContainer extends StatelessWidget {
                     )
                 ],
               ),
-              SizedBox(height: _isActive ? 14 * _scaleScreen : 0),
-              _isActive
-                  ? CommonButton(
-                      onPressed: () {},
-                      backgroundColor: AppStyle.whiteColor,
-                      text: "start".toUpperCase(),
-                      textColor: AppStyle.primaryColor,
-                      borderRadius: 25,
-                      height: 46 * _scaleScreen,
-                      elevation: 0,
-                    )
-                  : Container(),
+              // SizedBox(height: _isActive ? 14 * _scaleScreen : 0),
+              // _isActive
+              //     ? CommonButton(
+              //         onPressed: () {},
+              //         backgroundColor: AppStyle.whiteColor,
+              //         text: "start".toUpperCase(),
+              //         textColor: AppStyle.primaryColor,
+              //         borderRadius: 25,
+              //         height: 46 * _scaleScreen,
+              //         elevation: 0,
+              //       )
+              //     : Container(),
             ],
           ),
         ),
