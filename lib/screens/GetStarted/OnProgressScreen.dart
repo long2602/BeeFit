@@ -24,6 +24,7 @@ class OnProgressScreen extends StatefulWidget {
       required double bmr,
       required int goal,
       required int muscleId,
+      required bool isModify,
       Key? key})
       : _name = name,
         _height = height,
@@ -35,8 +36,9 @@ class OnProgressScreen extends StatefulWidget {
         _bmr = bmr,
         _goal = goal,
         _muscleId = muscleId,
+        _isModify = isModify,
         super(key: key);
-  final bool _isMale;
+  final bool _isMale, _isModify;
   final int _height, _currentWeight, _age, _level, _goal;
   final String _name;
   final double _bmi, _bmr;
@@ -137,7 +139,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
             bmr: widget._bmr,
             goal: widget._goal,
             muscleId: widget._muscleId!,
-            mainPlan: idPlan,
+            mainPlan: 2,
           ),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {

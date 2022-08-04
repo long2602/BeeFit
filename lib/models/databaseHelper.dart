@@ -267,6 +267,18 @@ class DatabaseHelper {
     return plans;
   }
 
+  Future<bool> getStatusPlan(int idPlan, int week, int day) async {
+    Database? db = await instance.database;
+    var data = await db.rawQuery(
+        "select * from plan_details where week = $week and day = $day and plan_id = $idPlan");
+    List<PlanDetail> plans =
+        data.isNotEmpty ? data.map((e) => PlanDetail.fromJson(e)).toList() : [];
+    for (var element in plans) {
+      if (element.status == 0) return false;
+    }
+    return true;
+  }
+
   Future<List<PlanDetail>> getPlanDetailById(int id) async {
     Database? db = await instance.database;
     var data =
@@ -285,13 +297,17 @@ class DatabaseHelper {
     return plans;
   }
 
+  // and e.bodypart_id = a.bodypart_id"
   Future<List<PlanExerciseDetail>> getPlanDayByDay(
-      int day, int userLevel, int week) async {
+      int day, int userLevel, int week, int idPlan) async {
     Database? db = await instance.database;
     var data = await db.rawQuery(
-        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal, b.id as idPlanDetail" +
-            " from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id join bodyparts_exercises d on c.id = d.exercise_id join default_reps e on d.bodypart_id = e.bodypart_id" +
-            " where b.day = $day and b.week = $week and e.user_level = $userLevel and e.bodypart_id = a.bodypart_id");
+        "with temp1(id, ex_name, plan_id, week, day, bodypart_id, isRepCount) as (select b.id, b.name, a.plan_id, a.week, a.day, c.bodypart_id, b.isRepCount " +
+            "from plan_details a, exercises b, bodyparts_exercises c " +
+            "where a.exercise_id=b.id and a.plan_id=$idPlan and b.id=c.exercise_id and a.week = ${week} and a.day = $day) " +
+            "select a.id, a.ex_name, a.plan_id, a.week, a.day, a.bodypart_id, a.isRepCount, b.user_level, b.rep, b.duration " +
+            "from temp1 a, default_reps b " +
+            "where a.bodypart_id in (6,5) and a.bodypart_id=b.bodypart_id and b.user_level=$userLevel");
     List<PlanExerciseDetail> plans = data.isNotEmpty
         ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
         : [];
@@ -301,7 +317,7 @@ class DatabaseHelper {
   Future<List<PlanExerciseDetail>> getPlanDayByDate(String date) async {
     Database? db = await instance.database;
     var data = await db.rawQuery(
-        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal, b.id as idPlanDetail" +
+        "select c.id, c.name, c.description, c.gif , c.level, c.met, c.type , c.rest_duration, c.isRepCount, e.rep, e.duration , b.kcal, b.id as idPlanDetail ,b.status" +
             " from plans a join plan_details b on a.id = b.plan_id join exercises c on b.exercise_id = c.id join bodyparts_exercises d on c.id = d.exercise_id join default_reps e on d.bodypart_id = e.bodypart_id" +
             " where b.date = $date");
     List<PlanExerciseDetail> plans = data.isNotEmpty
@@ -403,7 +419,7 @@ class DatabaseHelper {
     //Add personal plan
     await db
         .rawInsert(
-            "INSERT INTO plans(name, bodypart_id, image, description, user_level) VALUES ('Personal Workout Plan', $bodypartId, 'personal-workout-plan','This personal workout plan is a set of exercises for 4 weeks, we created to help you achieve your goal and your desired physique. Try it out now to see how your body will change.', $userLevel)")
+            "INSERT INTO plans(id, name, bodypart_id, image, description, user_level) VALUES (2, 'Personal Workout Plan', $bodypartId, 'personal-workout-plan','This personal workout plan is a set of exercises for 4 weeks, we created to help you achieve your goal and your desired physique. Try it out now to see how your body will change.', $userLevel)")
         .then((value) => planID = value);
 
     if (planID != 0) {

@@ -19,6 +19,7 @@ import '../models/databaseHelper.dart';
 import '../models/food_history.dart';
 import '../models/plan.dart';
 import 'Plan/DetailChallengeScreen.dart';
+import 'Plan/DetailPlanScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   final User _user;
@@ -387,8 +388,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   radius: 75 * AppMethods.screenScale(context),
                                   lineWidth: 12,
                                   animation: true,
-                                  percent: (user.bmr! - totalEat + totalCalo) /
-                                      user.bmr!,
+                                  percent: ((user.bmr! - totalEat + totalCalo) /
+                                              user.bmr!) >
+                                          1
+                                      ? 1
+                                      : (user.bmr! - totalEat + totalCalo) >= 0
+                                          ? (user.bmr! - totalEat + totalCalo) /
+                                              user.bmr!
+                                          : ((totalEat - totalCalo).abs() /
+                                              user.bmr!),
                                   center: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -406,7 +414,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: AppStyle.secondaryColor),
                                       ),
                                       Text(
-                                        "Remaining",
+                                        (user.bmr! - totalEat + totalCalo) >= 0
+                                            ? "Remaining"
+                                            : 'Over',
                                         style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.w600,
                                             fontSize: (12 *
@@ -493,7 +503,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 CommonButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailPlanScreen(
+                                                plan: plan,
+                                                user: widget._user,
+                                              )),
+                                    );
+                                  },
                                   backgroundColor: AppStyle.whiteColor,
                                   text: 'START',
                                   textColor: AppStyle.primaryColor,

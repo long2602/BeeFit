@@ -121,7 +121,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const GetStartedScreen(),
+                          builder: (_) =>
+                              const GetStartedScreen(isModify: true),
                         ),
                       );
                     },

@@ -177,6 +177,7 @@ class _DetailPlanScreenState extends State<DetailPlanScreen> {
                                       maxDay: maxDayOfWeek(i),
                                       plan: plan,
                                       user: widget._user,
+                                      databaseHelper: databaseHelper,
                                     );
                                   },
                                 )
@@ -218,6 +219,7 @@ class WeekContainer extends StatelessWidget {
   final int _maxDayOfWeek;
   final Plan _plan;
   final User _user;
+  final DatabaseHelper _databaseHelper;
 
   const WeekContainer(
       {required int week,
@@ -226,6 +228,7 @@ class WeekContainer extends StatelessWidget {
       required int maxDay,
       required Plan plan,
       required User user,
+      required DatabaseHelper databaseHelper,
       Key? key})
       : _week = week,
         _isActive = isActive,
@@ -233,6 +236,7 @@ class WeekContainer extends StatelessWidget {
         _maxDayOfWeek = maxDay,
         _plan = plan,
         _user = user,
+        _databaseHelper = databaseHelper,
         super(key: key);
 
   @override
@@ -274,12 +278,21 @@ class WeekContainer extends StatelessWidget {
                 children: [
                   for (int i = 0; i < _maxDayOfWeek; i++)
                     FutureBuilder(
+                      future: _databaseHelper.getStatusPlan(
+                          _plan.id!, _week, i + 1),
                       builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            color: AppStyle.primaryColor,
+                          ));
+                        }
+                        bool isDone = snapshot.data as bool;
                         return Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ButtonCircle(
-                              isActive: (!_isActive) ? false : true,
+                              isActive: isDone,
                               no: i + 1,
                               week: _week,
                               plan: _plan,
@@ -373,15 +386,17 @@ class ButtonCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text(
-        _no.toString(),
-        textAlign: TextAlign.center,
-        style: GoogleFonts.poppins(
-          fontWeight: FontWeight.w600,
-          color: _isActive ? AppStyle.primaryColor : AppStyle.whiteColor,
-          fontSize: 16,
-        ),
-      ),
+      child: !_isActive
+          ? Text(
+              _no.toString(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: AppStyle.primaryColor,
+                fontSize: 16,
+              ),
+            )
+          : const Icon(Icons.check),
       onPressed: () {
         Navigator.push(
           context,
@@ -393,7 +408,7 @@ class ButtonCircle extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(30, 30),
         shape: const CircleBorder(),
-        primary: _isActive ? AppStyle.whiteColor : AppStyle.primaryColor,
+        primary: !_isActive ? AppStyle.whiteColor : AppStyle.primaryColor,
         elevation: 0,
       ),
     );

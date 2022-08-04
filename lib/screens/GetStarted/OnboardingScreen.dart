@@ -90,7 +90,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             right: 30 * _scale,
             child: ElevatedButton(
               onPressed: () => Navigator.pushReplacement(
-                  context, AppMethods.animatedRoute(const GetStartedScreen())),
+                  context,
+                  AppMethods.animatedRoute(const GetStartedScreen(
+                    isModify: false,
+                  ))),
               child: Text(
                 "Get Started",
                 style: TextStyle(

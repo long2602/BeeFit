@@ -47,6 +47,25 @@ class _DailyScreenState extends State<DailyScreen> {
   double _totalExercise = 0;
   double _totalEat = 0;
   double _totalTime = 0;
+  double defaultCarb = 0;
+  double defaultProtein = 0;
+  double defaultFat = 0;
+
+  macroNutrition(int userLevel) {
+    if (userLevel == 1) {
+      defaultCarb = user.bmr! * 0.3;
+      defaultFat = user.bmr! * 0.3;
+      defaultProtein = user.bmr! * 0.4;
+    } else if (userLevel == 2) {
+      defaultCarb = user.bmr! * 0.35;
+      defaultFat = user.bmr! * 0.35;
+      defaultProtein = user.bmr! * 0.3;
+    } else {
+      defaultCarb = user.bmr! * 0.3;
+      defaultFat = user.bmr! * 0.2;
+      defaultProtein = user.bmr! * 0.5;
+    }
+  }
 
   TabBar get _tabBar => const TabBar(
         tabs: [
@@ -62,6 +81,7 @@ class _DailyScreenState extends State<DailyScreen> {
     _selectedDays.add(_focusedDay.value);
     _selectedEvents = ValueNotifier(_getEventsForDay(_focusedDay.value));
     user = widget._user;
+    macroNutrition(user.level!);
   }
 
   @override
@@ -480,8 +500,14 @@ class _DailyScreenState extends State<DailyScreen> {
                               radius: 72 * AppMethods.screenScale(context),
                               lineWidth: 12,
                               animation: true,
-                              percent:
-                                  (user.bmr! - _totalEat + _totalExercise) >= 0
+                              percent: ((user.bmr! -
+                                              _totalEat +
+                                              _totalExercise) /
+                                          user.bmr!) >
+                                      1
+                                  ? 1
+                                  : (user.bmr! - _totalEat + _totalExercise) >=
+                                          0
                                       ? (user.bmr! -
                                               _totalEat +
                                               _totalExercise) /
@@ -578,14 +604,16 @@ class _DailyScreenState extends State<DailyScreen> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4 * _scaleScreen),
-                                      child: const LinearProgressIndicator(
+                                      child: LinearProgressIndicator(
                                         backgroundColor: AppStyle.gray5Color,
                                         color: AppStyle.primaryColor,
-                                        value: 46 / 158,
+                                        value: totalCarb / defaultCarb > 1
+                                            ? 1
+                                            : (totalCarb / defaultCarb),
                                       ),
                                     ),
                                     Text(
-                                      '${totalCarb.ceil()} / 158',
+                                      '${totalCarb.ceil()} / ${defaultCarb.ceil()}',
                                       style: GoogleFonts.poppins(
                                           fontSize: 12 * _scaleFont),
                                     ),
@@ -608,14 +636,17 @@ class _DailyScreenState extends State<DailyScreen> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4 * _scaleScreen),
-                                      child: const LinearProgressIndicator(
+                                      child: LinearProgressIndicator(
                                         backgroundColor: AppStyle.gray5Color,
                                         color: AppStyle.primaryColor,
-                                        value: 46 / 158,
+                                        value:
+                                            (totalProtein / defaultProtein) > 1
+                                                ? 1
+                                                : (totalCarb / defaultCarb),
                                       ),
                                     ),
                                     Text(
-                                      '${totalProtein.ceil()} / 158',
+                                      '${totalProtein.ceil()} / ${defaultProtein.ceil()}',
                                       style: GoogleFonts.poppins(
                                           fontSize: 12 * _scaleFont),
                                     ),
@@ -638,14 +669,16 @@ class _DailyScreenState extends State<DailyScreen> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4 * _scaleScreen),
-                                      child: const LinearProgressIndicator(
+                                      child: LinearProgressIndicator(
                                         backgroundColor: AppStyle.gray5Color,
                                         color: AppStyle.primaryColor,
-                                        value: 46 / 158,
+                                        value: (totalFat / defaultProtein) > 1
+                                            ? 1
+                                            : (totalFat / defaultProtein),
                                       ),
                                     ),
                                     Text(
-                                      '${totalFat.ceil()} / 158',
+                                      '${totalFat.ceil()} / ${defaultFat.ceil()}',
                                       style: GoogleFonts.poppins(
                                           fontSize: 12 * _scaleFont),
                                     ),

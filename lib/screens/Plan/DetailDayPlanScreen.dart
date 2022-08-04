@@ -81,7 +81,8 @@ class _DetailDayPlanScreenState extends State<DetailDayPlanScreen> {
       backgroundColor: AppStyle.whiteColor,
       body: FutureBuilder(
         future: Future.wait([
-          databaseHelper.getPlanDayByDay(day, 1, widget._week),
+          databaseHelper.getPlanDayByDay(
+              day, widget._user.level!, widget._week, widget._plan.id!),
           databaseHelper.getDefaultRepByLevel(widget._user.level!),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
@@ -222,7 +223,7 @@ class _DetailDayPlanScreenState extends State<DetailDayPlanScreen> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        '$totalCalo kCal',
+                                        '${totalCalo.ceil()} kCal',
                                         style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16 * _scaleFont),
@@ -313,6 +314,12 @@ class _DetailDayPlanScreenState extends State<DetailDayPlanScreen> {
                                     style: GoogleFonts.poppins(
                                         color: Colors.grey, fontSize: 14),
                                   ),
+                                  trailing: item.status == 1
+                                      ? const Icon(
+                                          Icons.check,
+                                          color: AppStyle.primaryColor,
+                                        )
+                                      : null,
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 2, horizontal: 16),
                                 ),

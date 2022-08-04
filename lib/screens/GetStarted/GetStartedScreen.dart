@@ -12,8 +12,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class GetStartedScreen extends StatefulWidget {
-  const GetStartedScreen({Key? key}) : super(key: key);
-
+  const GetStartedScreen({Key? key, required bool isModify})
+      : _isModify = isModify,
+        super(key: key);
+  final bool _isModify;
   @override
   State<GetStartedScreen> createState() => _GetStartedScreenState();
 }
@@ -226,6 +228,7 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                                       goal: _goalListIndex,
                                       level: _levelId,
                                       muscleId: _bdpId,
+                                      isModify: widget._isModify,
                                     )));
                               }
                             }

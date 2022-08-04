@@ -32,16 +32,22 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
   final CountDownTimerState timerState = Get.put(CountDownTimerState());
   late VideoPlayerController _controller;
   DatabaseHelper databaseHelper = DatabaseHelper.instance;
-  late List<PlanExerciseDetail> _list = widget._list;
+  late List<PlanExerciseDetail> _list;
+  late User _user;
   final PageController _pageController = PageController(initialPage: 0);
   int indexPage = 0;
   late String videoName;
-  num TotalKcal = 0;
-  num TotalTime = 0;
+  num totalKcal = 0;
+  num totalTime = 0;
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  DateTime startTime = DateTime.now();
+  late DateTime endTime;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _list = widget._list;
+    _user = widget._user;
     videoName = _list[0].gif;
     _controller =
         VideoPlayerController.asset('assets/imgs/video/$videoName.mp4');
@@ -52,6 +58,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
     timerState.setMaxNumber(_list[0].duration.toString());
   }
 
+  //update status
   Future<bool> UpdatePlanDetail(Map<String, dynamic> row, int id) async {
     try {
       databaseHelper.updateRawQuery(row, "plan_details", id, "id");
@@ -68,7 +75,10 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
     _controller.dispose();
   }
 
+  //confirm
   Future<void> _confirmDialog(BuildContext context) async {
+    endTime = DateTime.now();
+    Duration dif = endTime.difference(startTime);
     await showDialog(
       context: context,
       builder: (BuildContext context1) => AlertDialog(
@@ -124,7 +134,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                               ),
                             ),
                             Text(
-                              TotalKcal.ceil().toString(),
+                              totalKcal.ceil().toString(),
                               style: GoogleFonts.poppins(
                                 color: AppStyle.primaryColor,
                                 fontWeight: FontWeight.bold,
@@ -146,7 +156,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                             ),
                           ),
                           Text(
-                            TotalTime.toString(),
+                            '${dif.inMinutes} minute',
                             style: GoogleFonts.poppins(
                               color: AppStyle.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -207,8 +217,13 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppStyle.whiteColor,
-        leading: const BackButton(
+        leading: BackButton(
           color: AppStyle.secondaryColor,
+          onPressed: () {
+            if (indexPage < _list.length) {
+              print('bạn có chắc');
+            }
+          },
         ),
         titleSpacing: 0,
         title: Row(
@@ -231,7 +246,21 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
       body: GetBuilder<CountDownTimerState>(
         builder: (_) {
           if (timerState.isFinish == true) {
+            PlanExerciseDetail planExerciseDetail = _list[indexPage];
             if (indexPage == _list.length - 1) {
+              num kcal = AppMethods.calculateMet(
+                  _user.weight!,
+                  planExerciseDetail.rep!,
+                  planExerciseDetail.duration!,
+                  planExerciseDetail.isRepCount!,
+                  planExerciseDetail.met!);
+              totalKcal += kcal;
+              Map<String, dynamic> row = {
+                "status": 1,
+                "date": formattedDate,
+                "kcal": kcal.toDouble(),
+              };
+              UpdatePlanDetail(row, planExerciseDetail.idPlanDetail!);
               Future.delayed(Duration.zero, () => _confirmDialog(context));
             } else {
               timerState.isFinish = false;
@@ -242,39 +271,36 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                         MaterialPageRoute(
                           builder: (_) => PauseScreen(
                             list: _list,
-                            item: _list[indexPage],
+                            item: planExerciseDetail,
                             index: indexPage + 1,
                             defaultReps: DefaultReps(
-                                rep: _list[indexPage].rep,
-                                duration: _list[indexPage].duration),
-                            user: widget._user,
+                                rep: planExerciseDetail.rep,
+                                duration: planExerciseDetail.duration),
+                            user: _user,
                           ),
                         ),
                       ));
-              timerState.setNumber(_list[indexPage].duration.toString());
-              timerState.setMaxNumber(_list[indexPage].duration.toString());
-              DateTime now = DateTime.now();
-              String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+              timerState.setNumber(planExerciseDetail.duration.toString());
+              timerState.setMaxNumber(planExerciseDetail.duration.toString());
               print(formattedDate);
-              num kcal = _list[indexPage].met! *
-                  widget._user.weight! *
-                  (_list[indexPage].isRepCount == 0
-                      ? _list[indexPage].duration
-                      : (_list[indexPage].rep! + 3) / 60)! *
-                  0.0175;
+              num kcal = AppMethods.calculateMet(
+                  _user.weight!,
+                  planExerciseDetail.rep!,
+                  planExerciseDetail.duration!,
+                  planExerciseDetail.isRepCount!,
+                  planExerciseDetail.met!);
+              totalKcal += totalKcal;
               Map<String, dynamic> row = {
                 "status": 1,
                 "date": formattedDate,
                 "kcal": kcal.toDouble(),
               };
-              UpdatePlanDetail(row, _list[indexPage].idPlanDetail!);
+              UpdatePlanDetail(row, planExerciseDetail.idPlanDetail!);
               print('add time');
               _pageController.nextPage(
                   duration: const Duration(seconds: 1),
                   curve: Curves.easeInOut);
             }
-            // Future.delayed(Duration.zero,
-            //     () => _showMyDialog(_list[indexPage].restDuration!));
           }
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 30 * _scaleScreen),
