@@ -82,7 +82,7 @@ class _DetailDayPlanScreenState extends State<DetailDayPlanScreen> {
       body: FutureBuilder(
         future: Future.wait([
           databaseHelper.getPlanDayByDay(
-              day, widget._user.level!, widget._week, widget._plan.id!),
+              day, widget._user.level!, widget._week, widget._plan.id!, widget._user.muscleId!),
           databaseHelper.getDefaultRepByLevel(widget._user.level!),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {

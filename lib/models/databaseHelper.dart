@@ -299,15 +299,26 @@ class DatabaseHelper {
 
   // and e.bodypart_id = a.bodypart_id"
   Future<List<PlanExerciseDetail>> getPlanDayByDay(
-      int day, int userLevel, int week, int idPlan) async {
+      int day, int userLevel, int week, int idPlan, int muscleId) async {
     Database? db = await instance.database;
+    var secondaryMuscleId = [];
+    if (muscleId == 1) {
+      // secondaryMuscleId = [2];
+    } else if (muscleId == 2) {
+      // secondaryMuscleId = 1;
+    } else if (muscleId == 3 || muscleId == 4 || muscleId == 5) {
+      secondaryMuscleId.add(6);
+    } else if (muscleId == 6) {
+    } else if (muscleId == 7 || muscleId == 8) {
+      // secondaryMuscleId = [1];
+    }
     var data = await db.rawQuery(
         "with temp1(id, ex_name, plan_id, week, day, bodypart_id, isRepCount) as (select b.id, b.name, a.plan_id, a.week, a.day, c.bodypart_id, b.isRepCount " +
             "from plan_details a, exercises b, bodyparts_exercises c " +
-            "where a.exercise_id=b.id and a.plan_id=$idPlan and b.id=c.exercise_id and a.week = ${week} and a.day = $day) " +
+            "where a.exercise_id=b.id and a.plan_id=$idPlan and b.id=c.exercise_id and a.week = $week and a.day = $day) " +
             "select a.id, a.ex_name, a.plan_id, a.week, a.day, a.bodypart_id, a.isRepCount, b.user_level, b.rep, b.duration " +
             "from temp1 a, default_reps b " +
-            "where a.bodypart_id in (6,5) and a.bodypart_id=b.bodypart_id and b.user_level=$userLevel");
+            "where a.bodypart_id in (${secondaryMuscleId.toString().replaceAll("[", "").replaceAll("]", "")},$muscleId) and a.bodypart_id=b.bodypart_id and b.user_level=$userLevel");
     List<PlanExerciseDetail> plans = data.isNotEmpty
         ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()
         : [];
@@ -392,7 +403,7 @@ class DatabaseHelper {
 
     List<int> absEXs1 = [58, 2, 48, 53, 12, 5, 4, 3, 46];
     List<int> absEXs2 = [13, 10, 6, 7, 11, 15, 16];
-    int absEXs3 = 3;
+    int absEXs3 = 14;
 
     List<int> armchestEXs1 = [17, 18, 38, 34];
     List<int> armchestEXs2 = [37, 19, 45, 64, 39, 20];
