@@ -302,15 +302,15 @@ class DatabaseHelper {
       int day, int userLevel, int week, int idPlan, int muscleId) async {
     Database? db = await instance.database;
     var secondaryMuscleId = [];
-    if (muscleId == 1) {
-      // secondaryMuscleId = [2];
-    } else if (muscleId == 2) {
-      // secondaryMuscleId = 1;
-    } else if (muscleId == 3 || muscleId == 4 || muscleId == 5) {
-      secondaryMuscleId.add(6);
+    if (muscleId == 1 ||
+        muscleId == 2 ||
+        muscleId == 3 ||
+        muscleId == 4 ||
+        muscleId == 5) {
+      secondaryMuscleId = [6];
     } else if (muscleId == 6) {
     } else if (muscleId == 7 || muscleId == 8) {
-      // secondaryMuscleId = [1];
+      
     }
     var data = await db.rawQuery(
         "with temp1(id, ex_name, plan_id, week, day, bodypart_id, isRepCount) as (select b.id, b.name, a.plan_id, a.week, a.day, c.bodypart_id, b.isRepCount " +
@@ -418,7 +418,7 @@ class DatabaseHelper {
     List<int> shoulderbackEXs3 = [28, 29, 21, 68, 41];
 
     //Stretch exercises
-    List<int> armchestSTs = [22, 8, 30, 36, 35];
+    List<int> armchestSTs = [8, 30, 36, 35];
     List<int> absSTs = [22, 65, 8];
     List<int> legbuttSTs = [65, 50, 49, 52];
     List<int> shoulderbackSTs = [22, 63, 65, 24, 9];
