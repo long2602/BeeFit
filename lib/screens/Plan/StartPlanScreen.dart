@@ -6,7 +6,9 @@ import 'package:beefit/screens/Plan/PauseScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:beefit/widgets/CountDownTimerState.dart';
 import 'package:beefit/widgets/TimeLine.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/AppMethods.dart';
@@ -59,7 +61,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
   }
 
   //update status
-  Future<bool> UpdatePlanDetail(Map<String, dynamic> row, int id) async {
+  Future<bool> updatePlanDetail(Map<String, dynamic> row, int id) async {
     try {
       databaseHelper.updateRawQuery(row, "plan_details", id, "id");
       return true;
@@ -125,6 +127,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                           ),
                         ),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               "Kcal",
@@ -147,6 +151,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                     ),
                     Expanded(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             "Time",
@@ -156,7 +162,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                             ),
                           ),
                           Text(
-                            '${dif.inMinutes} minute',
+                            '${dif.inMinutes} min',
                             style: GoogleFonts.poppins(
                               color: AppStyle.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -169,35 +175,19 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: ClipRRect(
-                  borderRadius: AppStyle.appBorder,
-                  child: MaterialButton(
-                    minWidth: double.infinity,
-                    color: AppStyle.primaryColor,
-                    elevation: 0,
-                    onPressed: () {
-                      int count = 0;
-                      Navigator.popUntil(
-                        context,
-                        (route) {
-                          return count++ == 2;
-                        },
-                      );
+              CommonButton(
+                onPressed: () {
+                  int count = 0;
+                  Navigator.popUntil(
+                    context,
+                    (route) {
+                      return count++ == 2;
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text(
-                        "FINISH",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: AppStyle.whiteColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                  );
+                },
+                backgroundColor: AppStyle.primaryColor,
+                text: "FINISH",
+                textColor: AppStyle.whiteColor,
               ),
             ],
           ),
@@ -217,13 +207,8 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppStyle.whiteColor,
-        leading: BackButton(
+        leading: const BackButton(
           color: AppStyle.secondaryColor,
-          onPressed: () {
-            if (indexPage < _list.length) {
-              print('bạn có chắc');
-            }
-          },
         ),
         titleSpacing: 0,
         title: Row(
@@ -260,7 +245,7 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                 "date": formattedDate,
                 "kcal": kcal.toDouble(),
               };
-              UpdatePlanDetail(row, planExerciseDetail.idPlanDetail!);
+              updatePlanDetail(row, planExerciseDetail.idPlanDetail!);
               Future.delayed(Duration.zero, () => _confirmDialog(context));
             } else {
               timerState.isFinish = false;
@@ -289,13 +274,13 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                   planExerciseDetail.duration!,
                   planExerciseDetail.isRepCount!,
                   planExerciseDetail.met!);
-              totalKcal += totalKcal;
+              totalKcal += kcal;
               Map<String, dynamic> row = {
                 "status": 1,
                 "date": formattedDate,
                 "kcal": kcal.toDouble(),
               };
-              UpdatePlanDetail(row, planExerciseDetail.idPlanDetail!);
+              updatePlanDetail(row, planExerciseDetail.idPlanDetail!);
               print('add time');
               _pageController.nextPage(
                   duration: const Duration(seconds: 1),
@@ -559,76 +544,106 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
                                                   height: double.infinity,
                                                   child: ElevatedButton(
                                                     onPressed: () {
-                                                      DateTime now =
-                                                          DateTime.now();
-                                                      String formattedDate =
-                                                          DateFormat(
-                                                                  'yyyy-MM-dd')
-                                                              .format(now);
-                                                      print(formattedDate);
-                                                      num kcal = _list[i].met! *
-                                                          widget._user.weight! *
-                                                          (_list[i].isRepCount ==
-                                                                  0
-                                                              ? _list[i]
-                                                                  .duration
-                                                              : (_list[i].rep! +
-                                                                      3) /
-                                                                  60)! *
-                                                          0.0175;
-                                                      Map<String, dynamic> row =
-                                                          {
-                                                        "status": 1,
-                                                        "date": formattedDate,
-                                                        "kcal": kcal.toDouble(),
-                                                      };
-                                                      UpdatePlanDetail(
-                                                          row,
-                                                          _list[i]
-                                                              .idPlanDetail!);
-                                                      print('add');
-                                                      Future.delayed(
-                                                          Duration.zero,
-                                                          () => Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (_) =>
-                                                                      PauseScreen(
-                                                                    list: _list,
-                                                                    item: _list[
-                                                                        indexPage],
-                                                                    index: (indexPage +
-                                                                                1) >
-                                                                            _list
-                                                                                .length
-                                                                        ? _list.length -
-                                                                            1
-                                                                        : indexPage +
-                                                                            1,
-                                                                    defaultReps: DefaultReps(
-                                                                        rep: _list[indexPage]
-                                                                            .rep,
-                                                                        duration:
-                                                                            _list[indexPage].duration),
-                                                                    user: widget
-                                                                        ._user,
+                                                      PlanExerciseDetail
+                                                          planExerciseDetail =
+                                                          _list[indexPage];
+                                                      if (indexPage ==
+                                                          _list.length - 1) {
+                                                        num kcal = AppMethods
+                                                            .calculateMet(
+                                                                _user.weight!,
+                                                                planExerciseDetail
+                                                                    .rep!,
+                                                                planExerciseDetail
+                                                                    .duration!,
+                                                                planExerciseDetail
+                                                                    .isRepCount!,
+                                                                planExerciseDetail
+                                                                    .met!);
+                                                        Map<String, dynamic>
+                                                            row = {
+                                                          "status": 1,
+                                                          "date": formattedDate,
+                                                          "kcal":
+                                                              kcal.toDouble(),
+                                                        };
+                                                        updatePlanDetail(
+                                                            row,
+                                                            _list[i]
+                                                                .idPlanDetail!);
+                                                        Future.delayed(
+                                                            Duration.zero,
+                                                            () =>
+                                                                _confirmDialog(
+                                                                    context));
+                                                      } else {
+                                                        num kcal = AppMethods
+                                                            .calculateMet(
+                                                                _user.weight!,
+                                                                planExerciseDetail
+                                                                    .rep!,
+                                                                planExerciseDetail
+                                                                    .duration!,
+                                                                planExerciseDetail
+                                                                    .isRepCount!,
+                                                                planExerciseDetail
+                                                                    .met!);
+                                                        Map<String, dynamic>
+                                                            row = {
+                                                          "status": 1,
+                                                          "date": formattedDate,
+                                                          "kcal":
+                                                              kcal.toDouble(),
+                                                        };
+                                                        updatePlanDetail(
+                                                            row,
+                                                            _list[i]
+                                                                .idPlanDetail!);
+                                                        print('add');
+                                                        Future.delayed(
+                                                            Duration.zero,
+                                                            () =>
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (_) =>
+                                                                        PauseScreen(
+                                                                      list:
+                                                                          _list,
+                                                                      item: _list[
+                                                                          indexPage],
+                                                                      index: (indexPage + 1) >
+                                                                              _list
+                                                                                  .length
+                                                                          ? _list.length -
+                                                                              1
+                                                                          : indexPage +
+                                                                              1,
+                                                                      defaultReps: DefaultReps(
+                                                                          rep: _list[indexPage]
+                                                                              .rep,
+                                                                          duration:
+                                                                              _list[indexPage].duration),
+                                                                      user: widget
+                                                                          ._user,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ));
-                                                      timerState.setNumber(
-                                                          _list[indexPage]
-                                                              .duration
-                                                              .toString());
-                                                      timerState.setMaxNumber(
-                                                          _list[indexPage]
-                                                              .duration
-                                                              .toString());
-                                                      _pageController.nextPage(
-                                                          duration:
-                                                              const Duration(
-                                                                  seconds: 1),
-                                                          curve:
-                                                              Curves.easeInOut);
+                                                                ));
+                                                        timerState.setNumber(
+                                                            _list[indexPage]
+                                                                .duration
+                                                                .toString());
+                                                        timerState.setMaxNumber(
+                                                            _list[indexPage]
+                                                                .duration
+                                                                .toString());
+                                                        _pageController.nextPage(
+                                                            duration:
+                                                                const Duration(
+                                                                    seconds: 1),
+                                                            curve: Curves
+                                                                .easeInOut);
+                                                      }
                                                     },
                                                     child: const Center(
                                                       child: Icon(
@@ -892,72 +907,6 @@ class _StartPlanScreenState extends State<StartPlanScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Future<void> _showMyDialog(int _time) async {
-    final CountDownTimerState _timerState = Get.put(CountDownTimerState());
-    _timerState.setNumber(_time);
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return GetBuilder<CountDownTimerState>(
-          builder: (_) {
-            if (_timerState.isFinish == true) {
-              _timerState.setNumber(_list[indexPage].duration.toString());
-              _timerState.setMaxNumber(_list[indexPage].duration.toString());
-              _pageController.nextPage(
-                  duration: const Duration(seconds: 1),
-                  curve: Curves.easeInOut);
-              Navigator.pop(context);
-            } else if (_timerState.isStart == true) {
-              // _timerState.setNumber(_time.toString());
-              _timerState.stateTimerStart();
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'REST',
-                  style: GoogleFonts.poppins(
-                      color: AppStyle.whiteColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  '00:${_timerState.count}',
-                  style: GoogleFonts.poppins(
-                      color: AppStyle.whiteColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 60),
-                  textAlign: TextAlign.center,
-                ),
-                CommonButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    timerState.setNumber(_list[indexPage].duration.toString());
-                    timerState
-                        .setMaxNumber(_list[indexPage].duration.toString());
-                    _pageController.nextPage(
-                        duration: const Duration(seconds: 1),
-                        curve: Curves.easeInOut);
-                  },
-                  backgroundColor: AppStyle.whiteColor,
-                  text: "SKIP",
-                  textColor: AppStyle.primaryColor,
-                  elevation: 0,
-                  width: 100,
-                  height: 40,
-                  borderRadius: 30,
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 }

@@ -46,6 +46,9 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: AppStyle.primaryColor,
+          leading: BackButton(
+            onPressed: () => Navigator.pop(context, true),
+          ),
           title: Text(
             'Add ${widget._title}',
             style: GoogleFonts.poppins(

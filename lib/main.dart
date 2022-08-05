@@ -45,9 +45,11 @@ class MyApp extends StatelessWidget {
       home: AnimatedSplashScreen(
         splash: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset("assets/imgs/Logo.png"),
+            ClipRRect(
+                borderRadius: AppStyle.appBorder,
+                child: Image.asset("assets/imgs/BEEFIT.png")),
             const SizedBox(width: 10),
             Text(
               "BeeFit",

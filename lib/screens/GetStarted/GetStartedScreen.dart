@@ -156,90 +156,97 @@ class _GetStartedScreenState extends State<GetStartedScreen>
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CommonButton(
-                    width: 170,
-                    backgroundColor: Colors.white,
-                    textColor: Color(AppMethods.hexColor("#fb9b28")),
-                    text: 'Previous',
-                    borderSide: BorderSide(
-                        color: Color(AppMethods.hexColor("#fb9b28")), width: 2),
-                    onPressed: () {
-                      switch (_tabController.index) {
-                        case 1:
-                          {
-                            _tabController.index--;
-                          }
-                          break;
-                        case 3:
-                          {
-                            if (_goalListIndex == 0 || _goalListIndex == 2) {
-                              _tabController.index -= 2;
-                            } else {
+                  Expanded(
+                    child: CommonButton(
+                      backgroundColor: Colors.white,
+                      textColor: Color(AppMethods.hexColor("#fb9b28")),
+                      text: 'Previous',
+                      borderSide: BorderSide(
+                          color: Color(AppMethods.hexColor("#fb9b28")),
+                          width: 2),
+                      onPressed: () {
+                        switch (_tabController.index) {
+                          case 1:
+                            {
                               _tabController.index--;
                             }
-                          }
-                          break;
-                        default:
-                          {
-                            _tabController.index--;
-                          }
-                      }
-                    },
-                  ),
-                  CommonButton(
-                    width: 170,
-                    backgroundColor: Color(AppMethods.hexColor("#fb9b28")),
-                    textColor: AppStyle.whiteColor,
-                    text: 'Next',
-                    onPressed: () {
-                      switch (_tabController.index) {
-                        case 1:
-                          {
-                            if (_goalListIndex == 0 || _goalListIndex == 2) {
-                              _tabController.index += 2;
-                            } else {
-                              _tabController.index++;
-                            }
-                          }
-                          break;
-                        case 3:
-                          {
-                            if (_formKey1.currentState!.validate()) {
-                              _tabController.index++;
-                            }
-                          }
-                          break;
-                        case 7:
-                          {
+                            break;
+                          case 3:
                             {
-                              if (_formKey2.currentState!.validate()) {
-                                Navigator.pushReplacement(
-                                    context,
-                                    AppMethods.animatedRoute(OnProgressScreen(
-                                      isMale: _maleIsTapped,
-                                      height: _currentHeight,
-                                      currentWeight: _currentWeight,
-                                      name: _nameController.value.text,
-                                      age: int.parse(_ageController.value.text),
-                                      bmi: _bmi,
-                                      bmr: _BMRCalculate(
-                                          weight: _currentWeight.toDouble(),
-                                          height: _currentHeight.toDouble()),
-                                      goal: _goalListIndex,
-                                      level: _levelId,
-                                      muscleId: _bdpId,
-                                      isModify: widget._isModify,
-                                    )));
+                              if (_goalListIndex == 0 || _goalListIndex == 2) {
+                                _tabController.index -= 2;
+                              } else {
+                                _tabController.index--;
                               }
                             }
-                          }
-                          break;
-                        default:
-                          {
-                            _tabController.index++;
-                          }
-                      }
-                    },
+                            break;
+                          default:
+                            {
+                              _tabController.index--;
+                            }
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: CommonButton(
+                      backgroundColor: Color(AppMethods.hexColor("#fb9b28")),
+                      textColor: AppStyle.whiteColor,
+                      text: 'Next',
+                      onPressed: () {
+                        switch (_tabController.index) {
+                          case 1:
+                            {
+                              if (_goalListIndex == 0 || _goalListIndex == 2) {
+                                _tabController.index += 2;
+                              } else {
+                                _tabController.index++;
+                              }
+                            }
+                            break;
+                          case 3:
+                            {
+                              if (_formKey1.currentState!.validate()) {
+                                _tabController.index++;
+                              }
+                            }
+                            break;
+                          case 7:
+                            {
+                              {
+                                if (_formKey2.currentState!.validate()) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      AppMethods.animatedRoute(OnProgressScreen(
+                                        isMale: _maleIsTapped,
+                                        height: _currentHeight,
+                                        currentWeight: _currentWeight,
+                                        name: _nameController.value.text,
+                                        age: int.parse(
+                                            _ageController.value.text),
+                                        bmi: _bmi,
+                                        bmr: _BMRCalculate(
+                                            weight: _currentWeight.toDouble(),
+                                            height: _currentHeight.toDouble()),
+                                        goal: _goalListIndex,
+                                        level: _levelId,
+                                        muscleId: _bdpId,
+                                        isModify: widget._isModify,
+                                      )));
+                                }
+                              }
+                            }
+                            break;
+                          default:
+                            {
+                              _tabController.index++;
+                            }
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -654,6 +661,9 @@ class _GetStartedScreenState extends State<GetStartedScreen>
                         if (val == "") return "Please enter your age.";
                         if (int.parse(val!) < 6) {
                           return "Please enter age larger than 6.";
+                        }
+                        if (int.parse(val) > 80) {
+                          return "Please enter age Less than 80.";
                         }
                         return null;
                       },

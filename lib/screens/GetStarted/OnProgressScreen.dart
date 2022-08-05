@@ -87,28 +87,18 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
     }
   }
 
-  // Future<bool> insertPlan() async {
-  //   databaseHelper.database;
-  //   Map<String, dynamic> row = {
-  //     'id': idPlan,
-  //     'name': "Personal Plan",
-  //     'bodypart_id': widget._goal != 2 ? 6 : 2,
-  //     'image': "fitness1",
-  //     'description':
-  //         "A personal development plan is a set of goals and objectives you create to help you achieve the life you want.",
-  //     'user_level': widget._level,
-  //   };
-  //   try {
-  //     await databaseHelper.insert('plans', row).then((id) {
-  //       idPlan = id;
-  //       print('insert row id: $id');
-  //     });
-  //     return true;
-  //   } on DatabaseException catch (e) {
-  //     if (e.isUniqueConstraintError()) {}
-  //     return false;
-  //   }
-  // }
+  Future<bool> isDelete() async {
+    try {
+      if (widget._isModify) {
+        databaseHelper.deleteRaw(2, "plan_details", "plan_id");
+        databaseHelper.deleteRaw(2, "plans", "id");
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +112,7 @@ class _OnProgressScreenState extends State<OnProgressScreen> {
       ),
       body: FutureBuilder(
         future: Future.wait([
+          isDelete(),
           databaseHelper
               .generatePlan(
                   bodypartId: widget._muscleId!,

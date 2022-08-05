@@ -108,12 +108,11 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                 //   _ingredient,
                 // );
                 insertData();
-
                 int count = 0;
                 Navigator.popUntil(
                   context,
                   (route) {
-                    return count++ == 2;
+                    return count++ == 1;
                   },
                 );
               },
@@ -131,7 +130,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           children: [
             FutureBuilder(
               future: ApiService.instance
-                  .fetchMapIngredient(widget._ingredient.id.toString()),
+                  .fetchMapIngredient(widget._ingredient.id.toString(), 1),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

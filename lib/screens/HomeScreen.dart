@@ -38,6 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
   String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   List<Challenge> listChallenges = [];
 
+  double value(double _totalEat, double _totalCalo) {
+    double temp = (user.bmr! - _totalEat + _totalCalo);
+    print(temp);
+    if (temp < 0) {
+      return 1;
+    } else if (temp > user.bmr!) {
+      return 1;
+    }
+    return (user.bmr! - _totalEat + _totalCalo).abs() / user.bmr!;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _scaleFont = AppMethods.fontScale(context);
@@ -69,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
             databaseHelper.getPlanDayByDate(formattedDate),
             databaseHelper.getFoodHistoryByDay(formattedDate),
             databaseHelper.getChallenges(),
+            // databaseHelper.getSumKcalChallenge(formattedDate),
           ]),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData) {
@@ -388,15 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   radius: 75 * AppMethods.screenScale(context),
                                   lineWidth: 12,
                                   animation: true,
-                                  percent: ((user.bmr! - totalEat + totalCalo) /
-                                              user.bmr!) >
-                                          1
-                                      ? 1
-                                      : (user.bmr! - totalEat + totalCalo) >= 0
-                                          ? (user.bmr! - totalEat + totalCalo) /
-                                              user.bmr!
-                                          : ((totalEat - totalCalo).abs() /
-                                              user.bmr!),
+                                  percent: value(totalEat, totalCalo),
                                   center: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -406,6 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         (user.bmr!.ceil() +
                                                 totalCalo.ceil() -
                                                 totalEat.ceil())
+                                            .abs()
                                             .toString(),
                                         style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold,

@@ -2,6 +2,7 @@ import 'package:beefit/constants/AppStyles.dart';
 import 'package:beefit/screens/GetStarted/GetStartedScreen.dart';
 import 'package:beefit/widgets/CommonButton.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/AppMethods.dart';
 import '../models/User.dart';
@@ -118,12 +119,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: CommonButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              const GetStartedScreen(isModify: true),
-                        ),
+                      Get.to(
+                        const GetStartedScreen(isModify: true),
                       );
                     },
                     backgroundColor: AppStyle.primaryColor,

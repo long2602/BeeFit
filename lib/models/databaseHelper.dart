@@ -316,7 +316,7 @@ class DatabaseHelper {
         "with temp1(id, name, description, gif, level, type, met, rest_duration, isRepCount, bodypart_id, plandetail_id, status, kcal)"
         " as (select b.id, b.name, b.description, b.gif, b.level, b.type, b.met, b.rest_duration, b.isRepCount, c.bodypart_id, a.id, a.status, a.kcal"
         " from plan_details a, exercises b, bodyparts_exercises c where a.exercise_id=b.id and a.plan_id=$idPlan and b.id=c.exercise_id and a.week=$week and a.day=$day)"
-        " select a.id, a.name, a.description, a.gif, a.level, a.type, a.met, a.rest_duration, a.kcal, b.rep, b.duration, a.isRepCount, a.plandetail_id, a.status "
+        " select a.id, a.name, a.description, a.gif, a.level, a.type, a.met, a.rest_duration, a.kcal, b.rep, b.duration, a.isRepCount, a.plandetail_id as idPlanDetail , a.status "
         "from temp1 a, default_reps b where a.bodypart_id in (${secondaryMuscleId.toString().replaceAll("[", "").replaceAll("]", "")},$muscleId) and a.bodypart_id=b.bodypart_id and b.user_level=$userLevel");
     List<PlanExerciseDetail> plans = data.isNotEmpty
         ? data.map((e) => PlanExerciseDetail.fromJson(e)).toList()

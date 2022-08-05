@@ -113,7 +113,7 @@ class _PlanScreenState extends State<PlanScreen> {
                           ),
                           //TODO: idboy
                           subtitle: Text(EnumBodyPart
-                              .values[personalPlan.idBodyPart].name),
+                              .values[personalPlan.idBodyPart - 1].name),
                           contentPadding: EdgeInsets.zero,
                           trailing: IconButton(
                             onPressed: () {},
@@ -133,44 +133,6 @@ class _PlanScreenState extends State<PlanScreen> {
                                       )),
                             );
                           },
-                        ),
-                        ListTile(
-                          leading: ClipRRect(
-                            borderRadius: AppStyle.appBorder,
-                            child: Image.asset(
-                              "assets/imgs/dinner.png",
-                              height: 60 * _scaleScreen,
-                              width: 60 * _scaleScreen,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          title: Text(
-                            'Food',
-                            style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                color: AppStyle.secondaryColor),
-                          ),
-                          subtitle: Text('3 Meal'),
-                          contentPadding: EdgeInsets.zero,
-                          trailing: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchScreen(
-                                          calo: widget._user.bmr!
-                                              .ceil()
-                                              .toDouble(),
-                                        )),
-                              );
-                            },
-                            icon: Icon(
-                              Icons.arrow_forward,
-                              color: AppStyle.primaryColor,
-                              size: 30 * _scaleScreen,
-                            ),
-                          ),
-                          onTap: () {},
                         ),
                       ],
                     ),
